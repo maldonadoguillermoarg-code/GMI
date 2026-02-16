@@ -2,19 +2,60 @@ import streamlit as st
 import datetime
 import time
 import base64
+import json
 import folium
 from streamlit_folium import st_folium
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios", initial_sidebar_state="collapsed")
 
-# --- 2. CONTROL DE ESTADO ---
+# --- 2. CARGA DE DATOS REALES (NUEVA SECCIÓN) ---
+@st.cache_data
+def cargar_datos_geograficos():
+    # 1. Cargar Provincias
+    try:
+        with open('argentina_states.json', 'r', encoding='utf-8') as f:
+            provincias_data = json.load(f)
+        # Adaptar según si es lista de strings o diccionarios
+        provincias = sorted([p['nombre'] if isinstance(p, dict) else p for p in provincias_data])
+    except:
+        provincias = ["Córdoba", "Buenos Aires", "Santa Fe"]
+
+    # 2. Cargar Localidades
+    try:
+        with open('argentina_localities.json', 'r', encoding='utf-8') as f:
+            localidades_data = json.load(f)
+        # Crear diccionario jerárquico { Provincia: [Localidades] }
+        loc_dict = {}
+        for item in localidades_data:
+            p = item.get('provincia')
+            n = item.get('nombre')
+            if p and n:
+                if p not in loc_dict: loc_dict[p] = []
+                loc_dict[p].append(n)
+        for p in loc_dict: loc_dict[p] = sorted(loc_dict[p])
+    except:
+        loc_dict = {"Córdoba": ["Córdoba Capital", "Villa Carlos Paz"]}
+
+    # 3. Cargar Barrios desde cordoba.geojson
+    try:
+        with open('cordoba.geojson', 'r', encoding='utf-8') as f:
+            geo_data = json.load(f)
+        barrios_cba = sorted(list(set([feat['properties']['Nombre'] for feat in geo_data['features'] if feat['properties'].get('Nombre')])))
+    except:
+        barrios_cba = ["Nueva Córdoba", "Centro", "General Paz"]
+
+    return provincias, loc_dict, barrios_cba
+
+PROVINCIAS, LOCALIDADES_DICT, BARRIOS_CBA = cargar_datos_geograficos()
+
+# --- 3. CONTROL DE ESTADO ---
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 if 'categoria_actual' not in st.session_state:
     st.session_state.categoria_actual = None
 
-# --- 3. FUNCIONES DE UTILIDAD ---
+# --- 4. FUNCIONES DE UTILIDAD ---
 def get_image_base64(path):
     try:
         with open(path, "rb") as f:
@@ -23,7 +64,7 @@ def get_image_base64(path):
     except:
         return ""
 
-# --- 4. DATOS DE PROPIEDADES ---
+# --- 5. DATOS DE PROPIEDADES ---
 propiedades = [
     {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
     {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
@@ -33,18 +74,16 @@ propiedades = [
     {"tipo": "TERRENOS", "titulo": "Macrolote Industrial", "precio": "USD 980.000", "barrio": "Circunvalación", "amb": "-", "m2": "5000", "img": "Terreno.jpeg"},
 ]
 
-# --- 5. ESTILOS CSS GENERALES Y HOUZEZ ---
+# --- 6. ESTILOS CSS GENERALES Y HOUZEZ ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
-    /* Ocultar elementos de Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Estilos de Tarjetas Houzez */
     .houzez-card {
         background: white;
         border-radius: 8px;
@@ -95,13 +134,12 @@ st.markdown("""
         font-size: 13px;
     }
     
-    /* Buscador Flotante */
     .search-container {
         background: white;
         padding: 25px;
         border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        margin-top: -60px;
+        margin-top: -80px;
         position: relative;
         z-index: 99;
     }
@@ -111,7 +149,6 @@ st.markdown("""
 # --- LÓGICA DE PANTALLAS ---
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: COUNTDOWN
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
@@ -155,10 +192,8 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 elif st.session_state.estado == 'web':
-    # PANTALLA 2: WEB PROFESIONAL (ESTILO HOUZEZ)
     st.markdown("<style>.stApp { background-color: #f8f9fa !important; }</style>", unsafe_allow_html=True)
     
-    # Header
     st.markdown(f"""
         <div style='text-align: center; padding: 30px 0;'>
             <div style='font-family: "Inter"; font-size: 50px; font-weight: 800; color: #1a1a1a;'>
@@ -168,21 +203,44 @@ elif st.session_state.estado == 'web':
         </div>
         """, unsafe_allow_html=True)
 
-    # Mapa de Córdoba
     m = folium.Map(location=[-31.4167, -64.1833], zoom_start=13, tiles='CartoDB positron')
     st_folium(m, height=450, use_container_width=True, key="mapa_houzez")
     
-    # Buscador Flotante (La confirmación de Morty)
+    # --- BUSCADOR EVOLUCIONADO (ESTILO CLASIFICADOS LA VOZ) ---
     st.markdown('<div class="search-container">', unsafe_allow_html=True)
-    col_b1, col_b2, col_b3, col_b4 = st.columns([2, 1, 1, 1])
-    with col_b1:
-        st.text_input("Localidad o Barrio", placeholder="Ej: Nueva Córdoba, Manantiales...", label_visibility="collapsed")
-    with col_b2:
-        st.selectbox("Operación", ["Venta", "Alquiler"], label_visibility="collapsed")
-    with col_b3:
-        st.selectbox("Tipo de Propiedad", ["Departamentos", "Casas", "Terrenos"], label_visibility="collapsed")
-    with col_b4:
-        st.button("BUSCAR AHORA", use_container_width=True)
+    
+    # Fila 1: Ubicación Dinámica
+    col_u1, col_u2, col_u3 = st.columns(3)
+    with col_u1:
+        prov_sel = st.selectbox("Provincia", options=["Seleccionar..."] + PROVINCIAS)
+    
+    with col_u2:
+        if prov_sel != "Seleccionar..." and prov_sel in LOCALIDADES_DICT:
+            loc_sel = st.selectbox("Localidad", options=["Todas las localidades"] + LOCALIDADES_DICT[prov_sel])
+        else:
+            loc_sel = st.selectbox("Localidad", options=["-"], disabled=True)
+            
+    with col_u3:
+        # Solo habilitamos barrios si es Córdoba Capital y cargamos los del GeoJSON
+        if prov_sel == "Córdoba" and loc_sel == "Córdoba Capital":
+            barrio_sel = st.selectbox("Barrio", options=["Todos los barrios"] + BARRIOS_CBA)
+        else:
+            barrio_sel = st.selectbox("Barrio", options=["-"], disabled=True)
+
+    st.markdown("<hr style='margin: 15px 0; border: 0.5px solid #eee;'>", unsafe_allow_html=True)
+
+    # Fila 2: Tipo y Precios
+    col_t1, col_t2, col_t3, col_t4 = st.columns([1.5, 1, 1, 1])
+    with col_t1:
+        st.multiselect("Tipo de Propiedad", options=["Casa", "Departamento", "Terreno", "PH", "Oficina"], placeholder="Cualquiera")
+    with col_t2:
+        st.number_input("Min USD", value=0, step=5000)
+    with col_t3:
+        st.number_input("Max USD", value=500000, step=5000)
+    with col_t4:
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.button("BUSCAR AHORA", use_container_width=True, type="primary")
+        
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -195,9 +253,8 @@ elif st.session_state.estado == 'web':
         </div>
     """, unsafe_allow_html=True)
 
-    # Grid de Propiedades (3 columnas)
+    # Grid de Propiedades
     col1, col2, col3 = st.columns(3)
-    
     for i, p in enumerate(propiedades):
         with [col1, col2, col3][i % 3]:
             img_b64 = get_image_base64(p["img"])
@@ -222,7 +279,6 @@ elif st.session_state.estado == 'web':
             if st.button(f"VER FICHA COMPLETA", key=f"btn_{i}", use_container_width=True):
                 st.toast(f"Cargando detalles de {p['titulo']}...", icon="🏠")
 
-    # Footer / Volver
     st.markdown("<br><br><hr>", unsafe_allow_html=True)
     if st.button("← VOLVER AL RELOJ DE LANZAMIENTO"):
         st.session_state.estado = 'intro'
