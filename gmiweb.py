@@ -136,7 +136,7 @@ else:
         st.button("VER DETALLES", key="btn2")
 
     with col3:
-        st.image("https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80")
+    st.image("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80")
         st.markdown("#### NORDELTA")
         st.markdown("**USD 540.000**")
         st.markdown("<p style='font-size: 12px; color: gray;'>MODERNA | FRENTE AL LAGO</p>", unsafe_allow_html=True)
