@@ -10,21 +10,24 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 
-# --- ESTILOS GLOBALES (Inter y Nunito) ---
+# --- ESTILOS GLOBALES (Tipografías y Botones Pro) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Nunito+Sans:wght@400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
+    /* Títulos Impactantes (Inter) */
     h1, h2, h3, .section-title {
         font-family: 'Inter', sans-serif !important;
         letter-spacing: -0.02em !important;
     }
+    
+    /* Cuerpo y Lectura (Nunito Sans) */
     p, div, span, label {
         font-family: 'Nunito Sans', sans-serif !important;
     }
 
-    /* BOTONES MODERNOS 8px */
+    /* BOTONES MODERNOS (8px radius + Padding Proporcional) */
     div.stButton > button {
         font-family: 'Nunito Sans', sans-serif !important;
         font-weight: 600 !important;
@@ -37,8 +40,10 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# --- LÓGICA DE PANTALLAS ---
+
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA (Estilo Stopwatch del video)
+    # PANTALLA 1: INTRO NEGRA (La confirmación de Morty - Estilo Red Stopwatch)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
@@ -48,22 +53,21 @@ if st.session_state.estado == 'intro':
             margin-top: 50px;
         }
 
-        /* EL RELOJ DEL VIDEO */
+        /* EL RELOJ DIGITAL (7 Segmentos + Resplandor del video) */
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
             font-size: clamp(60px, 15vw, 120px);
-            /* Efecto de resplandor eléctrico rojo */
             text-shadow: 
-                0 0 10px rgba(255, 0, 0, 0.8), 
-                0 0 20px rgba(255, 0, 0, 0.5),
+                0 0 10px rgba(255, 0, 0, 0.9), 
+                0 0 20px rgba(255, 0, 0, 0.6),
                 0 0 40px rgba(255, 0, 0, 0.3);
             letter-spacing: 5px;
             line-height: 1;
         }
 
         .labels-timer {
-            color: #222; /* Muy tenue para que destaque el rojo */
+            color: #222;
             text-align: center;
             letter-spacing: 12px;
             font-size: 11px;
@@ -72,18 +76,25 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
 
-        /* Botón Ghost para no romper la estética oscura */
-        div.stButton > button {
+        /* FUERZA EL CENTRADO TOTAL DEL BOTÓN */
+        .stButton {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        /* Estilo Ghost para el botón de Intro */
+        .stButton > button {
             background-color: transparent !important;
             color: #444 !important;
             border: 1px solid #222 !important;
-            margin-top: 60px;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        div.stButton > button:hover {
+        .stButton > button:hover {
             color: #FF0000 !important;
             border: 1px solid #FF0000 !important;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2) !important;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2) !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -98,7 +109,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Lógica de "La confirmación de Morty"
+    # Lógica de tiempo
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -113,11 +124,10 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    col_btn = st.columns([1, 1, 1])
-    with col_btn[1]:
-        if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
-            st.session_state.estado = 'web'
-            st.rerun()
+    # Botón centrado automáticamente por el CSS de arriba
+    if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
+        st.session_state.estado = 'web'
+        st.rerun()
     
     time.sleep(1)
     st.rerun()
@@ -127,38 +137,87 @@ else:
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
-        .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
-        .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
-        .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
         
-        [data-testid="stImage"] img { height: 350px !important; object-fit: cover !important; border-radius: 12px !important; }
+        .logo-main {
+            font-family: 'Inter', sans-serif;
+            font-size: 80px;
+            font-weight: 800;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1;
+            color: #1a1a1a;
+        }
         
-        div.stButton > button { background-color: #1a1a1a !important; color: white !important; width: 100% !important; }
-        div.stButton > button:hover { background-color: #C41E3A !important; transform: scale(1.02); }
+        .subtitle-main {
+            text-align: center;
+            letter-spacing: 4px;
+            color: #888;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #1a1a1a;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 10px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            border-top: 1px solid #eee;
+            padding-top: 30px;
+        }
+
+        /* Imágenes consistentes (Alineación Terrenos) */
+        [data-testid="stImage"] img {
+            height: 350px !important;
+            object-fit: cover !important;
+            border-radius: 12px !important;
+        }
+
+        /* Botones de Categoría (Negros) */
+        div.stButton > button {
+            background-color: #1a1a1a !important;
+            color: white !important;
+            width: 100% !important;
+            text-transform: uppercase;
+        }
+        div.stButton > button:hover {
+            background-color: #C41E3A !important;
+            transform: scale(1.02);
+        }
         </style>
         """, unsafe_allow_html=True)
 
     st.markdown("""
-        <div class='logo-main'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
+        <div class='logo-main'>
+            <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
+        </div>
         <div class='subtitle-main'>NEGOCIOS INMOBILIARIOS</div>
         <div class='section-title'>CATEGORÍAS</div>
         """, unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns(3)
-    
-    def cat(col, txt, img, key):
-        with col:
-            st.markdown(f"<div style='text-align:center; font-weight:800; margin-bottom:10px;'>{txt}</div>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+
+    def mostrar_categoria(columna, titulo, archivo, clave):
+        with columna:
+            st.markdown(f"<div style='text-align:center; font-weight:800; margin-bottom:15px; font-family:Inter;'>{titulo}</div>", unsafe_allow_html=True)
             try:
-                st.image(Image.open(img), use_container_width=True)
-                st.button(f"VER {txt}", key=key)
-            except: st.error(f"Falta {img}")
+                img = Image.open(archivo)
+                st.image(img, use_container_width=True)
+                st.button(f"VER {titulo}", key=clave)
+            except FileNotFoundError:
+                st.error(f"Falta archivo: {archivo}")
 
-    cat(c1, "DEPARTAMENTOS", "Deptos.jpeg", "d")
-    cat(c2, "CASAS", "Casas.jpeg", "c")
-    cat(c3, "TERRENOS", "Terreno.jpeg", "t")
+    mostrar_categoria(col1, "DEPARTAMENTOS", "Deptos.jpeg", "cat_d")
+    mostrar_categoria(col2, "CASAS", "Casas.jpeg", "cat_c")
+    mostrar_categoria(col3, "TERRENOS", "Terreno.jpeg", "cat_t")
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("← VOLVER"):
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    
+    # Botón Volver centrado
+    if st.button("← VOLVER AL INICIO", key="back_home"):
         st.session_state.estado = 'intro'
         st.rerun()
