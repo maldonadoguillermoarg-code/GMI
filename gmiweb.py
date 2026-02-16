@@ -37,21 +37,22 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
         
-        /* EL TRUCO PARA EL CENTRADO TOTAL */
-        /* Buscamos el contenedor del botón de Streamlit y lo centramos con Flex */
+        /* POSICIONAMIENTO ABSOLUTO PARA CENTRADO TOTAL */
         .stButton {
-            display: flex !important;
-            justify-content: center !important;
-            width: 100% !important;
+            position: fixed;
+            left: 90%;
+            transform: translateX(-50%);
+            bottom: 25%; /* Ajusta esto si lo querés más arriba o abajo */
+            z-index: 999;
         }
 
         div.stButton > button {
             width: auto !important;
-            min-width: 250px; /* Tamaño mínimo elegante */
+            min-width: 280px;
             background-color: transparent !important;
             color: white !important;
             border: 1px solid #444 !important;
-            padding: 10px 30px !important;
+            padding: 12px 30px !important;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 13px;
@@ -88,7 +89,7 @@ if st.session_state.estado == 'intro':
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # El botón ahora será forzado al centro por el CSS arriba
+    # Botón con posición fija en el centro
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -97,7 +98,7 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 else:
-    # PANTALLA 2: WEB BLANCA LUXURY
+    # PANTALLA 2: WEB BLANCA
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
