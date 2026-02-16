@@ -30,14 +30,15 @@ if st.session_state.estado == 'intro':
         .clock-container {
             text-align: center;
             width: 100%;
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
-            font-size: clamp(60px, 15vw, 120px);
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.9);
+            /* Tamaño reducido del reloj */
+            font-size: clamp(45px, 10vw, 90px);
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
             letter-spacing: 5px;
             line-height: 1;
         }
@@ -46,9 +47,26 @@ if st.session_state.estado == 'intro':
             color: #222;
             letter-spacing: 12px;
             font-size: 11px;
-            margin-top: 20px;
+            margin-top: 15px;
             font-weight: 800;
             text-transform: uppercase;
+        }
+
+        /* ESTILO SOLICITADO PARA EL TEXTO "HACE CLIC" */
+        .click-instruction {
+            color: #FF0000 !important;
+            margin-top: 50px;
+            font-size: 18px !important; /* Letra más grande */
+            font-weight: 900 !important;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            /* Contorno negro (Text Stroke) */
+            text-shadow: 
+                -2px -2px 0 #000,  
+                 2px -2px 0 #000,
+                -2px  2px 0 #000,
+                 2px  2px 0 #000,
+                 0px  0px 10px rgba(255, 0, 0, 0.5);
         }
 
         /* CAPA INVISIBLE SOBRE TODA LA PANTALLA */
@@ -69,20 +87,16 @@ if st.session_state.estado == 'intro':
             color: transparent !important;
             cursor: pointer !important;
         }
-        
-        div.stButton > button:hover {
-            background: rgba(255, 0, 0, 0.02) !important;
-        }
         </style>
         """, unsafe_allow_html=True)
 
-    # Diseño visual (ahora es solo estético, el botón invisible está encima)
+    # Diseño visual
     st.markdown("""
         <div style='text-align: center;'>
             <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </h1>
-            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p>
+            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 30px;'>NEGOCIOS INMOBILIARIOS</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -97,11 +111,11 @@ if st.session_state.estado == 'intro':
         <div class='clock-container'>
             <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
-            <p style='color: #444; margin-top: 40px; font-size: 10px; letter-spacing: 2px;'>HACE CLIC EN CUALQUIER LUGAR PARA EXPLORAR</p>
+            <p class='click-instruction'>HACE CLIC EN CUALQUIER LUGAR PARA EXPLORAR</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # El botón ahora ocupa toda la pantalla y es invisible
+    # Overlay para el clic (La confirmación de Morty)
     if st.button("Click Overlay"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -117,10 +131,7 @@ else:
         .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
         .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
         .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
-        
         [data-testid="stImage"] img { height: 350px !important; object-fit: cover !important; border-radius: 12px !important; }
-        
-        /* Botones estándar para la segunda pantalla */
         div.stButton > button { 
             background-color: #1a1a1a !important; 
             color: white !important; 
