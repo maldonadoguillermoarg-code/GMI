@@ -18,6 +18,11 @@ st.markdown("""
 
     h1, h2, h3, .section-title { font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em !important; }
     p, div, span, label { font-family: 'Nunito Sans', sans-serif !important; }
+    
+    /* Animación de titileo */
+    @keyframes blinker {
+        50% { opacity: 0.3; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -36,40 +41,38 @@ if st.session_state.estado == 'intro':
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
-            /* Tamaño reducido del reloj */
             font-size: clamp(45px, 10vw, 90px);
             text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
             letter-spacing: 5px;
             line-height: 1;
         }
 
+        /* AJUSTE: Etiquetas más grandes y rojo más tenue */
         .labels-timer {
-            color: #222;
+            color: #8B0000; /* Rojo más oscuro/tenue */
             letter-spacing: 12px;
-            font-size: 11px;
+            font-size: 14px; /* Un poco más grande */
             margin-top: 15px;
             font-weight: 800;
             text-transform: uppercase;
+            margin-bottom: 80px; 
         }
 
-        /* ESTILO SOLICITADO PARA EL TEXTO "HACE CLIC" */
+        /* AJUSTE: Titileo y Estilo */
         .click-instruction {
             color: #FF0000 !important;
-            margin-top: 50px;
-            font-size: 18px !important; /* Letra más grande */
+            font-size: 22px !important;
             font-weight: 900 !important;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            /* Contorno negro (Text Stroke) */
+            animation: blinker 1.5s linear infinite; /* Efecto titileo */
             text-shadow: 
                 -2px -2px 0 #000,  
                  2px -2px 0 #000,
                 -2px  2px 0 #000,
-                 2px  2px 0 #000,
-                 0px  0px 10px rgba(255, 0, 0, 0.5);
+                 2px  2px 0 #000;
         }
 
-        /* CAPA INVISIBLE SOBRE TODA LA PANTALLA */
         div.stButton {
             position: fixed;
             top: 0;
@@ -111,11 +114,10 @@ if st.session_state.estado == 'intro':
         <div class='clock-container'>
             <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
-            <p class='click-instruction'>HACE CLIC EN CUALQUIER LUGAR PARA EXPLORAR</p>
+            <p class='click-instruction'>HACÉ CLICK Y MIRÁ LOS AVANCES</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # Overlay para el clic (La confirmación de Morty)
     if st.button("Click Overlay"):
         st.session_state.estado = 'web'
         st.rerun()
