@@ -6,3 +6,7 @@ google-auth
 pillow
 streamlit-folium
 streamlit-card
+streamlit
+streamlit-extras
+streamlit-lottie
+streamlit-antd-components
