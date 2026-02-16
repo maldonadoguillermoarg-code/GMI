@@ -44,7 +44,7 @@ if st.session_state.estado == 'intro':
                 
                 
                 
-                            left: 87%; /* Movido a la derecha como pediste */
+                            left: 86%; /* Movido a la derecha como pediste */
             transform: translateX(-50%);
             bottom: 18%; /* Bajado un poco más (antes 25%) */
             z-index: 999;
