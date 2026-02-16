@@ -9,6 +9,8 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 # 2. Control de estado
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
+if 'categoria_actual' not in st.session_state:
+    st.session_state.categoria_actual = None
 
 # Función para convertir imagen local a Base64
 def get_image_base64(path):
@@ -19,12 +21,11 @@ def get_image_base64(path):
     except:
         return ""
 
-# --- DATOS DE PRUEBA (Lo que vendrá de Zoho) ---
-propiedades_ejemplo = [
-    {"titulo": "Penthouse Av. Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
-    {"titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
-    {"titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
-    {"titulo": "Departamento Studio", "precio": "USD 120.000", "barrio": "Centro", "amb": "1", "m2": "35", "img": "Deptos.jpeg"},
+# --- DATOS QUE VENDRÁN DE ZOHO (Simulados) ---
+propiedades = [
+    {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
+    {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
+    {"tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
 ]
 
 # --- ESTILOS GLOBALES ---
@@ -33,88 +34,36 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
-    /* Reset Estilo Elliman */
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #f4f4f2 !important;
-        scrollbar-width: none;
-    }
+    /* Reset Scrollbar oculto */
+    html, body { scrollbar-width: none; }
+    body::-webkit-scrollbar { display: none; }
     
-    h1, h2, h3 { font-family: 'Inter', sans-serif !important; }
-    
-    /* Animación de titileo */
     @keyframes blinker { 50% { opacity: 0.1; } }
 
-    /* TARJETA DE PROPIEDAD ESTILO ELLIMAN */
-    .listing-card {
-        background-color: transparent;
-        margin-bottom: 40px;
-        transition: 0.3s;
-        cursor: pointer;
-    }
-
-    .img-container-listing {
-        width: 100%;
-        height: 300px;
-        overflow: hidden;
-        position: relative;
-        border-radius: 2px;
-    }
-
-    .img-container-listing img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .img-container-listing:hover img {
-        transform: scale(1.05);
-    }
-
-    .info-container {
-        padding: 15px 0;
-        border-bottom: 1px solid #d1d1d1;
-    }
-
-    .prop-precio {
-        font-family: 'Inter', sans-serif;
-        font-weight: 800;
-        font-size: 20px;
-        color: #1a1a1a;
-        margin: 0;
-    }
-
-    .prop-ubicacion {
-        font-family: 'Nunito Sans', sans-serif;
-        font-size: 14px;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin: 5px 0;
-    }
-
-    .prop-detalles {
-        font-family: 'Nunito Sans', sans-serif;
-        font-size: 13px;
-        color: #888;
-        font-weight: 400;
-    }
+    /* TARJETA ESTILO ELLIMAN */
+    .listing-card { background-color: transparent; margin-bottom: 20px; transition: 0.3s; }
+    .img-container-listing { width: 100%; height: 350px; overflow: hidden; border-radius: 2px; }
+    .img-container-listing img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .img-container-listing:hover img { transform: scale(1.05); }
+    .info-container { padding: 15px 0; border-bottom: 1px solid #d1d1d1; }
+    .prop-precio { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 20px; color: #1a1a1a; margin: 0; }
+    .prop-ubicacion { font-family: 'Nunito Sans', sans-serif; font-size: 14px; color: #666; text-transform: uppercase; margin: 5px 0; }
     </style>
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA
+    # PANTALLA 1: INTRO NEGRA (RESTAURADA)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
         .digital-timer {
             font-family: 'Seven Segment', sans-serif; color: #FF0000;
             font-size: clamp(45px, 10vw, 90px); text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-            text-align: center; letter-spacing: 5px;
+            text-align: center; letter-spacing: 5px; line-height: 1;
         }
         .labels-timer {
             color: #8B0000; text-align: center; letter-spacing: 12px; font-size: 14px;
-            font-weight: 800; text-transform: uppercase; margin-top: 10px;
+            font-weight: 800; text-transform: uppercase; margin-top: 15px;
         }
         .text-link-titileo {
             color: #FF0000 !important; font-family: 'Inter', sans-serif; font-weight: 900;
@@ -128,7 +77,7 @@ if st.session_state.estado == 'intro':
         </style>
         """, unsafe_allow_html=True)
 
-    st.markdown("<div style='text-align: center;'><h1 style='font-size: 100px; margin-bottom: 0px; color: white;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></h1><p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p></div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center; margin-top: 5vh;'><h1 style='font-size: 100px; margin-bottom: 0px; color: white;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></h1><p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p></div>", unsafe_allow_html=True)
 
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
@@ -144,39 +93,64 @@ if st.session_state.estado == 'intro':
     time.sleep(1)
     st.rerun()
 
-else:
-    # PANTALLA 2: LISTADO DE PROPIEDADES (Estilo Elliman)
+elif st.session_state.estado == 'web':
+    # PANTALLA 2: WEB BLANCA / HUESO (CATEGORÍAS)
+    st.markdown("<style>.stApp { background-color: #f4f4f2 !important; }</style>", unsafe_allow_html=True)
+    
     st.markdown(f"""
         <div style='text-align: center; padding-top: 20px;'>
             <div style='font-family: "Inter"; font-size: 60px; font-weight: 800; color: #1a1a1a;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </div>
-            <div style='letter-spacing: 5px; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 40px;'>LISTADO DE PROPIEDADES</div>
+            <div style='letter-spacing: 5px; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 40px;'>NEGOCIOS INMOBILIARIOS</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # Grilla de Propiedades (3 columnas)
-    cols = st.columns(3)
-    
-    for i, prop in enumerate(propiedades_ejemplo):
-        img_b64 = get_image_base64(prop["img"])
-        with cols[i % 3]:
-            st.markdown(f"""
-                <div class="listing-card">
-                    <div class="img-container-listing">
-                        <img src="data:image/jpeg;base64,{img_b64}">
+    if st.session_state.categoria_actual is None:
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #d1d1d1; padding-top: 20px; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns(3)
+        
+        categorias = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
+        for i, (nombre, img) in enumerate(categorias):
+            with [col1, col2, col3][i]:
+                img_b64 = get_image_base64(img)
+                st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                if st.button(nombre, key=f"cat_{nombre}", use_container_width=True):
+                    st.session_state.categoria_actual = nombre
+                    st.rerun()
+    else:
+        # VISTA DE LISTADO FILTRADO
+        cat = st.session_state.categoria_actual
+        st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
+        
+        # Filtrar propiedades por categoría
+        propiedades_filtradas = [p for p in propiedades if p["tipo"] == cat]
+        
+        col_list, col_spacer = st.columns([1, 2]) # Para que la tarjeta no ocupe todo el ancho si hay una sola
+        
+        for i, p in enumerate(propiedades_filtradas):
+            with col_list:
+                img_b64 = get_image_base64(p["img"])
+                st.markdown(f"""
+                    <div class="listing-card">
+                        <div class="img-container-listing">
+                            <img src="data:image/jpeg;base64,{img_b64}">
+                        </div>
+                        <div class="info-container">
+                            <p class="prop-precio">{p['precio']}</p>
+                            <p class="prop-ubicacion">{p['titulo']} | {p['barrio']}</p>
+                            <p style='color: #888; font-size: 13px;'>{p['amb']} AMB  •  {p['m2']} M²</p>
+                        </div>
                     </div>
-                    <div class="info-container">
-                        <p class="prop-precio">{prop['precio']}</p>
-                        <p class="prop-ubicacion">{prop['titulo']} | {prop['barrio']}</p>
-                        <p class="prop-detalles">{prop['amb']} AMB  •  {prop['m2']} M² TOT.</p>
-                    </div>
-                </div>
                 """, unsafe_allow_html=True)
-            if st.button(f"VER DETALLE", key=f"btn_{i}", use_container_width=True):
-                st.write(f"Conectando con Zoho para la propiedad: {prop['titulo']}...")
+                st.button("VER FICHA COMPLETA", key=f"ficha_{i}")
+
+        if st.button("← VOLVER A CATEGORÍAS"):
+            st.session_state.categoria_actual = None
+            st.rerun()
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO"):
         st.session_state.estado = 'intro'
+        st.session_state.categoria_actual = None
         st.rerun()
