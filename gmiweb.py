@@ -68,12 +68,13 @@ if st.session_state.estado == 'intro':
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # Botón de entrada CENTRADO
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
+    # --- BLOQUE DE BOTÓN CENTRADO (NUEVO) ---
+    _, col_centro, _ = st.columns([1.1, 2, 1]) # El guion bajo (_) crea espacio vacío
+    with col_centro:
         if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
-            st.session_state.estado = 'web'
+            st.session_state.estado = "web"
             st.rerun()
+    # ----------------------------------------
 
     # Auto-refrescar para el segundero
     time.sleep(1)
@@ -150,4 +151,3 @@ else:
     if st.button("← CERRAR SISTEMA"):
         st.session_state.estado = 'intro'
         st.rerun()
-        
