@@ -113,7 +113,7 @@ if st.session_state.estado == 'intro':
         """, unsafe_allow_html=True)
 
     # Botón centrado debajo del reloj
-    col_btn, col_spacer = st.columns([2, 1]) # truco para centrar el botón si es necesario, pero usaremos container
+    col_btn, col_spacer = st.columns([2, 1, 1]) # truco para centrar el botón si es necesario, pero usaremos container
     with st.container():
         st.markdown("<div class='intro-btn-container'>", unsafe_allow_html=True)
         if st.button("MIRA LOS AVANCES DE NUESTRA WEB"):
