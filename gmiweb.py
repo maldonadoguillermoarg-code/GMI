@@ -12,7 +12,7 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 
-# Función crítica: Convierte imagen local a formato web para que streamlit-card la vea
+# Función para convertir imagen local a formato compatible con la tarjeta
 def get_image_base64(path):
     try:
         with open(path, "rb") as f:
@@ -30,16 +30,24 @@ st.markdown("""
     h1, h2, h3, .section-title { font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em !important; }
     p, div, span, label { font-family: 'Nunito Sans', sans-serif !important; }
     
-    @keyframes blinker { 50% { opacity: 0.3; } }
+    @keyframes blinker {
+        50% { opacity: 0.3; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA (ORIGINAL)
+    # PANTALLA 1: INTRO NEGRA INTERACTIVA
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; cursor: pointer; }
-        .clock-container { text-align: center; width: 100%; margin-top: 30px; }
+        
+        .clock-container {
+            text-align: center;
+            width: 100%;
+            margin-top: 30px;
+        }
+
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
@@ -48,6 +56,7 @@ if st.session_state.estado == 'intro':
             letter-spacing: 5px;
             line-height: 1;
         }
+
         .labels-timer {
             color: #8B0000;
             letter-spacing: 12px;
@@ -57,6 +66,7 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
             margin-bottom: 80px; 
         }
+
         .click-instruction {
             color: #FF0000 !important;
             font-size: 22px !important;
@@ -64,12 +74,29 @@ if st.session_state.estado == 'intro':
             letter-spacing: 4px;
             text-transform: uppercase;
             animation: blinker 1.5s linear infinite;
-            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+            text-shadow: 
+                -2px -2px 0 #000,  
+                 2px -2px 0 #000,
+                -2px  2px 0 #000,
+                 2px  2px 0 #000;
         }
+
+        div.stButton {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
+        }
+
         div.stButton > button {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: transparent !important; border: none !important;
-            color: transparent !important; z-index: 999; cursor: pointer !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            cursor: pointer !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -83,6 +110,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
+    # Lógica del Reloj
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -113,6 +141,14 @@ else:
         .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
         .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
         .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
+        
+        /* Estilo para los botones de Streamlit para que no desentonen */
+        div.stButton > button {
+            background-color: #1a1a1a !important;
+            color: white !important;
+            border-radius: 8px !important;
+            border: none !important;
+        }
         </style>
         """, unsafe_allow_html=True)
 
@@ -124,13 +160,15 @@ else:
     
     col1, col2, col3 = st.columns(3)
 
-    # Estilos de la tarjeta
+    # Configuración de tarjetas: Fondo blanco y sin sombras para eliminar el recuadro gris
     card_styles = {
         "card": {
             "width": "100%",
             "height": "400px",
             "border-radius": "15px",
-            "box-shadow": "0 0 15px rgba(0,0,0,0.1)",
+            "background-color": "#FFFFFF", 
+            "box-shadow": "none",
+            "border": "none",
         },
         "title": {
             "font-family": "Inter",
@@ -145,16 +183,16 @@ else:
     }
 
     with col1:
-        img_b64 = get_image_base64("Deptos.jpeg")
-        card(title="DEPARTAMENTOS", text="", image=img_b64, styles=card_styles, key="c1")
+        img_deptos = get_image_base64("Deptos.jpeg")
+        card(title="DEPARTAMENTOS", text="", image=img_deptos, styles=card_styles, key="c1")
 
     with col2:
-        img_b64 = get_image_base64("Casas.jpeg")
-        card(title="CASAS", text="", image=img_b64, styles=card_styles, key="c2")
+        img_casas = get_image_base64("Casas.jpeg")
+        card(title="CASAS", text="", image=img_casas, styles=card_styles, key="c2")
 
     with col3:
-        img_b64 = get_image_base64("Terreno.jpeg")
-        card(title="TERRENOS", text="", image=img_b64, styles=card_styles, key="c3")
+        img_terrenos = get_image_base64("Terreno.jpeg")
+        card(title="TERRENOS", text="", image=img_terrenos, styles=card_styles, key="c3")
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO"):
