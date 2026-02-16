@@ -12,7 +12,7 @@ if 'estado' not in st.session_state:
 # --- LÓGICA DE PANTALLAS ---
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA
+    # PANTALLA 1: INTRO NEGRA (La confirmación de Morty)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
@@ -82,52 +82,83 @@ else:
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
-        /* Logo GMI para fondo blanco */
-        .logo-text { font-size: 60px; font-weight: bold; text-align: center; margin-bottom: 0px; }
-        .sub-logo { letter-spacing: 8px; color: #808080; font-size: 14px; text-align: center; margin-top: -10px; margin-bottom: 20px; }
         
+        .logo-main {
+            font-size: 70px;
+            font-weight: 800;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: #1a1a1a;
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 12px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
         div.stButton > button {
             background-color: #1a1a1a !important;
             color: white !important;
             width: 100% !important;
-            border-radius: 0px;
+            border-radius: 2px;
             border: none;
             padding: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-        h3 { color: #1a1a1a; font-size: 18px; margin-top: 10px; text-align: center; }
+        
+        .cat-label {
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
         </style>
         """, unsafe_allow_html=True)
 
-    # Cabecera con Logo Original
+    # Cabecera con Logo GMI Replicado
     st.markdown("""
-        <div class='logo-text'>
+        <div class='logo-main'>
             <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
         </div>
-        <div class='sub-logo'>CATEGORÍAS</div>
-        <hr style='border: 0.5px solid #eeeeee;'>
+        <div class='section-title'>CATEGORÍAS</div>
         """, unsafe_allow_html=True)
     
     col_a, col_b, col_c = st.columns(3)
     
     with col_a:
         # Nueva Córdoba Aérea
-        st.image("https://images.unsplash.com/photo-1590424600949-161b96d92663?w=800", caption="Vista Aérea")
-        st.markdown("### DEPARTAMENTOS")
-        st.button("VER LISTADO", key="cat_depto")
+        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzI59h1C7LAtN89mI5Y81mP3R-C69qj19Q4w&s", use_container_width=True)
+        st.markdown("<div class='cat-label'>DEPARTAMENTOS</div>", unsafe_allow_html=True)
+        st.button("EXPLORAR DEPTOS", key="cat_depto")
         
     with col_b:
-        # Casa moderna realista "tranqui"
-        st.image("https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800")
-        st.markdown("### CASAS")
-        st.button("VER LISTADO", key="cat_casas")
+        # Casa moderna realista
+        st.image("https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800", use_container_width=True)
+        st.markdown("<div class='cat-label'>CASAS</div>", unsafe_allow_html=True)
+        st.button("EXPLORAR CASAS", key="cat_casas")
         
     with col_c:
         # Terrenos
-        st.image("https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800")
-        st.markdown("### TERRENOS")
-        st.button("VER LISTADO", key="cat_terrenos")
+        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNLa4KheNv4oRWIJFDrzN1pnwy1jwvBV7UzbdHJIaX&s", use_container_width=True)
+        st.markdown("<div class='cat-label'>TERRENOS</div>", unsafe_allow_html=True)
+        st.button("EXPLORAR LOTES", key="cat_terrenos")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    if st.button("← VOLVER AL INICIO", key="back"):
-        st.session_state.estado = 'intro'
-        st.rerun()
+    st.markdown("<br><br><hr style='border: 0.1px solid #f0f0f0;'>", unsafe_allow_html=True)
+    
+    # Botón de volver centrado y más discreto
+    col_v1, col_v2, col_v3 = st.columns([1,1,1])
+    with col_v2:
+        if st.button("← VOLVER AL INICIO", key="back"):
+            st.session_state.estado = 'intro'
+            st.rerun()
