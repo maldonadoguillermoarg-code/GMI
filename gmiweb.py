@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import time
+import base64
 from PIL import Image
 from streamlit_card import card
 
@@ -10,6 +11,15 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 # 2. Control de estado
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
+
+# Función crítica: Convierte imagen local a formato web para que streamlit-card la vea
+def get_image_base64(path):
+    try:
+        with open(path, "rb") as f:
+            data = f.read()
+        return "data:image/jpeg;base64," + base64.b64encode(data).decode()
+    except:
+        return ""
 
 # --- ESTILOS GLOBALES ---
 st.markdown("""
@@ -25,7 +35,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA INTERACTIVA
+    # PANTALLA 1: INTRO NEGRA (ORIGINAL)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; cursor: pointer; }
@@ -45,7 +55,7 @@ if st.session_state.estado == 'intro':
             margin-top: 15px;
             font-weight: 800;
             text-transform: uppercase;
-            margin-bottom: 60px; 
+            margin-bottom: 80px; 
         }
         .click-instruction {
             color: #FF0000 !important;
@@ -73,7 +83,6 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Lógica del Reloj
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -115,41 +124,37 @@ else:
     
     col1, col2, col3 = st.columns(3)
 
-    # Función para renderizar con estilo corregido
-    def crear_tarjeta(titulo, imagen, clave):
-        return card(
-            title=titulo,
-            text="",
-            image=imagen,
-            styles={
-                "card": {
-                    "width": "100%",
-                    "height": "400px",
-                    "border-radius": "15px",
-                    "box-shadow": "0 0 15px rgba(0,0,0,0.2)",
-                },
-                "title": {
-                    "font-family": "Inter",
-                    "font-weight": "800",
-                    "font-size": "28px",
-                    "color": "white",
-                    "text-shadow": "2px 2px 8px rgba(0,0,0,0.8)", # Sombra fuerte para que resalte
-                },
-                "filter": {
-                    "background-color": "rgba(0, 0, 0, 0.1)" # Capa muy suave para no tapar la foto
-                }
-            },
-            key=clave
-        )
+    # Estilos de la tarjeta
+    card_styles = {
+        "card": {
+            "width": "100%",
+            "height": "400px",
+            "border-radius": "15px",
+            "box-shadow": "0 0 15px rgba(0,0,0,0.1)",
+        },
+        "title": {
+            "font-family": "Inter",
+            "font-weight": "800",
+            "font-size": "26px",
+            "color": "white",
+            "text-shadow": "2px 2px 6px rgba(0,0,0,0.9)",
+        },
+        "filter": {
+            "background-color": "rgba(0, 0, 0, 0.15)"
+        }
+    }
 
     with col1:
-        crear_tarjeta("DEPARTAMENTOS", "Deptos.jpeg", "c1")
+        img_b64 = get_image_base64("Deptos.jpeg")
+        card(title="DEPARTAMENTOS", text="", image=img_b64, styles=card_styles, key="c1")
 
     with col2:
-        crear_tarjeta("CASAS", "Casas.jpeg", "c2")
+        img_b64 = get_image_base64("Casas.jpeg")
+        card(title="CASAS", text="", image=img_b64, styles=card_styles, key="c2")
 
     with col3:
-        crear_tarjeta("TERRENOS", "Terreno.jpeg", "c3")
+        img_b64 = get_image_base64("Terreno.jpeg")
+        card(title="TERRENOS", text="", image=img_b64, styles=card_styles, key="c3")
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO"):
