@@ -9,23 +9,26 @@ from streamlit_folium import st_folium
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios", initial_sidebar_state="collapsed")
 
-# --- 2. CARGA DE DATOS PARA BUSCADOR PREDICTIVO (NUEVO) ---
+# --- 2. CONTROL DE ESTADO ---
+if 'estado' not in st.session_state:
+    st.session_state.estado = 'intro'
+if 'categoria_actual' not in st.session_state:
+    st.session_state.categoria_actual = None
+
+# --- 3. CARGA DE DATOS PARA BUSCADOR (NUEVO) ---
 @st.cache_data
 def cargar_base_predictiva():
     sugerencias = []
-    # Provincias
     try:
         with open('argentina_states.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
             sugerencias += [p['nombre'] for p in data] if isinstance(data[0], dict) else data
     except: pass
-    # Localidades
     try:
         with open('argentina_localities.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
             sugerencias += [l['nombre'] for l in data]
     except: pass
-    # Barrios (GeoJSON)
     try:
         with open('cordoba.geojson', 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -34,12 +37,6 @@ def cargar_base_predictiva():
     return sorted(list(set(sugerencias)))
 
 OPCIONES_BUSQUEDA = cargar_base_predictiva()
-
-# --- 3. CONTROL DE ESTADO ---
-if 'estado' not in st.session_state:
-    st.session_state.estado = 'intro'
-if 'categoria_actual' not in st.session_state:
-    st.session_state.categoria_actual = None
 
 # --- 4. FUNCIONES DE UTILIDAD ---
 def get_image_base64(path):
@@ -92,10 +89,9 @@ st.markdown("""
         border-top: 1px solid #f0f0f0; color: #666; font-size: 13px;
     }
     
-    .search-panel-right {
+    .search-container-box {
         background: white; padding: 25px; border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee;
-        height: 450px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -147,8 +143,9 @@ if st.session_state.estado == 'intro':
 elif st.session_state.estado == 'web':
     st.markdown("<style>.stApp { background-color: #f8f9fa !important; }</style>", unsafe_allow_html=True)
     
+    # Header
     st.markdown(f"""
-        <div style='text-align: center; padding: 20px 0;'>
+        <div style='text-align: center; padding: 30px 0;'>
             <div style='font-family: "Inter"; font-size: 50px; font-weight: 800; color: #1a1a1a;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </div>
@@ -156,7 +153,7 @@ elif st.session_state.estado == 'web':
         </div>
         """, unsafe_allow_html=True)
 
-    # --- DISEÑO 50/50: MAPA Y BUSCADOR (La confirmación de Morty) ---
+    # --- DISEÑO 50/50: MAPA Y BUSCADOR ---
     col_izq, col_der = st.columns([1, 1])
     
     with col_izq:
@@ -164,27 +161,29 @@ elif st.session_state.estado == 'web':
         st_folium(m, height=450, use_container_width=True, key="mapa_houzez")
     
     with col_der:
-        st.markdown('<div class="search-panel-right">', unsafe_allow_html=True)
-        st.markdown("<h3 style='font-family: Inter; font-weight: 800; margin-bottom: 20px; color: #1a1a1a;'>BUSCADOR</h3>", unsafe_allow_html=True)
+        st.markdown('<div class="search-container-box">', unsafe_allow_html=True)
+        # Imagen dmap.jpeg
+        img_dmap = get_image_base64("dmap.jpeg")
+        st.markdown(f'<img src="data:image/jpeg;base64,{img_dmap}" style="width:100%; border-radius:5px; margin-bottom:15px;">', unsafe_allow_html=True)
         
-        # BUSCADOR PREDICTIVO ÚNICO (Usa los 3 archivos cargados)
+        # Buscador Predictivo
         seleccion = st.selectbox(
-            "Provincia, Localidad o Barrio",
+            "Localidad o Barrio", 
             options=[""] + OPCIONES_BUSQUEDA,
-            format_func=lambda x: "Escribí para buscar..." if x == "" else x,
-            key="buscador_predictivo"
+            format_func=lambda x: "Escribí para buscar (Ej: Nueva Córdoba)..." if x == "" else x
         )
         
-        st.selectbox("Operación", ["Venta", "Alquiler"])
-        st.selectbox("Tipo de Propiedad", ["Departamentos", "Casas", "Terrenos"])
+        st.selectbox("Operación", ["Venta", "Alquiler"], key="op_web")
+        st.selectbox("Tipo de Propiedad", ["Departamentos", "Casas", "Terrenos"], key="tipo_web")
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("LA CONFIRMACIÓN DE MORTY (BUSCAR)", use_container_width=True, type="primary"):
-            st.toast(f"Filtrando por: {seleccion}")
+        # Botón Ponte Rickoso
+        if st.button("PONTE RICKOSO", use_container_width=True, type="primary"):
+            st.toast(f"Buscando en {seleccion}...")
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
+    # Título de Sección
     st.markdown("""
         <div style='text-align: center; margin-bottom: 50px;'>
             <h2 style='font-family: Inter; font-weight: 800; font-size: 35px; color: #1a1a1a;'>Propiedades Destacadas</h2>
@@ -192,6 +191,7 @@ elif st.session_state.estado == 'web':
         </div>
     """, unsafe_allow_html=True)
 
+    # Grid de Propiedades
     col1, col2, col3 = st.columns(3)
     for i, p in enumerate(propiedades):
         with [col1, col2, col3][i % 3]:
@@ -202,16 +202,16 @@ elif st.session_state.estado == 'web':
                     <div class="img-container-listing"><img src="data:image/jpeg;base64,{img_b64}"></div>
                     <div class="houzez-title">{p['titulo']}</div>
                     <p style="padding: 0 20px; color: #888; font-size: 14px; margin-bottom: 15px;">
-                        <i class="fa fa-map-marker"></i> {p['barrio']}, Córdoba
+                        {p['barrio']}, Córdoba
                     </p>
                     <div class="houzez-price">{p['precio']}</div>
                     <div class="houzez-meta">
-                        <span>{p['amb']} Dorm</span><span>{p['m2']} m²</span>
+                        <span>{p['amb']} Dorm</span>
+                        <span>{p['m2']} m²</span>
                     </div>
                 </div>
             """, unsafe_allow_html=True)
-            if st.button(f"VER FICHA COMPLETA", key=f"btn_{i}", use_container_width=True):
-                st.toast(f"Cargando detalles de {p['titulo']}...", icon="🏠")
+            st.button(f"VER FICHA COMPLETA", key=f"btn_{i}", use_container_width=True)
 
     st.markdown("<br><br><hr>", unsafe_allow_html=True)
     if st.button("← VOLVER AL RELOJ DE LANZAMIENTO"):
