@@ -37,21 +37,25 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
         
-        /* AJUSTE DEL BOTÓN COMPACTO */
+        /* FUERZA EL CENTRADO TOTAL DEL BOTÓN COMPACTO */
+        .stButton {
+            display: flex !important;
+            justify-content: center !important;
+        }
+
         div.stButton > button {
-            display: block;
-            margin: 0 auto !important; /* Centrado horizontal */
-            width: fit-content !important; /* El cuadro envuelve solo el texto */
+            width: auto !important;
             background-color: transparent !important;
             color: white !important;
             border: 1px solid #444 !important;
-            padding: 10px 25px !important; /* Espacio interno reducido */
+            padding: 10px 25px !important;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 13px;
             transition: 0.3s;
             border-radius: 4px;
         }
+        
         div.stButton > button:hover {
             border: 1px solid #FF0000 !important;
             color: #FF0000 !important;
@@ -72,7 +76,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Tiempo
+    # Tiempo hasta el 31 de Octubre
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
     dif = fecha_limite - datetime.datetime.now()
     dias, horas, resto = dif.days, divmod(dif.seconds, 3600)[0], divmod(dif.seconds % 3600, 60)
@@ -95,11 +99,13 @@ else:
         <style>
         .stApp { background-color: #FFFFFF !important; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 300; color: #1a1a1a; }
-        div.stButton > button {
+        
+        /* Botones de la web (estos sí son anchos) */
+        .main-web-btn div.stButton > button {
             background-color: #1a1a1a !important;
             color: white !important;
             border-radius: 0px !important;
-            width: 100%;
+            width: 100% !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -128,6 +134,7 @@ else:
         st.markdown("#### NORDELTA")
         st.button("VER DETALLES", key="w3")
 
+    st.write("---")
     if st.button("← VOLVER", key="back"):
         st.session_state.estado = 'intro'
         st.rerun()
