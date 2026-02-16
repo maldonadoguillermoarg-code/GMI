@@ -92,6 +92,7 @@ st.markdown("""
     .search-container-box {
         background: white; padding: 25px; border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee;
+        height: 450px; /* Ajustado para alinear con el mapa */
     }
     </style>
     """, unsafe_allow_html=True)
@@ -162,10 +163,10 @@ elif st.session_state.estado == 'web':
     
     with col_der:
         st.markdown('<div class="search-container-box">', unsafe_allow_html=True)
-        # Imagen dmap.jpeg
-        img_dmap = get_image_base64("dmap.jpeg")
-        st.markdown(f'<img src="data:image/jpeg;base64,{img_dmap}" style="width:100%; border-radius:5px; margin-bottom:15px;">', unsafe_allow_html=True)
+        # Se ha eliminado la imagen dmap.jpeg para que el buscador comience desde arriba
         
+        st.markdown("<h3 style='font-family: Inter; font-weight: 800; margin-top: 0; margin-bottom: 25px; color: #1a1a1a;'>BUSCADOR</h3>", unsafe_allow_html=True)
+
         # Buscador Predictivo
         seleccion = st.selectbox(
             "Localidad o Barrio", 
@@ -176,6 +177,8 @@ elif st.session_state.estado == 'web':
         st.selectbox("Operación", ["Venta", "Alquiler"], key="op_web")
         st.selectbox("Tipo de Propiedad", ["Departamentos", "Casas", "Terrenos"], key="tipo_web")
         
+        st.markdown("<br>", unsafe_allow_html=True)
+
         # Botón Ponte Rickoso
         if st.button("PONTE RICKOSO", use_container_width=True, type="primary"):
             st.toast(f"Buscando en {seleccion}...")
