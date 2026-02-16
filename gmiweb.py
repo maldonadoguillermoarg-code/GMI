@@ -12,7 +12,7 @@ if 'estado' not in st.session_state:
 if 'categoria_actual' not in st.session_state:
     st.session_state.categoria_actual = None
 
-# Función para cargar archivos (Imágenes, GIFs, Audio)
+# Función para convertir archivos locales a Base64
 def get_file_base64(path):
     try:
         with open(path, "rb") as f:
@@ -21,18 +21,19 @@ def get_file_base64(path):
     except:
         return ""
 
-# CARGA DE ARCHIVOS
+# CARGA DE ASSETS (GIFs y AUDIO)
 ricoso_b64 = get_file_base64("ricoso.gif")
 pepinillo_b64 = get_file_base64("pepinillo.gif")
-audio_b64 = get_file_base64("Ricoo.mp3") # El audio que pediste
+audio_b64 = get_file_base64("Ricoo.mp3")
 
-# --- ESTILOS GLOBALES Y ANIMACIONES ---
+# --- ESTILOS GLOBALES Y CAPAS SUPERIORES ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
-    html, body {{ scrollbar-width: none; }}
+    /* Reset Scrollbar */
+    html, body {{ scrollbar-width: none; -ms-overflow-style: none; }}
     body::-webkit-scrollbar {{ display: none; }}
     
     @keyframes blinker {{ 50% {{ opacity: 0.1; }} }}
@@ -40,59 +41,65 @@ st.markdown(f"""
     /* Animación Pepinillo DVD */
     @keyframes dvdBounce {{
         0%   {{ top: 0%; left: 0%; transform: rotate(0deg); }}
-        25%  {{ top: 80%; left: 15%; transform: rotate(90deg); }}
-        50%  {{ top: 5%; left: 85%; transform: rotate(180deg); }}
-        75%  {{ top: 75%; left: 40%; transform: rotate(270deg); }}
+        25%  {{ top: 85%; left: 10%; transform: rotate(90deg); }}
+        50%  {{ top: 5%; left: 80%; transform: rotate(180deg); }}
+        75%  {{ top: 80%; left: 40%; transform: rotate(270deg); }}
         100% {{ top: 0%; left: 0%; transform: rotate(360deg); }}
     }}
 
     .pepinillo-dvd {{
-        position: fixed; width: 150px; z-index: 10000;
-        animation: dvdBounce 12s linear infinite; pointer-events: none;
+        position: fixed; width: 140px; z-index: 10000;
+        animation: dvdBounce 14s linear infinite; pointer-events: none;
     }}
 
     .ricoso-fijo {{
-        position: fixed; bottom: 10px; right: 10px; width: 180px;
+        position: fixed; bottom: 0; right: 0; width: 160px;
         z-index: 10001; pointer-events: none;
     }}
 
-    /* Estilos de tarjetas Elliman */
-    .listing-card {{ background-color: transparent; margin-bottom: 20px; }}
-    .img-container-listing {{ width: 100%; height: 350px; overflow: hidden; border-radius: 2px; }}
-    .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
+    /* Estilo Tarjetas Elliman */
+    .listing-card {{ background-color: transparent; margin-bottom: 25px; transition: 0.3s; }}
+    .img-container-listing {{ width: 100%; height: 380px; overflow: hidden; border-radius: 2px; }}
+    .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease; }}
     .img-container-listing:hover img {{ transform: scale(1.05); }}
+    .prop-precio {{ font-family: 'Inter'; font-weight: 800; font-size: 22px; color: #1a1a1a; margin: 0; }}
     </style>
 
     <div class="pepinillo-dvd"><img src="data:image/gif;base64,{pepinillo_b64}" width="100%"></div>
     <div class="ricoso-fijo"><img src="data:image/gif;base64,{ricoso_b64}" width="100%"></div>
     """, unsafe_allow_html=True)
 
-# LÓGICA DE AUDIO "LO ANTES POSIBLE"
+# LÓGICA DE AUDIO (Inyectamos el reproductor y la función de Play)
 if audio_b64:
-    # El atributo 'autoplay' intentará sonar solo, pero el clic inicial es el que lo activa
     st.markdown(f"""
-        <audio autoplay loop id="bg-audio">
+        <audio id="audioRicoo" loop>
             <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
         </audio>
         <script>
-            var audio = document.getElementById("bg-audio");
-            audio.volume = 0.5; // Volumen al 50%
+            function playRicoo() {{
+                var audio = document.getElementById("audioRicoo");
+                audio.play();
+            }}
         </script>
         """, unsafe_allow_html=True)
 
-# --- DATOS PROPIEDADES ---
+# --- BASE DE DATOS SIMULADA ---
 propiedades = [
     {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
     {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
     {"tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
 ]
 
+# ==========================================
+# PANTALLA 1: INTRO NEGRA
+# ==========================================
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA
     st.markdown("<style>.stApp { background-color: #000000 !important; }</style>", unsafe_allow_html=True)
+    
+    # Logo Central
     st.markdown("<div style='text-align: center; margin-top: 5vh;'><h1 style='font-size: 100px; margin-bottom: 0px; color: white;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></h1><p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p></div>", unsafe_allow_html=True)
 
-    # RELOJ
+    # Reloj Cuenta Regresiva
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     dif = futuro - datetime.datetime.now()
     d, h, res = dif.days, *divmod(dif.seconds, 3600)
@@ -112,24 +119,40 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # BOTÓN INVISIBLE (El que dispara el audio al ser clickeado)
-    st.markdown('<style>div.stButton > button { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: transparent !important; border: none !important; color: transparent !important; z-index: 999; }</style>', unsafe_allow_html=True)
-    if st.button("CLICK_TO_PLAY_AUDIO_AND_ENTER"):
+    # CAPA INVISIBLE PARA DISPARAR AUDIO Y ENTRAR
+    # Al hacer click en cualquier parte, se llama a playRicoo() de JS
+    st.markdown("""
+        <div onclick="playRicoo()" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999; cursor: pointer;"></div>
+        """, unsafe_allow_html=True)
+    
+    if st.button("ENTRAR AL SITIO"):
         st.session_state.estado = 'web'
         st.rerun()
     
     time.sleep(1)
     st.rerun()
 
+# ==========================================
+# PANTALLA 2: WEB (ESTILO ELLIMAN)
+# ==========================================
 elif st.session_state.estado == 'web':
-    # PANTALLA 2: WEB (CATEGORÍAS)
     st.markdown("<style>.stApp { background-color: #f4f4f2 !important; }</style>", unsafe_allow_html=True)
-    st.markdown("<div style='text-align: center; padding-top: 20px;'><div style='font-family: \"Inter\"; font-size: 60px; font-weight: 800; color: #1a1a1a;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div><div style='letter-spacing: 5px; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 40px;'>NEGOCIOS INMOBILIARIOS</div></div>", unsafe_allow_html=True)
+    
+    st.markdown(f"""
+        <div style='text-align: center; padding-top: 20px;'>
+            <div style='font-family: "Inter"; font-size: 60px; font-weight: 800; color: #1a1a1a;'>
+                <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
+            </div>
+            <div style='letter-spacing: 5px; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 40px;'>NEGOCIOS INMOBILIARIOS</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     if st.session_state.categoria_actual is None:
+        # VISTA DE CATEGORÍAS
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #d1d1d1; padding-top: 20px; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         cats = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
+        
         for i, (nom, img) in enumerate(cats):
             with [c1, c2, c3][i]:
                 b64 = get_file_base64(img)
@@ -138,21 +161,35 @@ elif st.session_state.estado == 'web':
                     st.session_state.categoria_actual = nom
                     st.rerun()
     else:
-        # LISTADO FILTRADO
+        # VISTA DE LISTADO FILTRADO
         cat = st.session_state.categoria_actual
         st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
+        
         filtradas = [p for p in propiedades if p["tipo"] == cat]
-        col_list, _ = st.columns([1, 2])
+        col_card, _ = st.columns([1, 2])
+        
         for i, p in enumerate(filtradas):
-            with col_list:
+            with col_card:
                 b64 = get_file_base64(p["img"])
-                st.markdown(f"<div class='listing-card'><div class='img-container-listing'><img src='data:image/jpeg;base64,{b64}'></div><div class='info-container'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p><p style='color: #888; font-size: 13px;'>{p['amb']} AMB • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
-                st.button("VER FICHA", key=f"f_{i}")
+                st.markdown(f"""
+                    <div class="listing-card">
+                        <div class="img-container-listing"><img src="data:image/jpeg;base64,{b64}"></div>
+                        <div class="info-container">
+                            <p class="prop-precio">{p['precio']}</p>
+                            <p style='font-family: "Nunito Sans"; font-size: 14px; color: #666; text-transform: uppercase; margin: 5px 0;'>{p['titulo']} | {p['barrio']}</p>
+                            <p style='color: #888; font-size: 13px;'>{p['amb']} AMB  •  {p['m2']} M² TOT.</p>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+                st.button("VER DETALLE COMPLETO", key=f"btn_{i}")
+
         if st.button("← VOLVER A CATEGORÍAS"):
             st.session_state.categoria_actual = None
             st.rerun()
 
-    if st.button("← VOLVER AL INICIO"):
+    # Footer para volver al inicio
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    if st.button("← VOLVER AL INICIO", key="reset_web"):
         st.session_state.estado = 'intro'
         st.session_state.categoria_actual = None
         st.rerun()
