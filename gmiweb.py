@@ -13,7 +13,7 @@ if 'estado' not in st.session_state:
 # --- LÓGICA DE PANTALLAS ---
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA
+    # PANTALLA 1: INTRO NEGRA (La confirmación de Morty)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
@@ -41,6 +41,7 @@ if st.session_state.estado == 'intro':
             padding: 10px 20px !important;
             text-transform: uppercase;
             letter-spacing: 2px;
+            border-radius: 4px;
         }
         div.stButton > button:hover {
             border: 1px solid #FF0000 !important;
@@ -59,7 +60,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Contador
+    # Contador para "La confirmación de Morty"
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -109,18 +110,20 @@ else:
             letter-spacing: 2px;
             margin-bottom: 10px;
         }
-        /* Botones estilo minimalista */
         div.stButton > button {
             background-color: #1a1a1a !important;
             color: white !important;
-            border-radius: 0px !important;
+            border-radius: 2px !important;
             width: 100% !important;
             font-weight: bold;
+            border: none;
+        }
+        div.stButton > button:hover {
+            background-color: #C41E3A !important;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Logo GMI
     st.markdown("""
         <div class='logo-main'>
             <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
@@ -130,32 +133,25 @@ else:
     
     col1, col2, col3 = st.columns(3)
 
-    try:
-        with col1:
-            st.markdown("<div class='cat-label'>DEPARTAMENTOS</div>", unsafe_allow_html=True)
-            img1 = Image.open("deptos.jpg")
-            st.image(img1, use_container_width=True)
-            if st.button("VER MÁS", key="btn_d"):
-                st.info("Sección Departamentos próximamente")
+    # Función de carga con nombres corregidos
+    def mostrar_categoria(columna, titulo, archivo, clave):
+        with columna:
+            st.markdown(f"<div class='cat-label'>{titulo}</div>", unsafe_allow_html=True)
+            try:
+                img = Image.open(archivo)
+                st.image(img, use_container_width=True)
+                if st.button(f"VER {titulo}", key=clave):
+                    st.toast(f"Cargando catálogo de {titulo.lower()}...")
+                    st.info(f"Muy pronto podrás ver todos nuestros {titulo.lower()} aquí.")
+            except FileNotFoundError:
+                st.error(f"No se encontró: {archivo}")
 
-        with col2:
-            st.markdown("<div class='cat-label'>CASAS</div>", unsafe_allow_html=True)
-            img2 = Image.open("casas.jpg")
-            st.image(img2, use_container_width=True)
-            if st.button("VER MÁS", key="btn_c"):
-                st.info("Sección Casas próximamente")
+    # Uso de los nombres exactos que pasaste
+    mostrar_categoria(col1, "DEPARTAMENTOS", "Deptos.jpg", "btn_deptos")
+    mostrar_categoria(col2, "CASAS", "Casas.jpg", "btn_casas")
+    mostrar_categoria(col3, "TERRENOS", "lote.jpg", "btn_lotes")
 
-        with col3:
-            st.markdown("<div class='cat-label'>TERRENOS</div>", unsafe_allow_html=True)
-            img3 = Image.open("lote.jpg")
-            st.image(img3, use_container_width=True)
-            if st.button("VER MÁS", key="btn_l"):
-                st.info("Sección Terrenos próximamente")
-                
-    except Exception as e:
-        st.error("Error cargando imágenes. Verificá que estén en la misma carpeta que este archivo.")
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    if st.button("← VOLVER"):
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    if st.button("← VOLVER AL INICIO", key="back_btn"):
         st.session_state.estado = 'intro'
         st.rerun()
