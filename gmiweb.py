@@ -3,152 +3,146 @@ import datetime
 import time
 
 # 1. Configuración de página
-st.set_page_config(layout="wide", page_title="GMI | Acceso")
+st.set_page_config(layout="wide", page_title="GMI | Próximamente")
 
-# 2. Control de estado: ¿Está en la intro o en la web?
-if 'pagina_activa' not in st.session_state:
-    st.session_state.pagina_activa = 'intro'
+# 2. Control de estado: Empezamos en la 'intro'
+if 'estado' not in st.session_state:
+    st.session_state.estado = 'intro'
 
-# 3. CSS Profesional: Fondo Negro Total y Reloj Rojo
-st.markdown("""
-    <style>
-    /* Fondo negro para la intro */
-    .stApp {
-        background-color: #000000;
-    }
-    
-    /* Contenedor de la Intro */
-    .intro-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 80vh;
-        text-align: center;
-    }
+# --- LÓGICA DE PANTALLAS ---
 
-    /* Reloj Digital con Segundos */
-    .digital-clock {
-        font-family: 'Courier New', Courier, monospace;
-        color: #FF0000;
-        font-size: 80px;
-        font-weight: bold;
-        text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-        letter-spacing: 5px;
-        margin: 30px 0;
-    }
-
-    /* Etiquetas de tiempo */
-    .time-labels {
-        color: #555;
-        font-size: 12px;
-        letter-spacing: 12px;
-        text-transform: uppercase;
-        margin-top: -20px;
-        margin-bottom: 40px;
-    }
-
-    /* Botón Futurista */
-    div.stButton > button {
-        background-color: transparent;
-        color: white;
-        border: 1px solid #444;
-        padding: 15px 40px;
-        text-transform: uppercase;
-        letter-spacing: 4px;
-        font-size: 14px;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        border: 1px solid #FF0000;
-        color: #FF0000;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- LÓGICA DE NAVEGACIÓN ---
-
-if st.session_state.pagina_activa == 'intro':
-    # --- PASO 1: LA PANTALLA NEGRA CON RELOJ ---
-    
-    # Logo GMI en la oscuridad
+if st.session_state.estado == 'intro':
+    # PANTALLA 1: NEGRO TOTAL CON RELOJ
     st.markdown("""
-        <div style='text-align: center; margin-top: 100px;'>
-            <h1 style='font-size: 80px;'>
+        <style>
+        /* Forzar fondo negro total en la intro */
+        .stApp {
+            background-color: #000000 !important;
+        }
+        .digital-clock {
+            font-family: 'Courier New', Courier, monospace;
+            color: #FF0000;
+            font-size: 80px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+            text-align: center;
+            margin-top: 50px;
+            letter-spacing: 5px;
+        }
+        .labels {
+            color: #444;
+            text-align: center;
+            letter-spacing: 15px;
+            font-size: 12px;
+            margin-bottom: 50px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    
+    # Logo GMI en la intro
+    st.markdown("""
+        <div style='text-align: center;'>
+            <h1 style='font-size: 80px; margin-bottom: 0px;'>
                 <span style='color: #003366;'>G</span><span style='color: #FFFFFF;'>M</span><span style='color: #C41E3A;'>I</span>
             </h1>
-            <p style='color: #444; letter-spacing: 10px;'>SISTEMA DE GESTIÓN ACTIVO</p>
+            <p style='letter-spacing: 10px; color: #333;'>SISTEMA DE GESTIÓN</p>
         </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Cálculo de tiempo (31 de Octubre)
+    # Cálculo del tiempo (31 de Octubre)
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
-    ahora = datetime.datetime.now()
-    dif = fecha_limite - ahora
-    
+    dif = fecha_limite - datetime.datetime.now()
     dias = dif.days
     horas, resto = divmod(dif.seconds, 3600)
     minutos, segundos = divmod(resto, 60)
 
-    # El Reloj con Segundos
-    st.markdown(f"""
-        <div style='text-align: center;'>
-            <div class="digital-clock">
-                {dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}
-            </div>
-            <div class="time-labels">
-                DÍAS HORAS MIN SEG
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+    # Reloj
+    st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # Botón para pasar a la segunda parte
+    # Botón de entrada
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
-            st.session_state.pagina_activa = 'web'
+            st.session_state.estado = 'web'
             st.rerun()
 
-    # Pequeño truco: Auto-refrescar cada 1 segundo para ver el reloj correr
+    # Auto-refrescar cada segundo para el segundero
     time.sleep(1)
     st.rerun()
 
 else:
-    # --- PASO 2: LA PÁGINA TERMINADA (DOUGLAS ELLIMAN STYLE) ---
-    # Cambiamos el fondo a blanco para la web
-    st.markdown("<style>.stApp { background-color: white; }</style>", unsafe_allow_html=True)
+    # PANTALLA 2: TU PÁGINA (ESTILO BLANCO DOUGLAS ELLIMAN)
+    st.markdown("""
+        <style>
+        .stApp {
+            background-color: #FFFFFF !important;
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 300;
+            color: #1a1a1a;
+            letter-spacing: -1px;
+        }
+        div.stButton > button {
+            background-color: #1a1a1a;
+            color: white;
+            border-radius: 0px;
+            border: none;
+            padding: 10px 25px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 2px;
+            width: 100%;
+        }
+        div.stButton > button:hover {
+            background-color: #4a4a4a;
+            color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    # Encabezado GMI Luxury
+    # Encabezado con el Logo GMI
     st.markdown("""
         <div style='text-align: center; margin-top: 30px;'>
-            <h1 style='font-size: 60px; margin-bottom: 0px;'>
+            <h1 style='font-size: 80px; margin-bottom: 0px;'>
                 <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
             </h1>
-            <p style='letter-spacing: 8px; color: #808080; font-size: 12px;'>GESTIÓN INMOBILIARIA</p>
+            <p style='letter-spacing: 8px; color: #808080; font-size: 14px; margin-top: -10px;'>
+                GESTIÓN INMOBILIARIA
+            </p>
         </div>
-        <hr style='opacity: 0.1;'>
-    """, unsafe_allow_html=True)
+        <hr style='border: 0.5px solid #eeeeee;'>
+        """, unsafe_allow_html=True)
 
-    st.markdown("<h3 style='text-align: center; letter-spacing: 4px; font-weight: 300;'>EXCLUSIVOS DISPONIBLES</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; letter-spacing: 3px;'>EXCLUSIVOS</h3>", unsafe_allow_html=True)
     
-    # Grid de Propiedades
-    c1, c2, c3 = st.columns(3)
-    propiedades = [
-        {"zona": "PUERTO MADERO", "precio": "850.000", "img": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"},
-        {"zona": "RECOLETA", "precio": "1.200.000", "img": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800"},
-        {"zona": "NORDELTA", "precio": "540.000", "img": "https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?w=800"}
-    ]
-    
-    cols = [c1, c2, c3]
-    for i, p in enumerate(propiedades):
-        with cols[i]:
-            st.image(p["img"])
-            st.markdown(f"**{p['zona']}**")
-            st.markdown(f"USD {p['precio']}")
-            st.button("VER DETALLES", key=f"prop_{i}")
+    col1, col2, col3 = st.columns(3)
 
-    # Botón para volver al modo incógnito (opcional)
-    if st.button("← VOLVER AL CONTADOR"):
-        st.session_state.pagina_activa = 'intro'
+    with col1:
+        st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80")
+        st.markdown("#### PUERTO MADERO")
+        st.markdown("**USD 850.000**")
+        st.markdown("<p style='font-size: 12px; color: gray;'>3 DORMITORIOS | 2 BAÑOS</p>", unsafe_allow_html=True)
+        st.button("VER DETALLES", key="btn1")
+
+    with col2:
+        st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80")
+        st.markdown("#### RECOLETA")
+        st.markdown("**USD 1.200.000**")
+        st.markdown("<p style='font-size: 12px; color: gray;'>PISO EXCLUSIVO | TERRAZA</p>", unsafe_allow_html=True)
+        st.button("VER DETALLES", key="btn2")
+
+    with col3:
+        st.image("https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80")
+        st.markdown("#### NORDELTA")
+        st.markdown("**USD 540.000**")
+        st.markdown("<p style='font-size: 12px; color: gray;'>MODERNA | FRENTE AL LAGO</p>", unsafe_allow_html=True)
+        st.button("VER DETALLES", key="btn3")
+
+    # Botón para volver (opcional, para que pruebes la transición)
+    if st.button("← CERRAR SISTEMA"):
+        st.session_state.estado = 'intro'
         st.rerun()
