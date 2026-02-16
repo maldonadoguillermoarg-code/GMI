@@ -113,7 +113,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    col_btn = st.columns([1, 2, 1])
+    col_btn = st.columns([1, 1, 1])
     with col_btn[1]:
         if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
             st.session_state.estado = 'web'
