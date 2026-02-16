@@ -1,64 +1,69 @@
 import streamlit as st
 import datetime
 import time
-import requests
-from streamlit_lottie import st_lottie
 from streamlit_extras.stylable_container import stylable_container
+import streamlit_antd_components as sac
 
-# --- FUNCIÓN PARA ANIMACIÓN ---
-def load_lottieurl(url: str):
-    r = requests.get(url)
-    if r.status_code != 200: return None
-    return r.json()
-
-# 1. Configuración
+# 1. Configuración de página
 st.set_page_config(layout="wide", page_title="GMI | Gestión Inmobiliaria")
 
+# 2. Control de estado
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 
-# --- PANTALLA INTRO ---
+# --- LÓGICA DE PANTALLAS ---
+
 if st.session_state.estado == 'intro':
+    # PANTALLA 1: INTRO NEGRA
     st.markdown("""
         <style>
-        .stApp { background-color: #000000 !important; }
+        .stApp {
+            background-color: #000000 !important;
+        }
         .digital-clock {
             font-family: 'Courier New', Courier, monospace;
             color: #FF0000;
-            font-size: clamp(40px, 10vw, 80px);
+            font-size: clamp(45px, 10vw, 85px);
             font-weight: bold;
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
             text-align: center;
+            margin-top: 50px;
+            letter-spacing: 5px;
+        }
+        .labels {
+            color: #333;
+            text-align: center;
+            letter-spacing: clamp(5px, 2vw, 15px);
+            font-size: 10px;
+            margin-bottom: 50px;
+            text-transform: uppercase;
         }
         </style>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Animación sutil superior
-    lottie_code = load_lottieurl("https://lottie.host/817d23d8-21d3-463d-864b-b0b3013c7c22/Yd2g74t52v.json")
-    col1, col2, col3 = st.columns([1,1,1])
-    with col2:
-        st_lottie(lottie_code, height=120, key="radar")
-
-    # Logo
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    
+    # Logo GMI
     st.markdown("""
-        <div style='text-align: center; margin-bottom: 20px;'>
-            <h1 style='font-size: clamp(50px, 12vw, 90px); margin-bottom: 0px;'>
+        <div style='text-align: center;'>
+            <h1 style='font-size: clamp(60px, 12vw, 90px); margin-bottom: 0px;'>
                 <span style='color: #003366;'>G</span><span style='color: #FFFFFF;'>M</span><span style='color: #C41E3A;'>I</span>
             </h1>
             <p style='letter-spacing: 10px; color: #444; font-size: 12px;'>SISTEMA DE GESTIÓN</p>
         </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Reloj
+    # Tiempo
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
     dif = fecha_limite - datetime.datetime.now()
     dias, horas, resto = dif.days, divmod(dif.seconds, 3600)[0], divmod(dif.seconds % 3600, 60)
+    
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{resto[0]:02d}:{resto[1]:02d}</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:#333; text-align:center; letter-spacing:10px; font-size:10px; margin-bottom:40px;">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
+    st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # EL BOTÓN PROFESIONAL (Usando stylable_container)
+    # BOTÓN CENTRADO (Usando la librería extras)
     with stylable_container(
-        key="botón_morty",
+        key="boton_principal",
         css_styles="""
             button {
                 background-color: transparent !important;
@@ -68,7 +73,7 @@ if st.session_state.estado == 'intro':
                 text-transform: uppercase;
                 letter-spacing: 3px;
                 display: block;
-                margin: 0 auto; /* CENTRADO TOTAL */
+                margin: 0 auto !important;
                 transition: 0.5s;
             }
             button:hover {
@@ -85,21 +90,21 @@ if st.session_state.estado == 'intro':
     time.sleep(1)
     st.rerun()
 
-# --- PANTALLA WEB ---
 else:
+    # PANTALLA 2: WEB BLANCA
     st.markdown("<style>.stApp { background-color: white !important; }</style>", unsafe_allow_html=True)
     
-    # Usamos un componente de antd para un menú moderno arriba
-    import streamlit_antd_components as sac
+    # Menú de pasos moderno (antd)
     sac.steps(
         items=[
-            sac.StepsItem(title='Inicio', subtitle='GMI Intro'),
-            sac.StepsItem(title='Propiedades', subtitle='Catálogo Activo'),
-            sac.StepsItem(title='Contacto', disabled=True),
-        ], format_value='dot', index=1
+            sac.StepsItem(title='Inicio', icon='house'),
+            sac.StepsItem(title='Propiedades', icon='building'),
+            sac.StepsItem(title='Contacto', icon='envelope', disabled=True),
+        ], format_value='dot', index=1, color='dark'
     )
 
-    st.markdown("<h1 style='color: black; text-align: center;'>CATÁLOGO EXCLUSIVO</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: black; text-align: center; margin-top: 20px;'>CATÁLOGO EXCLUSIVO</h1>", unsafe_allow_html=True)
+    st.markdown("---")
     
     col_a, col_b, col_c = st.columns(3)
     with col_a:
