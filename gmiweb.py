@@ -1,23 +1,23 @@
 import streamlit as st
 
-# 1. Configuración de página ancha (estilo Douglas Elliman)
-st.set_page_config(layout="wide", page_title="GMI | Luxury Real Estate")
+# 1. Configuración de página ancha (Estilo Luxury)
+st.set_page_config(layout="wide", page_title="GMI | Gestión Inmobiliaria")
 
-# 2. El "Truco" de Estilo (CSS) para que se vea Pro
+# 2. El "Truco" de Estilo (CSS) para colores y tipografía
 st.markdown("""
     <style>
-    /* Cambiar el fondo a blanco puro */
+    /* Fondo blanco puro */
     .stApp {
         background-color: #FFFFFF;
     }
-    /* Estilo para los títulos (Tipografía elegante y fina) */
+    /* Estilo para los títulos */
     h1, h2, h3 {
         font-family: 'Playfair Display', serif;
         font-weight: 300;
         color: #1a1a1a;
         letter-spacing: -1px;
     }
-    /* Botones estilo Douglas Elliman (Negros, rectos, elegantes) */
+    /* Botones negros y rectos (Estilo Elliman) */
     div.stButton > button {
         background-color: #1a1a1a;
         color: white;
@@ -27,35 +27,35 @@ st.markdown("""
         text-transform: uppercase;
         font-size: 12px;
         letter-spacing: 2px;
-        transition: 0.3s;
+        width: 100%;
     }
     div.stButton > button:hover {
         background-color: #4a4a4a;
         color: white;
     }
-    /* Quitar bordes de las imágenes */
-    img {
-        border-radius: 0px;
-    }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Encabezado Minimalista con Colores Personalizados
+# 3. Encabezado con el Logo GMI (G Azul, M Negra, I Roja)
 st.markdown("""
-    <h1 style='text-align: center; margin-top: 50px; font-size: 60px;'>
-        <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
-    </h1>
+    <div style='text-align: center; margin-top: 30px;'>
+        <h1 style='font-size: 80px; margin-bottom: 0px;'>
+            <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
+        </h1>
+        <p style='letter-spacing: 8px; color: #808080; font-size: 14px; margin-top: -10px;'>
+            GESTIÓN INMOBILIARIA
+        </p>
+    </div>
     """, unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; letter-spacing: 5px; color: grey;'>GESTIÓN INMOBILIARIA</p>", unsafe_allow_html=True)
-st.markdown("---")
+
+st.markdown("<hr style='border: 0.5px solid #eeeeee;'>", unsafe_allow_html=True)
 
 # 4. Sección de Propiedades Destacadas
-st.markdown("### EXCLUSIVOS")
+st.markdown("<h3 style='text-align: center; letter-spacing: 3px;'>EXCLUSIVOS</h3>", unsafe_allow_html=True)
+st.write("") # Espacio
 
-# Creamos 3 columnas para las tarjetas de propiedades
 col1, col2, col3 = st.columns(3)
 
-# Simulación de propiedades con el look de Elliman
 with col1:
     st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80")
     st.markdown("#### PUERTO MADERO")
