@@ -37,14 +37,13 @@ if st.session_state.estado == 'intro':
         .stButton { display: flex; justify-content: center; padding-top: 20px; }
         div.stButton > button {
             width: auto !important;
-            min-width: 200px;
+            min-width: 250px;
             background-color: transparent !important;
             color: white !important;
             border: 1px solid #444 !important;
             padding: 12px 25px !important;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 14px;
             border-radius: 4px;
         }
         div.stButton > button:hover {
@@ -78,7 +77,7 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 else:
-    # PANTALLA 2: WEB BLANCA - CATEGORÍAS
+    # PANTALLA 2: WEB BLANCA - CATEGORÍAS CON CLIC EN FOTO
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
@@ -98,35 +97,49 @@ else:
             font-weight: 300;
             letter-spacing: 12px;
             margin-top: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
             text-transform: uppercase;
             border-top: 1px solid #eee;
             padding-top: 20px;
         }
 
-        div.stButton > button {
-            background-color: #1a1a1a !important;
-            color: white !important;
-            width: 100% !important;
-            border-radius: 2px;
-            border: none;
-            padding: 10px;
-            font-weight: bold;
-            letter-spacing: 1px;
+        /* Contenedor de Imagen con Efecto Hover */
+        .img-card {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 10px;
         }
         
+        .img-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .img-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .cat-label {
             color: #1a1a1a;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin-top: 15px;
             text-align: center;
             letter-spacing: 2px;
+            margin-top: 10px;
         }
+
+        /* Ocultar botones de Streamlit para usar los nuestros invisibles */
+        .hidden-btn { display: none; }
         </style>
         """, unsafe_allow_html=True)
 
-    # Cabecera con Logo GMI Replicado
+    # Cabecera
     st.markdown("""
         <div class='logo-main'>
             <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
@@ -136,28 +149,29 @@ else:
     
     col_a, col_b, col_c = st.columns(3)
     
+    # Nota: Para detectar clics en imágenes en Streamlit usamos botones invisibles o st.image con un link
     with col_a:
-        # Nueva Córdoba Aérea
-        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzI59h1C7LAtN89mI5Y81mP3R-C69qj19Q4w&s", use_container_width=True)
-        st.markdown("<div class='cat-label'>DEPARTAMENTOS</div>", unsafe_allow_html=True)
-        st.button("EXPLORAR DEPTOS", key="cat_depto")
+        st.markdown('<div class="cat-label">DEPARTAMENTOS</div>', unsafe_allow_html=True)
+        if st.button(" 🏢 ", key="click_deptos", use_container_width=True, help="Ver Departamentos"):
+            pass # Aquí irá la lógica para abrir la lista de deptos
+        st.image("deptos.jpg", use_container_width=True)
         
     with col_b:
-        # Casa moderna realista
-        st.image("https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800", use_container_width=True)
-        st.markdown("<div class='cat-label'>CASAS</div>", unsafe_allow_html=True)
-        st.button("EXPLORAR CASAS", key="cat_casas")
+        st.markdown('<div class="cat-label">CASAS</div>', unsafe_allow_html=True)
+        if st.button(" 🏠 ", key="click_casas", use_container_width=True, help="Ver Casas"):
+            pass
+        st.image("casas.jpg", use_container_width=True)
         
     with col_c:
-        # Terrenos
-        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNLa4KheNv4oRWIJFDrzN1pnwy1jwvBV7UzbdHJIaX&s", use_container_width=True)
-        st.markdown("<div class='cat-label'>TERRENOS</div>", unsafe_allow_html=True)
-        st.button("EXPLORAR LOTES", key="cat_terrenos")
+        st.markdown('<div class="cat-label">TERRENOS</div>', unsafe_allow_html=True)
+        if st.button(" 🌳 ", key="click_lotes", use_container_width=True, help="Ver Terrenos"):
+            pass
+        st.image("lote.jpg", use_container_width=True)
 
-    st.markdown("<br><br><hr style='border: 0.1px solid #f0f0f0;'>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    # Botón de volver centrado y más discreto
-    col_v1, col_v2, col_v3 = st.columns([1,1,1])
+    # Botón de volver
+    _, col_v2, _ = st.columns([1,1,1])
     with col_v2:
         if st.button("← VOLVER AL INICIO", key="back"):
             st.session_state.estado = 'intro'
