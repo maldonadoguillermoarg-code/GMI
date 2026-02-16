@@ -35,6 +35,14 @@ if st.session_state.estado == 'intro':
             font-size: 12px;
             margin-bottom: 50px;
         }
+        /* Forzar que el botón de la intro sea blanco y esté centrado */
+        .stButton button {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #444 !important;
+            color: white !important;
+            background-color: transparent !important;
+        }
         </style>
         """, unsafe_allow_html=True)
 
@@ -49,26 +57,30 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
+    # Cálculo del tiempo (31 de Octubre)
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
     dif = fecha_limite - datetime.datetime.now()
     dias = dif.days
     horas, resto = divmod(dif.seconds, 3600)
     minutos, segundos = divmod(resto, 60)
 
+    # Reloj
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
+    # Botón de entrada CENTRADO
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
             st.session_state.estado = 'web'
             st.rerun()
 
+    # Auto-refrescar para el segundero
     time.sleep(1)
     st.rerun()
 
 else:
-    # PANTALLA 2: TU PÁGINA (ESTILO BLANCO DOUGLAS ELLIMAN)
+    # PANTALLA 2: TU PÁGINA (ESTILO BLANCO)
     st.markdown("""
         <style>
         .stApp {
@@ -98,6 +110,7 @@ else:
         </style>
         """, unsafe_allow_html=True)
 
+    # Encabezado GMI
     st.markdown("""
         <div style='text-align: center; margin-top: 30px;'>
             <h1 style='font-size: 80px; margin-bottom: 0px;'>
@@ -115,27 +128,25 @@ else:
     col_a, col_b, col_c = st.columns(3)
 
     with col_a:
-        st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80")
+        st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800")
         st.markdown("#### PUERTO MADERO")
         st.markdown("**USD 850.000**")
-        st.markdown("<p style='font-size: 12px; color: gray;'>3 DORMITORIOS | 2 BAÑOS</p>", unsafe_allow_html=True)
         st.button("VER DETALLES", key="btn1")
 
     with col_b:
-        st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80")
+        st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800")
         st.markdown("#### RECOLETA")
         st.markdown("**USD 1.200.000**")
-        st.markdown("<p style='font-size: 12px; color: gray;'>PISO EXCLUSIVO | TERRAZA</p>", unsafe_allow_html=True)
         st.button("VER DETALLES", key="btn2")
 
     with col_c:
-        # Aquí corregí la sangría y el link
-        st.image("https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80")
+        # IMAGEN 3 CORREGIDA (Una mansión de lujo que sí carga)
+        st.image("https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800")
         st.markdown("#### NORDELTA")
         st.markdown("**USD 540.000**")
-        st.markdown("<p style='font-size: 12px; color: gray;'>MODERNA | FRENTE AL LAGO</p>", unsafe_allow_html=True)
         st.button("VER DETALLES", key="btn3")
 
+    st.write("")
     if st.button("← CERRAR SISTEMA"):
         st.session_state.estado = 'intro'
         st.rerun()
