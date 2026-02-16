@@ -2,8 +2,8 @@ import streamlit as st
 import datetime
 import time
 import base64
-import folium  # Condición 2
-from streamlit_folium import st_folium  # Condición 2
+import folium  # Condición: Librerías específicas
+from streamlit_folium import st_folium
 
 # 1. Configuración de página
 st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
@@ -14,7 +14,7 @@ if 'estado' not in st.session_state:
 if 'categoria_actual' not in st.session_state:
     st.session_state.categoria_actual = None
 
-# Función para convertir imagen local a Base64
+# Función para imágenes de propiedades
 def get_image_base64(path):
     try:
         with open(path, "rb") as f:
@@ -23,11 +23,7 @@ def get_image_base64(path):
     except:
         return ""
 
-# Cargamos los GIFs
-ricoso_b64 = get_image_base64("ricoso.gif")
-pepinillo_b64 = get_image_base64("pepinillo.gif")
-
-# --- ESTILOS GLOBALES Y ANIMACIONES ---
+# --- ESTILOS GLOBALES ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
@@ -38,31 +34,6 @@ st.markdown(f"""
     
     @keyframes blinker {{ 50% {{ opacity: 0.1; }} }}
 
-    @keyframes dvdBounce {{
-        0%   {{ top: 0%; left: 0%; transform: rotate(0deg); }}
-        25%  {{ top: 80%; left: 20%; transform: rotate(90deg); }}
-        50%  {{ top: 10%; left: 80%; transform: rotate(180deg); }}
-        75%  {{ top: 70%; left: 40%; transform: rotate(270deg); }}
-        100% {{ top: 0%; left: 0%; transform: rotate(360deg); }}
-    }}
-
-    .pepinillo-dvd {{
-        position: fixed;
-        width: 150px;
-        z-index: 10000;
-        animation: dvdBounce 15s linear infinite;
-        pointer-events: none;
-    }}
-
-    .ricoso-fijo {{
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        width: 180px;
-        z-index: 10001;
-        pointer-events: none;
-    }}
-
     .listing-card {{ background-color: transparent; margin-bottom: 20px; transition: 0.3s; }}
     .img-container-listing {{ width: 100%; height: 350px; overflow: hidden; border-radius: 2px; }}
     .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
@@ -71,12 +42,9 @@ st.markdown(f"""
     .prop-precio {{ font-family: 'Inter', sans-serif; font-weight: 800; font-size: 20px; color: #1a1a1a; margin: 0; }}
     .prop-ubicacion {{ font-family: 'Nunito Sans', sans-serif; font-size: 14px; color: #666; text-transform: uppercase; margin: 5px 0; }}
     </style>
-
-    <div class="pepinillo-dvd"><img src="data:image/gif;base64,{pepinillo_b64}" width="100%"></div>
-    <div class="ricoso-fijo"><img src="data:image/gif;base64,{ricoso_b64}" width="100%"></div>
     """, unsafe_allow_html=True)
 
-# --- DATOS DE ZOHO ---
+# --- DATOS ---
 propiedades = [
     {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
     {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
@@ -127,14 +95,22 @@ if st.session_state.estado == 'intro':
 elif st.session_state.estado == 'web':
     st.markdown("<style>.stApp { background-color: #f4f4f2 !important; }</style>", unsafe_allow_html=True)
     
+    # Header
     st.markdown(f"""
         <div style='text-align: center; padding-top: 20px;'>
             <div style='font-family: "Inter"; font-size: 60px; font-weight: 800; color: #1a1a1a;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </div>
-            <div style='letter-spacing: 5px; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 40px;'>NEGOCIOS INMOBILIARIOS</div>
+            <div style='letter-spacing: 5px; color: #888; font-size: 12px; font-weight: 600; margin-bottom: 10px;'>NEGOCIOS INMOBILIARIOS</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # --- MAPA CÓRDOBA (Estética Morty: CartoDB Positron) ---
+    # Ubicado inmediatamente debajo de la línea de texto del header
+    m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron')
+    st_folium(m, height=300, use_container_width=True, key="mapa_principal")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
 
     if st.session_state.categoria_actual is None:
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #d1d1d1; padding-top: 20px; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
@@ -169,14 +145,7 @@ elif st.session_state.estado == 'web':
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
-                
-                # Ubicación del Mapa según condición 3
-                expander = st.expander("VER FICHA COMPLETA / UBICACIÓN")
-                with expander:
-                    # Estética Morty: CartoDB positron centrado en Córdoba Capital
-                    m = folium.Map(location=[-31.4167, -64.1833], zoom_start=13, tiles='CartoDB positron')
-                    folium.Marker([-31.4167, -64.1833], popup=p['titulo']).add_to(m)
-                    st_folium(m, height=300, use_container_width=True, key=f"map_{i}")
+                st.button("VER FICHA COMPLETA", key=f"ficha_{i}")
 
         if st.button("← VOLVER A CATEGORÍAS"):
             st.session_state.categoria_actual = None
