@@ -23,44 +23,26 @@ st.markdown("""
     p, div, span, label {
         font-family: 'Nunito Sans', sans-serif !important;
     }
-
-    /* BOTONES MODERNOS 8px RADIUS */
-    div.stButton > button {
-        font-family: 'Nunito Sans', sans-serif !important;
-        font-weight: 600 !important;
-        border-radius: 8px !important;
-        padding: 16px 32px !important;
-        border: none !important;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
-        transition: all 0.3s ease;
-    }
     </style>
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA (La confirmación de Morty)
+    # PANTALLA 1: INTRO NEGRA
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
         
-        .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .clock-container {
             text-align: center;
             width: 100%;
+            margin-top: 50px;
         }
 
-        /* EL RELOJ (Estilo YouTube) */
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
             font-size: clamp(60px, 15vw, 120px);
-            text-shadow: 
-                0 0 10px rgba(255, 0, 0, 0.9), 
-                0 0 20px rgba(255, 0, 0, 0.6),
-                0 0 40px rgba(255, 0, 0, 0.3);
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.9);
             letter-spacing: 5px;
             line-height: 1;
         }
@@ -74,33 +56,39 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
 
-        /* FUERZA EL CENTRADO DEL BOTÓN IGNORANDO COLUMNAS */
-        div.stButton {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: 60px;
+        /* BOTÓN ANCHO (IGUAL AL RELOJ) */
+        div.stButton > button {
+            display: block;
+            width: 80% !important; /* Ancho similar al bloque del reloj */
+            max-width: 900px;
+            margin: 60px auto 0 auto !important; /* Centrado por margen */
+            background-color: transparent !important;
+            color: #555 !important;
+            border: 1px solid #222 !important;
+            border-radius: 8px !important;
+            padding: 12px !important;
+            
+            /* Tipografía más chica */
+            font-family: 'Nunito Sans', sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 400 !important;
+            letter-spacing: 3px !important;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
         }
 
-        .stButton > button {
-            background-color: transparent !important;
-            color: #444 !important;
-            border: 1px solid #222 !important;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            width: auto !important;
-        }
-        .stButton > button:hover {
+        div.stButton > button:hover {
             color: #FF0000 !important;
             border: 1px solid #FF0000 !important;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2) !important;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.15) !important;
+            background-color: rgba(255, 0, 0, 0.02) !important;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Contenedor central de la marca
+    # Header
     st.markdown("""
-        <div class='main-wrapper'>
+        <div style='text-align: center;'>
             <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </h1>
@@ -108,7 +96,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Lógica de tiempo
+    # Tiempo
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -116,15 +104,14 @@ if st.session_state.estado == 'intro':
     horas, resto = divmod(dif.seconds, 3600)
     minutos, segundos = divmod(resto, 60)
     
-    # Reloj y etiquetas centrados
     st.markdown(f"""
-        <div class='main-wrapper'>
+        <div class='clock-container'>
             <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # El botón ahora hereda el "display: flex; justify-content: center" y queda en el medio
+    # Botón (Ahora es ancho y centrado por CSS)
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -133,7 +120,7 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 else:
-    # PANTALLA 2: WEB BLANCA - CATEGORÍAS
+    # PANTALLA 2: WEB BLANCA
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
@@ -143,12 +130,15 @@ else:
         
         [data-testid="stImage"] img { height: 350px !important; object-fit: cover !important; border-radius: 12px !important; }
         
-        div.stButton > button { background-color: #1a1a1a !important; color: white !important; width: 100% !important; text-transform: uppercase; }
-        div.stButton > button:hover { background-color: #C41E3A !important; transform: scale(1.02); }
-        
-        /* Botón Volver al inicio centrado */
-        .back-btn-container .stButton { display: flex; justify-content: center; }
-        .back-btn-container .stButton > button { width: auto !important; background-color: #eee !important; color: #333 !important; }
+        /* Botones de categoría mantienen el estilo sólido */
+        div.stButton > button { 
+            background-color: #1a1a1a !important; 
+            color: white !important; 
+            width: 100% !important; 
+            border-radius: 8px !important;
+            font-family: 'Nunito Sans', sans-serif !important;
+            font-size: 16px !important;
+        }
         </style>
         """, unsafe_allow_html=True)
 
@@ -173,8 +163,7 @@ else:
     mostrar_categoria(col2, "CASAS", "Casas.jpeg", "cat_c")
     mostrar_categoria(col3, "TERRENOS", "Terreno.jpeg", "cat_t")
 
-    st.markdown("<br><br><div class='back-btn-container'>", unsafe_allow_html=True)
-    if st.button("← VOLVER AL INICIO", key="back_home"):
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    if st.button("← VOLVER AL INICIO"):
         st.session_state.estado = 'intro'
         st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
