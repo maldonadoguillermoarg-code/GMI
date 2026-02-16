@@ -133,7 +133,7 @@ else:
     
     col1, col2, col3 = st.columns(3)
 
-    # Función de carga con nombres corregidos
+    # Función de carga con nombres y extensión .jpeg
     def mostrar_categoria(columna, titulo, archivo, clave):
         with columna:
             st.markdown(f"<div class='cat-label'>{titulo}</div>", unsafe_allow_html=True)
@@ -144,12 +144,12 @@ else:
                     st.toast(f"Cargando catálogo de {titulo.lower()}...")
                     st.info(f"Muy pronto podrás ver todos nuestros {titulo.lower()} aquí.")
             except FileNotFoundError:
-                st.error(f"No se encontró: {archivo}")
+                st.error(f"Error: No se encontró '{archivo}' en la carpeta raíz.")
 
-    # Uso de los nombres exactos que pasaste
-    mostrar_categoria(col1, "DEPARTAMENTOS", "Deptos.jpg", "btn_deptos")
-    mostrar_categoria(col2, "CASAS", "Casas.jpg", "btn_casas")
-    mostrar_categoria(col3, "TERRENOS", "lote.jpg", "btn_lotes")
+    # Nombres actualizados según tu indicación
+    mostrar_categoria(col1, "DEPARTAMENTOS", "Deptos.jpeg", "btn_deptos")
+    mostrar_categoria(col2, "CASAS", "Casas.jpeg", "btn_casas")
+    mostrar_categoria(col3, "TERRENOS", "Terreno.jpeg", "btn_lotes")
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO", key="back_btn"):
