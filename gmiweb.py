@@ -3,7 +3,6 @@ import datetime
 import time
 import base64
 from PIL import Image
-from streamlit_card import card
 
 # 1. Configuración de página
 st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
@@ -12,12 +11,12 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 
-# Función para convertir imagen local a formato compatible con la tarjeta
+# Función para convertir imagen local a Base64 (evita errores de ruta en la web)
 def get_image_base64(path):
     try:
         with open(path, "rb") as f:
             data = f.read()
-        return "data:image/jpeg;base64," + base64.b64encode(data).decode()
+        return base64.b64encode(data).decode()
     except:
         return ""
 
@@ -30,24 +29,56 @@ st.markdown("""
     h1, h2, h3, .section-title { font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em !important; }
     p, div, span, label { font-family: 'Nunito Sans', sans-serif !important; }
     
-    @keyframes blinker {
-        50% { opacity: 0.3; }
+    /* Animación de titileo */
+    @keyframes blinker { 50% { opacity: 0.3; } }
+
+    /* Estilo de los Contenedores de Categoría */
+    .img-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+    
+    .img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Botón flotante arriba de la foto */
+    .overlay-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(26, 26, 26, 0.8) !important;
+        color: white !important;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        width: 80%;
+        text-align: center;
     }
     </style>
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA INTERACTIVA
+    # PANTALLA 1: INTRO NEGRA
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; cursor: pointer; }
-        
-        .clock-container {
-            text-align: center;
-            width: 100%;
-            margin-top: 30px;
-        }
-
+        .clock-container { text-align: center; width: 100%; margin-top: 30px; }
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
@@ -56,75 +87,31 @@ if st.session_state.estado == 'intro':
             letter-spacing: 5px;
             line-height: 1;
         }
-
         .labels-timer {
-            color: #8B0000;
-            letter-spacing: 12px;
-            font-size: 14px;
-            margin-top: 15px;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 80px; 
+            color: #8B0000; letter-spacing: 12px; font-size: 14px; margin-top: 15px;
+            font-weight: 800; text-transform: uppercase; margin-bottom: 80px; 
         }
-
         .click-instruction {
-            color: #FF0000 !important;
-            font-size: 22px !important;
-            font-weight: 900 !important;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            animation: blinker 1.5s linear infinite;
-            text-shadow: 
-                -2px -2px 0 #000,  
-                 2px -2px 0 #000,
-                -2px  2px 0 #000,
-                 2px  2px 0 #000;
+            color: #FF0000 !important; font-size: 22px !important; font-weight: 900 !important;
+            letter-spacing: 4px; text-transform: uppercase; animation: blinker 1.5s linear infinite;
         }
-
-        div.stButton {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 999;
-        }
-
         div.stButton > button {
-            width: 100% !important;
-            height: 100% !important;
-            background: transparent !important;
-            border: none !important;
-            color: transparent !important;
-            cursor: pointer !important;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: transparent !important; border: none !important;
+            color: transparent !important; z-index: 999;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    st.markdown("""
-        <div style='text-align: center;'>
-            <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
-                <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
-            </h1>
-            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 30px;'>NEGOCIOS INMOBILIARIOS</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center;'><h1 style='font-size: 100px; margin-bottom: 0px; color: white;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></h1><p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 30px;'>NEGOCIOS INMOBILIARIOS</p></div>", unsafe_allow_html=True)
 
-    # Lógica del Reloj
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
-    dias = dif.days
-    horas, resto = divmod(dif.seconds, 3600)
-    minutos, segundos = divmod(resto, 60)
+    dias, horas, resto = dif.days, divmod(dif.seconds, 3600)
+    minutos, segundos = divmod(resto[1], 60)
     
-    st.markdown(f"""
-        <div class='clock-container'>
-            <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
-            <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
-            <p class='click-instruction'>HACÉ CLICK Y MIRÁ LOS AVANCES</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown(f"<div class='clock-container'><div class='digital-timer'>{dias:02d}:{resto[0]:02d}:{minutos:02d}:{segundos:02d}</div><div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div><p class='click-instruction'>HACÉ CLICK Y MIRÁ LOS AVANCES</p></div>", unsafe_allow_html=True)
 
     if st.button("Click Overlay"):
         st.session_state.estado = 'web'
@@ -141,58 +128,31 @@ else:
         .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
         .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
         .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
-        
-        /* Estilo para los botones de Streamlit para que no desentonen */
-        div.stButton > button {
-            background-color: #1a1a1a !important;
-            color: white !important;
-            border-radius: 8px !important;
-            border: none !important;
-        }
         </style>
         """, unsafe_allow_html=True)
 
-    st.markdown("""
-        <div class='logo-main'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
-        <div class='subtitle-main'>NEGOCIOS INMOBILIARIOS</div>
-        <div class='section-title'>EXPLORAR</div>
-        """, unsafe_allow_html=True)
+    st.markdown("<div class='logo-main'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div><div class='subtitle-main'>NEGOCIOS INMOBILIARIOS</div><div class='section-title'>CATEGORÍAS</div>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
 
-    # Configuración de tarjetas: Fondo blanco y sin sombras para eliminar el recuadro gris
-    card_styles = {
-        "card": {
-            "width": "100%",
-            "height": "400px",
-            "border-radius": "15px",
-            "background-color": "#FFFFFF", 
-            "box-shadow": "none",
-            "border": "none",
-        },
-        "title": {
-            "font-family": "Inter",
-            "font-weight": "800",
-            "font-size": "26px",
-            "color": "white",
-            "text-shadow": "2px 2px 6px rgba(0,0,0,0.9)",
-        },
-        "filter": {
-            "background-color": "rgba(0, 0, 0, 0.15)"
-        }
-    }
+    def mostrar_categoria_limpia(columna, titulo, archivo, clave):
+        with columna:
+            img_b64 = get_image_base64(archivo)
+            if img_b64:
+                # Renderizamos HTML puro para evitar el rectángulo gris
+                st.markdown(f"""
+                    <div class="img-container">
+                        <img src="data:image/jpeg;base64,{img_b64}">
+                    </div>
+                    """, unsafe_allow_html=True)
+                # Botón de Streamlit justo debajo de la foto o encima
+                st.button(titulo, key=clave, use_container_width=True)
+            else:
+                st.error(f"Falta {archivo}")
 
-    with col1:
-        img_deptos = get_image_base64("Deptos.jpeg")
-        card(title="DEPARTAMENTOS", text="", image=img_deptos, styles=card_styles, key="c1")
-
-    with col2:
-        img_casas = get_image_base64("Casas.jpeg")
-        card(title="CASAS", text="", image=img_casas, styles=card_styles, key="c2")
-
-    with col3:
-        img_terrenos = get_image_base64("Terreno.jpeg")
-        card(title="TERRENOS", text="", image=img_terrenos, styles=card_styles, key="c3")
+    mostrar_categoria_limpia(col1, "DEPARTAMENTOS", "Deptos.jpeg", "btn_d")
+    mostrar_categoria_limpia(col2, "CASAS", "Casas.jpeg", "btn_c")
+    mostrar_categoria_limpia(col3, "TERRENOS", "Terreno.jpeg", "btn_t")
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO"):
