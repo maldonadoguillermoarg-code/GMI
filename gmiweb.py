@@ -37,18 +37,21 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
         
-        /* FUERZA EL CENTRADO TOTAL DEL BOTÓN COMPACTO */
+        /* EL TRUCO PARA EL CENTRADO TOTAL */
+        /* Buscamos el contenedor del botón de Streamlit y lo centramos con Flex */
         .stButton {
             display: flex !important;
             justify-content: center !important;
+            width: 100% !important;
         }
 
         div.stButton > button {
             width: auto !important;
+            min-width: 250px; /* Tamaño mínimo elegante */
             background-color: transparent !important;
             color: white !important;
             border: 1px solid #444 !important;
-            padding: 10px 25px !important;
+            padding: 10px 30px !important;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 13px;
@@ -76,7 +79,7 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Tiempo hasta el 31 de Octubre
+    # Tiempo
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
     dif = fecha_limite - datetime.datetime.now()
     dias, horas, resto = dif.days, divmod(dif.seconds, 3600)[0], divmod(dif.seconds % 3600, 60)
@@ -85,7 +88,7 @@ if st.session_state.estado == 'intro':
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # Botón centrado y ajustado al texto
+    # El botón ahora será forzado al centro por el CSS arriba
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -99,9 +102,7 @@ else:
         <style>
         .stApp { background-color: #FFFFFF !important; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 300; color: #1a1a1a; }
-        
-        /* Botones de la web (estos sí son anchos) */
-        .main-web-btn div.stButton > button {
+        div.stButton > button {
             background-color: #1a1a1a !important;
             color: white !important;
             border-radius: 0px !important;
@@ -134,7 +135,6 @@ else:
         st.markdown("#### NORDELTA")
         st.button("VER DETALLES", key="w3")
 
-    st.write("---")
     if st.button("← VOLVER", key="back"):
         st.session_state.estado = 'intro'
         st.rerun()
