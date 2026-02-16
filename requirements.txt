@@ -6,3 +6,13 @@ google-auth
 pillow
 streamlit-folium
 streamlit-card
+streamlit
+flet
+flet-lottie
+streamlit-extras
+plotly
+dash
+dash-mantine-components
+nicegui
+pydeck
+Pillow
