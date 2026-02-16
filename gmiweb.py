@@ -29,38 +29,22 @@ st.markdown("""
     h1, h2, h3, .section-title { font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em !important; }
     p, div, span, label { font-family: 'Nunito Sans', sans-serif !important; }
     
-    /* Contenedor de imagen limpio */
+    /* Animación de titileo (Blink) */
+    @keyframes blinker {
+        50% { opacity: 0.1; }
+    }
+
     .img-box {
         width: 100%;
         height: 400px;
         border-radius: 15px;
         overflow: hidden;
         margin-bottom: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     .img-box img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-    }
-
-    /* Estilo para los botones negros de la web */
-    div.stButton > button {
-        background-color: #1a1a1a !important;
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-        padding: 12px !important;
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 700 !important;
-        text-transform: uppercase;
-    }
-
-    /* Contenedor para centrar el botón de la intro */
-    .intro-btn-container {
-        display: flex;
-        justify-content: center;
-        margin: 40px 0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -70,7 +54,9 @@ if st.session_state.estado == 'intro':
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
-        .clock-container { text-align: center; width: 100%; }
+        
+        .clock-container { text-align: center; width: 100%; margin-top: 20px; }
+        
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
@@ -79,40 +65,55 @@ if st.session_state.estado == 'intro':
             letter-spacing: 5px;
             line-height: 1;
         }
+
         .labels-timer {
-            color: #8B0000; letter-spacing: 12px; font-size: 14px; margin-top: 15px;
-            font-weight: 800; text-transform: uppercase; margin-bottom: 30px; 
+            color: #8B0000; 
+            letter-spacing: 12px; 
+            font-size: 14px; 
+            margin-top: 15px;
+            font-weight: 800; 
+            text-transform: uppercase;
         }
-        /* Botón rojo para la intro */
-        .intro-btn-container div.stButton > button {
-            background-color: #FF0000 !important;
-            color: white !important;
-            padding: 18px 40px !important;
-            font-size: 20px !important;
-            letter-spacing: 2px !important;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+
+        .text-link-titileo {
+            color: #FF0000 !important;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 3px;
+            margin-top: 40px;
+            text-transform: uppercase;
+            animation: blinker 1.2s linear infinite;
+            cursor: pointer;
+        }
+
+        /* Botón invisible sobre toda la zona inferior para capturar el clic */
+        div.stButton > button {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            z-index: 999;
+            cursor: pointer !important;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # 1. LOGO GMI
+    # LOGO GMI
     st.markdown("""
         <div style='text-align: center;'>
             <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </h1>
-            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800;'>NEGOCIOS INMOBILIARIOS</p>
+            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # 2. BOTÓN DE AVANCE (Entre Logo y Reloj)
-    st.markdown("<div class='intro-btn-container'>", unsafe_allow_html=True)
-    if st.button("MIRA LOS AVANCES DE NUESTRA WEB"):
-        st.session_state.estado = 'web'
-        st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    # 3. RELOJ
+    # RELOJ
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -124,8 +125,14 @@ if st.session_state.estado == 'intro':
         <div class='clock-container'>
             <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
+            <div class='text-link-titileo'>>>> MIRA LOS AVANCES DE NUESTRA WEB <<<</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # El botón invisible que permite avanzar
+    if st.button("CLICK_TO_ENTER"):
+        st.session_state.estado = 'web'
+        st.rerun()
     
     time.sleep(1)
     st.rerun()
@@ -138,6 +145,17 @@ else:
         .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
         .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
         .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
+        
+        div.stButton > button {
+            background-color: #1a1a1a !important;
+            color: white !important;
+            border-radius: 8px !important;
+            border: none !important;
+            padding: 12px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+        }
         </style>
         """, unsafe_allow_html=True)
 
