@@ -16,21 +16,16 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Nunito+Sans:wght@400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
-    h1, h2, h3, .section-title {
-        font-family: 'Inter', sans-serif !important;
-        letter-spacing: -0.02em !important;
-    }
-    p, div, span, label {
-        font-family: 'Nunito Sans', sans-serif !important;
-    }
+    h1, h2, h3, .section-title { font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em !important; }
+    p, div, span, label { font-family: 'Nunito Sans', sans-serif !important; }
     </style>
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA
+    # PANTALLA 1: INTRO NEGRA INTERACTIVA
     st.markdown("""
         <style>
-        .stApp { background-color: #000000 !important; }
+        .stApp { background-color: #000000 !important; cursor: pointer; }
         
         .clock-container {
             text-align: center;
@@ -56,42 +51,32 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
 
-        /* CORRECCIÓN DE CENTRADO PARA WEB Y MÓVIL */
+        /* CAPA INVISIBLE SOBRE TODA LA PANTALLA */
         div.stButton {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
         }
 
         div.stButton > button {
-            display: block;
-            width: 80% !important;
-            max-width: 900px;
-            margin: 60px 0 0 0 !important;
-            background-color: transparent !important;
-            color: #555 !important;
-            border: 1px solid #222 !important;
-            border-radius: 8px !important;
-            padding: 12px !important;
-            font-family: 'Nunito Sans', sans-serif !important;
-            font-size: 14px !important;
-            font-weight: 400 !important;
-            letter-spacing: 3px !important;
-            text-transform: uppercase;
-            transition: all 0.4s ease;
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            cursor: pointer !important;
         }
-
+        
         div.stButton > button:hover {
-            color: #FF0000 !important;
-            border: 1px solid #FF0000 !important;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.15) !important;
-            background-color: rgba(255, 0, 0, 0.02) !important;
+            background: rgba(255, 0, 0, 0.02) !important;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Header
+    # Diseño visual (ahora es solo estético, el botón invisible está encima)
     st.markdown("""
         <div style='text-align: center;'>
             <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
@@ -101,7 +86,6 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Tiempo
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
@@ -113,11 +97,12 @@ if st.session_state.estado == 'intro':
         <div class='clock-container'>
             <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
+            <p style='color: #444; margin-top: 40px; font-size: 10px; letter-spacing: 2px;'>HACE CLIC EN CUALQUIER LUGAR PARA EXPLORAR</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # Botón centrado
-    if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
+    # El botón ahora ocupa toda la pantalla y es invisible
+    if st.button("Click Overlay"):
         st.session_state.estado = 'web'
         st.rerun()
     
@@ -135,14 +120,13 @@ else:
         
         [data-testid="stImage"] img { height: 350px !important; object-fit: cover !important; border-radius: 12px !important; }
         
-        /* Botones de categoría */
+        /* Botones estándar para la segunda pantalla */
         div.stButton > button { 
             background-color: #1a1a1a !important; 
             color: white !important; 
             width: 100% !important; 
             border-radius: 8px !important;
-            font-family: 'Nunito Sans', sans-serif !important;
-            font-size: 16px !important;
+            padding: 10px !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -170,8 +154,6 @@ else:
     mostrar_categoria(col3, "TERRENOS", "Terreno.jpeg", "cat_t")
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    
-    # Botón para volver centrado también
     if st.button("← VOLVER AL INICIO"):
         st.session_state.estado = 'intro'
         st.rerun()
