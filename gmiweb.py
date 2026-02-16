@@ -1,34 +1,78 @@
 import streamlit as st
-import requests # Esta es la que instalamos para traer datos de internet
 
-st.set_page_config(page_title="GMI - Panel Profesional", page_icon="🏠")
+# 1. Configuración de página ancha (estilo Douglas Elliman)
+st.set_page_config(layout="wide", page_title="GMI | Luxury Real Estate")
 
-# --- FUNCIÓN PARA TRAER EL DÓLAR ---
-def obtener_dolar():
-    try:
-        # Usamos la API de dolarapi.com para traer el valor real
-        url = "https://dolarapi.com/v1/dolares/blue"
-        respuesta = requests.get(url)
-        datos = respuesta.json()
-        return datos['venta']
-    except:
-        return "No disponible"
+# 2. El "Truco" de Estilo (CSS) para que se vea Pro
+st.markdown("""
+    <style>
+    /* Cambiar el fondo a blanco puro */
+    .stApp {
+        background-color: #FFFFFF;
+    }
+    /* Estilo para los títulos (Tipografía elegante y fina) */
+    h1, h2, h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 300;
+        color: #1a1a1a;
+        letter-spacing: -1px;
+    }
+    /* Botones estilo Douglas Elliman (Negros, rectos, elegantes) */
+    div.stButton > button {
+        background-color: #1a1a1a;
+        color: white;
+        border-radius: 0px;
+        border: none;
+        padding: 10px 25px;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 2px;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        background-color: #4a4a4a;
+        color: white;
+    }
+    /* Quitar bordes de las imágenes */
+    img {
+        border-radius: 0px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-valor_dolar = obtener_dolar()
-
-# --- DISEÑO ---
-st.title("🏠 GMI - Gestión Inmobiliaria")
-
-# Mostramos el dólar en un "Métrico" (se ve muy pro)
-st.metric(label="Cotización Dólar Blue (Venta)", value=f"${valor_dolar}")
-
+# 3. Encabezado Minimalista con Colores Personalizados
+st.markdown("""
+    <h1 style='text-align: center; margin-top: 50px; font-size: 60px;'>
+        <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
+    </h1>
+    """, unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; letter-spacing: 5px; color: grey;'>GESTIÓN INMOBILIARIA</p>", unsafe_allow_html=True)
 st.markdown("---")
-st.write("### Estado del Sistema")
-st.success("Conexión con Python: OK")
-st.info("Próximo paso: Conectar la base de datos de propiedades.")
 
-# Sidebar
-st.sidebar.header("Menú de Gestión")
-if st.sidebar.button("Actualizar Datos"):
-    st.rerun()
-    
+# 4. Sección de Propiedades Destacadas
+st.markdown("### EXCLUSIVOS")
+
+# Creamos 3 columnas para las tarjetas de propiedades
+col1, col2, col3 = st.columns(3)
+
+# Simulación de propiedades con el look de Elliman
+with col1:
+    st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80")
+    st.markdown("#### PUERTO MADERO")
+    st.markdown("**USD 850.000**")
+    st.markdown("<p style='font-size: 12px; color: gray;'>3 DORMITORIOS | 2 BAÑOS</p>", unsafe_allow_html=True)
+    st.button("VER DETALLES", key="btn1")
+
+with col2:
+    st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80")
+    st.markdown("#### RECOLETA")
+    st.markdown("**USD 1.200.000**")
+    st.markdown("<p style='font-size: 12px; color: gray;'>PISO EXCLUSIVO | TERRAZA</p>", unsafe_allow_html=True)
+    st.button("VER DETALLES", key="btn2")
+
+with col3:
+    st.image("https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80")
+    st.markdown("#### NORDELTA")
+    st.markdown("**USD 540.000**")
+    st.markdown("<p style='font-size: 12px; color: gray;'>MODERNA | FRENTE AL LAGO</p>", unsafe_allow_html=True)
+    st.button("VER DETALLES", key="btn3")
