@@ -11,7 +11,7 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 
-# --- ESTILOS GLOBALES (Respetando tus fuentes originales) ---
+# --- ESTILOS GLOBALES ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Nunito+Sans:wght@400;600&display=swap');
@@ -25,7 +25,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA (Tu diseño original con el botón invisible)
+    # PANTALLA 1: INTRO NEGRA INTERACTIVA
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; cursor: pointer; }
@@ -45,7 +45,7 @@ if st.session_state.estado == 'intro':
             margin-top: 15px;
             font-weight: 800;
             text-transform: uppercase;
-            margin-bottom: 80px; 
+            margin-bottom: 60px; 
         }
         .click-instruction {
             color: #FF0000 !important;
@@ -56,11 +56,10 @@ if st.session_state.estado == 'intro':
             animation: blinker 1.5s linear infinite;
             text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
         }
-        div.stButton { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999; }
         div.stButton > button {
-            width: 100% !important; height: 100% !important;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: transparent !important; border: none !important;
-            color: transparent !important; cursor: pointer !important;
+            color: transparent !important; z-index: 999; cursor: pointer !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -74,15 +73,17 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
+    # Lógica del Reloj (Parcheada para evitar el ValueError)
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
-    dias, horas, resto = dif.days, divmod(dif.seconds, 3600)
-    minutos, segundos = divmod(resto[1], 60)
+    dias = dif.days
+    horas, resto = divmod(dif.seconds, 3600)
+    minutos, segundos = divmod(resto, 60)
     
     st.markdown(f"""
         <div class='clock-container'>
-            <div class='digital-timer'>{dias:02d}:{resto[0]:02d}:{minutos:02d}:{segundos:02d}</div>
+            <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
             <p class='click-instruction'>HACÉ CLICK Y MIRÁ LOS AVANCES</p>
         </div>
@@ -96,7 +97,7 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 else:
-    # PANTALLA 2: WEB BLANCA (Con tus tipografías y tus imágenes locales)
+    # PANTALLA 2: WEB BLANCA CON TARJETAS
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
@@ -104,13 +105,11 @@ else:
         .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
         .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
         
-        /* Ajuste para que el botón de volver use tu estilo original */
-        .btn-volver > div.stButton > button {
+        /* Estilo para el botón de volver */
+        .stButton button {
             background-color: #1a1a1a !important;
             color: white !important;
             border-radius: 8px !important;
-            padding: 10px 25px !important;
-            font-family: 'Nunito Sans', sans-serif !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -118,44 +117,47 @@ else:
     st.markdown("""
         <div class='logo-main'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
         <div class='subtitle-main'>NEGOCIOS INMOBILIARIOS</div>
-        <div class='section-title'>CATEGORÍAS</div>
+        <div class='section-title'>EXPLORAR</div>
         """, unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
 
-    # Función para renderizar tarjetas con tus imágenes locales
-    def render_card(titulo, imagen_path, clave):
-        try:
-            # Intentamos cargar la imagen local para verificar que existe
-            Image.open(imagen_path)
-            card(
-                title=titulo,
-                text="Haz clic para ver más",
-                image=imagen_path,
-                styles={
-                    "card": {
-                        "width": "100%",
-                        "height": "350px",
-                        "border-radius": "12px",
-                        "box-shadow": "0 0 10px rgba(0,0,0,0.1)",
-                        "font-family": "Inter"
-                    },
-                    "title": {"font-family": "Inter", "font-weight": "800"},
-                    "text": {"font-family": "Nunito Sans"}
-                },
-                key=clave
-            )
-        except:
-            st.error(f"Falta {imagen_path}")
+    # Estilos comunes para las tarjetas (Fondo transparente y texto arriba)
+    card_style = {
+        "card": {
+            "width": "100%",
+            "height": "400px",
+            "border-radius": "15px",
+            "box-shadow": "0 0 15px rgba(0,0,0,0.1)",
+            "margin": "0px",
+            "background-color": "rgba(0,0,0,0)" # Fondo transparente
+        },
+        "title": {
+            "font-family": "Inter",
+            "font-weight": "800",
+            "font-size": "24px",
+            "text-transform": "uppercase",
+            "color": "white",
+            "text-shadow": "2px 2px 4px rgba(0,0,0,0.5)"
+        },
+        "text": {
+            "display": "none" # Ocultamos el subtexto para que quede solo el título
+        },
+        "filter": {
+            "background-color": "rgba(0, 0, 0, 0.2)" # Oscurece un poquito la foto para que se lea el blanco
+        }
+    }
 
-    with col1: render_card("DEPARTAMENTOS", "Deptos.jpeg", "c1")
-    with col2: render_card("CASAS", "Casas.jpeg", "c2")
-    with col3: render_card("TERRENOS", "Terreno.jpeg", "c3")
+    with col1:
+        card(title="DEPARTAMENTOS", text="", image="Deptos.jpeg", styles=card_style, key="c1")
+
+    with col2:
+        card(title="CASAS", text="", image="Casas.jpeg", styles=card_style, key="c2")
+
+    with col3:
+        card(title="TERRENOS", text="", image="Terreno.jpeg", styles=card_style, key="c3")
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    
-    st.markdown("<div class='btn-volver'>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO"):
         st.session_state.estado = 'intro'
         st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
