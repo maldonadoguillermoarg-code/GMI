@@ -10,24 +10,21 @@ st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
 
-# --- ESTILOS GLOBALES (Tipografías y Botones Pro) ---
+# --- ESTILOS GLOBALES ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Nunito+Sans:wght@400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
-    /* Títulos Impactantes (Inter) */
     h1, h2, h3, .section-title {
         font-family: 'Inter', sans-serif !important;
         letter-spacing: -0.02em !important;
     }
-    
-    /* Cuerpo y Lectura (Nunito Sans) */
     p, div, span, label {
         font-family: 'Nunito Sans', sans-serif !important;
     }
 
-    /* BOTONES MODERNOS (8px radius + Padding Proporcional) */
+    /* BOTONES MODERNOS 8px RADIUS */
     div.stButton > button {
         font-family: 'Nunito Sans', sans-serif !important;
         font-weight: 600 !important;
@@ -40,20 +37,22 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- LÓGICA DE PANTALLAS ---
-
 if st.session_state.estado == 'intro':
-    # PANTALLA 1: INTRO NEGRA (La confirmación de Morty - Estilo Red Stopwatch)
+    # PANTALLA 1: INTRO NEGRA (La confirmación de Morty)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
         
-        .clock-container {
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            margin-top: 50px;
+            width: 100%;
         }
 
-        /* EL RELOJ DIGITAL (7 Segmentos + Resplandor del video) */
+        /* EL RELOJ (Estilo YouTube) */
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
             color: #FF0000;
@@ -68,7 +67,6 @@ if st.session_state.estado == 'intro':
 
         .labels-timer {
             color: #222;
-            text-align: center;
             letter-spacing: 12px;
             font-size: 11px;
             margin-top: 20px;
@@ -76,20 +74,21 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
 
-        /* FUERZA EL CENTRADO TOTAL DEL BOTÓN */
-        .stButton {
+        /* FUERZA EL CENTRADO DEL BOTÓN IGNORANDO COLUMNAS */
+        div.stButton {
             display: flex;
             justify-content: center;
-            margin-top: 50px;
+            width: 100%;
+            margin-top: 60px;
         }
 
-        /* Estilo Ghost para el botón de Intro */
         .stButton > button {
             background-color: transparent !important;
             color: #444 !important;
             border: 1px solid #222 !important;
             text-transform: uppercase;
             letter-spacing: 2px;
+            width: auto !important;
         }
         .stButton > button:hover {
             color: #FF0000 !important;
@@ -99,13 +98,13 @@ if st.session_state.estado == 'intro':
         </style>
         """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    # Contenedor central de la marca
     st.markdown("""
-        <div style='text-align: center;'>
+        <div class='main-wrapper'>
             <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
                 <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
             </h1>
-            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800;'>NEGOCIOS INMOBILIARIOS</p>
+            <p style='letter-spacing: 8px; color: #333; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -117,14 +116,15 @@ if st.session_state.estado == 'intro':
     horas, resto = divmod(dif.seconds, 3600)
     minutos, segundos = divmod(resto, 60)
     
+    # Reloj y etiquetas centrados
     st.markdown(f"""
-        <div class='clock-container'>
+        <div class='main-wrapper'>
             <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
             <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # Botón centrado automáticamente por el CSS de arriba
+    # El botón ahora hereda el "display: flex; justify-content: center" y queda en el medio
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -137,64 +137,23 @@ else:
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
+        .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
+        .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
+        .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
         
-        .logo-main {
-            font-family: 'Inter', sans-serif;
-            font-size: 80px;
-            font-weight: 800;
-            text-align: center;
-            margin-top: 20px;
-            line-height: 1;
-            color: #1a1a1a;
-        }
+        [data-testid="stImage"] img { height: 350px !important; object-fit: cover !important; border-radius: 12px !important; }
         
-        .subtitle-main {
-            text-align: center;
-            letter-spacing: 4px;
-            color: #888;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        .section-title {
-            text-align: center;
-            color: #1a1a1a;
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 10px;
-            margin-top: 40px;
-            margin-bottom: 50px;
-            text-transform: uppercase;
-            border-top: 1px solid #eee;
-            padding-top: 30px;
-        }
-
-        /* Imágenes consistentes (Alineación Terrenos) */
-        [data-testid="stImage"] img {
-            height: 350px !important;
-            object-fit: cover !important;
-            border-radius: 12px !important;
-        }
-
-        /* Botones de Categoría (Negros) */
-        div.stButton > button {
-            background-color: #1a1a1a !important;
-            color: white !important;
-            width: 100% !important;
-            text-transform: uppercase;
-        }
-        div.stButton > button:hover {
-            background-color: #C41E3A !important;
-            transform: scale(1.02);
-        }
+        div.stButton > button { background-color: #1a1a1a !important; color: white !important; width: 100% !important; text-transform: uppercase; }
+        div.stButton > button:hover { background-color: #C41E3A !important; transform: scale(1.02); }
+        
+        /* Botón Volver al inicio centrado */
+        .back-btn-container .stButton { display: flex; justify-content: center; }
+        .back-btn-container .stButton > button { width: auto !important; background-color: #eee !important; color: #333 !important; }
         </style>
         """, unsafe_allow_html=True)
 
     st.markdown("""
-        <div class='logo-main'>
-            <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
-        </div>
+        <div class='logo-main'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
         <div class='subtitle-main'>NEGOCIOS INMOBILIARIOS</div>
         <div class='section-title'>CATEGORÍAS</div>
         """, unsafe_allow_html=True)
@@ -208,16 +167,14 @@ else:
                 img = Image.open(archivo)
                 st.image(img, use_container_width=True)
                 st.button(f"VER {titulo}", key=clave)
-            except FileNotFoundError:
-                st.error(f"Falta archivo: {archivo}")
+            except: st.error(f"Falta {archivo}")
 
     mostrar_categoria(col1, "DEPARTAMENTOS", "Deptos.jpeg", "cat_d")
     mostrar_categoria(col2, "CASAS", "Casas.jpeg", "cat_c")
     mostrar_categoria(col3, "TERRENOS", "Terreno.jpeg", "cat_t")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    
-    # Botón Volver centrado
+    st.markdown("<br><br><div class='back-btn-container'>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO", key="back_home"):
         st.session_state.estado = 'intro'
         st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
