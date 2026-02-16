@@ -37,12 +37,12 @@ if st.session_state.estado == 'intro':
             text-transform: uppercase;
         }
         
-        /* POSICIONAMIENTO ABSOLUTO PARA CENTRADO TOTAL */
+        /* POSICIONAMIENTO DEL BOTÓN AJUSTADO */
         .stButton {
             position: fixed;
-            left: 90%;
+            left: 85%; /* Movido a la derecha como pediste */
             transform: translateX(-50%);
-            bottom: 25%; /* Ajusta esto si lo querés más arriba o abajo */
+            bottom: 18%; /* Bajado un poco más (antes 25%) */
             z-index: 999;
         }
 
@@ -70,7 +70,7 @@ if st.session_state.estado == 'intro':
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     
-    # Logo
+    # Logo GMI
     st.markdown("""
         <div style='text-align: center;'>
             <h1 style='font-size: 80px; margin-bottom: 0px;'>
@@ -89,7 +89,7 @@ if st.session_state.estado == 'intro':
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # Botón con posición fija en el centro
+    # Botón
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -108,6 +108,10 @@ else:
             color: white !important;
             border-radius: 0px !important;
             width: 100% !important;
+            position: relative !important; 
+            left: 0 !important;
+            transform: none !important;
+            bottom: 0 !important;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -139,3 +143,5 @@ else:
     if st.button("← VOLVER", key="back"):
         st.session_state.estado = 'intro'
         st.rerun()
+
+        
