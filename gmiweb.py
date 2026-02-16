@@ -15,7 +15,6 @@ if st.session_state.estado == 'intro':
     # PANTALLA 1: NEGRO TOTAL CON RELOJ
     st.markdown("""
         <style>
-        /* Forzar fondo negro total en la intro */
         .stApp {
             background-color: #000000 !important;
         }
@@ -41,7 +40,6 @@ if st.session_state.estado == 'intro':
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     
-    # Logo GMI en la intro
     st.markdown("""
         <div style='text-align: center;'>
             <h1 style='font-size: 80px; margin-bottom: 0px;'>
@@ -51,25 +49,21 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Cálculo del tiempo (31 de Octubre)
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
     dif = fecha_limite - datetime.datetime.now()
     dias = dif.days
     horas, resto = divmod(dif.seconds, 3600)
     minutos, segundos = divmod(resto, 60)
 
-    # Reloj
     st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # Botón de entrada
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
             st.session_state.estado = 'web'
             st.rerun()
 
-    # Auto-refrescar cada segundo para el segundero
     time.sleep(1)
     st.rerun()
 
@@ -104,7 +98,6 @@ else:
         </style>
         """, unsafe_allow_html=True)
 
-    # Encabezado con el Logo GMI
     st.markdown("""
         <div style='text-align: center; margin-top: 30px;'>
             <h1 style='font-size: 80px; margin-bottom: 0px;'>
@@ -119,30 +112,31 @@ else:
 
     st.markdown("<h3 style='text-align: center; letter-spacing: 3px;'>EXCLUSIVOS</h3>", unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
+    col_a, col_b, col_c = st.columns(3)
 
-    with col1:
+    with col_a:
         st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80")
         st.markdown("#### PUERTO MADERO")
         st.markdown("**USD 850.000**")
         st.markdown("<p style='font-size: 12px; color: gray;'>3 DORMITORIOS | 2 BAÑOS</p>", unsafe_allow_html=True)
         st.button("VER DETALLES", key="btn1")
 
-    with col2:
+    with col_b:
         st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80")
         st.markdown("#### RECOLETA")
         st.markdown("**USD 1.200.000**")
         st.markdown("<p style='font-size: 12px; color: gray;'>PISO EXCLUSIVO | TERRAZA</p>", unsafe_allow_html=True)
         st.button("VER DETALLES", key="btn2")
 
-    with col3:
-    st.image("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80")
+    with col_c:
+        # Aquí corregí la sangría y el link
+        st.image("https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80")
         st.markdown("#### NORDELTA")
         st.markdown("**USD 540.000**")
         st.markdown("<p style='font-size: 12px; color: gray;'>MODERNA | FRENTE AL LAGO</p>", unsafe_allow_html=True)
         st.button("VER DETALLES", key="btn3")
 
-    # Botón para volver (opcional, para que pruebes la transición)
     if st.button("← CERRAR SISTEMA"):
         st.session_state.estado = 'intro'
         st.rerun()
+        
