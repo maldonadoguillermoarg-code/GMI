@@ -15,13 +15,11 @@ if st.session_state.estado == 'intro':
     # PANTALLA 1: INTRO NEGRA
     st.markdown("""
         <style>
-        .stApp {
-            background-color: #000000 !important;
-        }
+        .stApp { background-color: #000000 !important; }
         .digital-clock {
             font-family: 'Courier New', Courier, monospace;
             color: #FF0000;
-            font-size: clamp(40px, 8vw, 80px); /* Tamaño ajustable a la pantalla */
+            font-size: clamp(40px, 8vw, 80px);
             font-weight: bold;
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
             text-align: center;
@@ -36,14 +34,7 @@ if st.session_state.estado == 'intro':
             margin-bottom: 30px;
             text-transform: uppercase;
         }
-        
-        /* BOTÓN RESPONSIVO: Centrado en PC y Android */
-        .stButton {
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-        }
-
+        .stButton { display: flex; justify-content: center; padding-top: 20px; }
         div.stButton > button {
             width: auto !important;
             min-width: 200px;
@@ -55,18 +46,15 @@ if st.session_state.estado == 'intro':
             letter-spacing: 2px;
             font-size: 14px;
             border-radius: 4px;
-            transition: 0.3s;
         }
-        
         div.stButton > button:hover {
             border: 1px solid #FF0000 !important;
             color: #FF0000 !important;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Logo GMI Centrado
+    st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("""
         <div style='text-align: center; margin-top: 50px;'>
             <h1 style='font-size: clamp(50px, 10vw, 80px); margin-bottom: 0px;'>
@@ -76,16 +64,12 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
-    # Tiempo
     fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
     dif = fecha_limite - datetime.datetime.now()
     dias, horas, resto = dif.days, divmod(dif.seconds, 3600)[0], divmod(dif.seconds % 3600, 60)
-    minutos, segundos = resto[0], resto[1]
-
-    st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{resto[0]:02d}:{resto[1]:02d}</div>', unsafe_allow_html=True)
     st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # El botón ahora está en el flujo normal, centrado automáticamente
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -94,33 +78,56 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 else:
-    # PANTALLA 2: WEB BLANCA (Simplificada para Android)
+    # PANTALLA 2: WEB BLANCA - CATEGORÍAS
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
+        /* Logo GMI para fondo blanco */
+        .logo-text { font-size: 60px; font-weight: bold; text-align: center; margin-bottom: 0px; }
+        .sub-logo { letter-spacing: 8px; color: #808080; font-size: 14px; text-align: center; margin-top: -10px; margin-bottom: 20px; }
+        
         div.stButton > button {
             background-color: #1a1a1a !important;
             color: white !important;
             width: 100% !important;
+            border-radius: 0px;
+            border: none;
+            padding: 10px;
         }
+        h3 { color: #1a1a1a; font-size: 18px; margin-top: 10px; text-align: center; }
         </style>
         """, unsafe_allow_html=True)
 
-    st.markdown("<h2 style='text-align: center; color: #1a1a1a;'>GMI PROPIEDADES</h2>", unsafe_allow_html=True)
+    # Cabecera con Logo Original
+    st.markdown("""
+        <div class='logo-text'>
+            <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
+        </div>
+        <div class='sub-logo'>CATEGORÍAS</div>
+        <hr style='border: 0.5px solid #eeeeee;'>
+        """, unsafe_allow_html=True)
     
-    # En Android, las columnas se apilan solas, lo cual es bueno
-    col_a, col_b, col_c = st.columns([1,1,1])
+    col_a, col_b, col_c = st.columns(3)
+    
     with col_a:
-        st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800")
-        st.button("VER PUERTO MADERO", key="w1")
+        # Nueva Córdoba Aérea
+        st.image("https://images.unsplash.com/photo-1590424600949-161b96d92663?w=800", caption="Vista Aérea")
+        st.markdown("### DEPARTAMENTOS")
+        st.button("VER LISTADO", key="cat_depto")
+        
     with col_b:
-        st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800")
-        st.button("VER RECOLETA", key="w2")
+        # Casa moderna realista "tranqui"
+        st.image("https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800")
+        st.markdown("### CASAS")
+        st.button("VER LISTADO", key="cat_casas")
+        
     with col_c:
-        st.image("https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800")
-        st.button("VER NORDELTA", key="w3")
+        # Terrenos
+        st.image("https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800")
+        st.markdown("### TERRENOS")
+        st.button("VER LISTADO", key="cat_terrenos")
 
-    if st.button("← VOLVER", key="back"):
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    if st.button("← VOLVER AL INICIO", key="back"):
         st.session_state.estado = 'intro'
         st.rerun()
-        
