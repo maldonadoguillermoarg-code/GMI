@@ -2,6 +2,7 @@ import streamlit as st
 import datetime
 import time
 from PIL import Image
+from streamlit_card import card  # Nueva librería para tarjetas estéticas
 
 # 1. Configuración de página
 st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios")
@@ -19,10 +20,10 @@ st.markdown("""
     h1, h2, h3, .section-title { font-family: 'Inter', sans-serif !important; letter-spacing: -0.02em !important; }
     p, div, span, label { font-family: 'Nunito Sans', sans-serif !important; }
     
-    /* Animación de titileo */
-    @keyframes blinker {
-        50% { opacity: 0.3; }
-    }
+    @keyframes blinker { 50% { opacity: 0.3; } }
+    
+    /* Mejoras en el contenedor de las tarjetas */
+    .st-emotion-cache-12w0qpk { gap: 2rem; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -32,11 +33,7 @@ if st.session_state.estado == 'intro':
         <style>
         .stApp { background-color: #000000 !important; cursor: pointer; }
         
-        .clock-container {
-            text-align: center;
-            width: 100%;
-            margin-top: 30px;
-        }
+        .clock-container { text-align: center; width: 100%; margin-top: 30px; }
 
         .digital-timer {
             font-family: 'Seven Segment', sans-serif;
@@ -47,53 +44,36 @@ if st.session_state.estado == 'intro':
             line-height: 1;
         }
 
-        /* AJUSTE: Etiquetas más grandes y rojo más tenue */
         .labels-timer {
-            color: #8B0000; /* Rojo más oscuro/tenue */
+            color: #8B0000;
             letter-spacing: 12px;
-            font-size: 14px; /* Un poco más grande */
+            font-size: 14px;
             margin-top: 15px;
             font-weight: 800;
             text-transform: uppercase;
-            margin-bottom: 80px; 
+            margin-bottom: 60px; 
         }
 
-        /* AJUSTE: Titileo y Estilo */
         .click-instruction {
             color: #FF0000 !important;
             font-size: 22px !important;
             font-weight: 900 !important;
             letter-spacing: 4px;
             text-transform: uppercase;
-            animation: blinker 1.5s linear infinite; /* Efecto titileo */
-            text-shadow: 
-                -2px -2px 0 #000,  
-                 2px -2px 0 #000,
-                -2px  2px 0 #000,
-                 2px  2px 0 #000;
+            animation: blinker 1.5s linear infinite;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
         }
 
-        div.stButton {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 999;
-        }
-
+        /* Overlay invisible para el clic */
         div.stButton > button {
-            width: 100% !important;
-            height: 100% !important;
-            background: transparent !important;
-            border: none !important;
-            color: transparent !important;
-            cursor: pointer !important;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: transparent !important; border: none !important;
+            color: transparent !important; z-index: 999; cursor: pointer !important;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Diseño visual
+    # Logo GMI
     st.markdown("""
         <div style='text-align: center;'>
             <h1 style='font-size: 100px; margin-bottom: 0px; color: white;'>
@@ -103,12 +83,11 @@ if st.session_state.estado == 'intro':
         </div>
         """, unsafe_allow_html=True)
 
+    # Lógica del Reloj
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
     ahora = datetime.datetime.now()
     dif = futuro - ahora
-    dias = dif.days
-    horas, resto = divmod(dif.seconds, 3600)
-    minutos, segundos = divmod(resto, 60)
+    dias, horas, minutos, segundos = dif.days, dif.seconds//3600, (dif.seconds//60)%60, dif.seconds%60
     
     st.markdown(f"""
         <div class='clock-container'>
@@ -126,45 +105,48 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 else:
-    # PANTALLA 2: WEB BLANCA
+    # PANTALLA 2: WEB BLANCA CON TARJETAS PREMIUM
     st.markdown("""
         <style>
         .stApp { background-color: #FFFFFF !important; }
         .logo-main { font-family: 'Inter', sans-serif; font-size: 80px; font-weight: 800; text-align: center; margin-top: 20px; color: #1a1a1a; }
         .subtitle-main { text-align: center; letter-spacing: 4px; color: #888; font-size: 14px; font-weight: 600; margin-bottom: 40px; }
         .section-title { text-align: center; color: #1a1a1a; font-size: 26px; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #eee; padding-top: 30px; margin-bottom: 50px; }
-        [data-testid="stImage"] img { height: 350px !important; object-fit: cover !important; border-radius: 12px !important; }
-        div.stButton > button { 
-            background-color: #1a1a1a !important; 
-            color: white !important; 
-            width: 100% !important; 
-            border-radius: 8px !important;
-            padding: 10px !important;
-        }
         </style>
         """, unsafe_allow_html=True)
 
     st.markdown("""
         <div class='logo-main'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
         <div class='subtitle-main'>NEGOCIOS INMOBILIARIOS</div>
-        <div class='section-title'>CATEGORÍAS</div>
+        <div class='section-title'>EXPLORAR PROPIEDADES</div>
         """, unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
 
-    def mostrar_categoria(columna, titulo, archivo, clave):
-        with columna:
-            st.markdown(f"<div style='text-align:center; font-weight:800; margin-bottom:15px; font-family:Inter;'>{titulo}</div>", unsafe_allow_html=True)
-            try:
-                img = Image.open(archivo)
-                st.image(img, use_container_width=True)
-                st.button(f"VER {titulo}", key=clave)
-            except: 
-                st.error(f"Falta {archivo}")
+    # Implementación de streamlit-card para un look moderno
+    with col1:
+        card(
+            title="DEPARTAMENTOS",
+            text="Ver unidades disponibles",
+            image="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=400", # Reemplazar por tu Deptos.jpeg local
+            on_click=lambda: print("Click Deptos")
+        )
 
-    mostrar_categoria(col1, "DEPARTAMENTOS", "Deptos.jpeg", "cat_d")
-    mostrar_categoria(col2, "CASAS", "Casas.jpeg", "cat_c")
-    mostrar_categoria(col3, "TERRENOS", "Terreno.jpeg", "cat_t")
+    with col2:
+        card(
+            title="CASAS",
+            text="Hogares a tu medida",
+            image="https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=400", # Reemplazar por tu Casas.jpeg local
+            on_click=lambda: print("Click Casas")
+        )
+
+    with col3:
+        card(
+            title="TERRENOS",
+            text="Tu inversión a futuro",
+            image="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=400", # Reemplazar por tu Terreno.jpeg local
+            on_click=lambda: print("Click Terrenos")
+        )
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("← VOLVER AL INICIO"):
