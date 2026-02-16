@@ -2,144 +2,146 @@ import streamlit as st
 import datetime
 
 # 1. Configuración de página
-st.set_page_config(layout="wide", page_title="GMI | Próximamente")
+st.set_page_config(layout="wide", page_title="GMI | Acceso Restringido")
 
-# 2. Control de navegación (para pasar del contador a la web)
-if 'entrar' not in st.session_state:
-    st.session_state.entrar = False
+# 2. Control de acceso
+if 'acceso_concedido' not in st.session_state:
+    st.session_state.acceso_concedido = False
 
-# 3. CSS: Estilo Douglas Elliman + Reloj Digital Rojo
+# 3. CSS FUTURISTA (Capa traslúcida total)
 st.markdown("""
     <style>
-    .stApp { background-color: #FFFFFF; }
-    
-    /* Contenedor traslúcido estilo moderno */
-    .countdown-container {
-        background-color: rgba(40, 40, 40, 0.9);
-        padding: 50px;
-        border-radius: 20px;
-        text-align: center;
-        margin: 40px auto;
-        max-width: 700px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    /* Estilo de la web de fondo */
+    .main-content {
+        filter: blur(8px);
+        pointer-events: none;
     }
-    
-    /* Fuente de reloj digital */
+
+    /* Pantalla total traslúcida */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(20, 20, 20, 0.85); /* Gris oscuro traslúcido */
+        backdrop-filter: blur(15px); /* Desenfoque de lo que hay atrás */
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+    }
+
+    /* Reloj Digital Futurista */
     .digital-clock {
         font-family: 'Courier New', Courier, monospace;
         color: #FF0000;
-        font-size: 75px;
+        font-size: 80px;
         font-weight: bold;
-        text-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 5px rgba(255, 0, 0, 1);
-        letter-spacing: 4px;
+        text-shadow: 0 0 20px rgba(255, 0, 0, 0.9), 0 0 40px rgba(255, 0, 0, 0.4);
         margin: 20px 0;
-    }
-    
-    .label-clock {
-        color: #aaaaaa;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 4px;
+        letter-spacing: 10px;
     }
 
-    /* Botón Negro Minimalista */
+    .scanner-line {
+        width: 100%;
+        height: 2px;
+        background: rgba(255, 0, 0, 0.5);
+        position: absolute;
+        top: 0;
+        box-shadow: 0 0 15px #FF0000;
+        animation: scan 4s linear infinite;
+    }
+
+    @keyframes scan {
+        0% { top: 0%; }
+        100% { top: 100%; }
+    }
+
+    /* Botón estilo Interfaz de Nave */
     div.stButton > button {
-        background-color: #000000;
-        color: white;
-        border-radius: 0px;
-        border: 1px solid #444;
-        padding: 15px 30px;
+        background-color: transparent;
+        color: #FF0000;
+        border: 2px solid #FF0000;
+        border-radius: 5px;
+        padding: 15px 40px;
         text-transform: uppercase;
-        letter-spacing: 3px;
-        font-size: 14px;
-        transition: 0.4s;
+        letter-spacing: 5px;
+        font-weight: bold;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        transition: 0.3s;
     }
     div.stButton > button:hover {
-        background-color: #333333;
-        border: 1px solid white;
+        background-color: #FF0000;
+        color: black;
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- LÓGICA DE PANTALLA ---
+# --- LÓGICA DE INTERFAZ ---
 
-if not st.session_state.entrar:
-    # --- PANTALLA 1: LANZAMIENTO (COUNTDOWN) ---
-    st.markdown("<br><br>", unsafe_allow_html=True)
+if not st.session_state.acceso_concedido:
+    # --- PANTALLA FUTURISTA (OVERLAY) ---
+    st.markdown('<div class="scanner-line"></div>', unsafe_allow_html=True)
     
-    # Logo GMI
+    # Logo GMI Flotante
     st.markdown("""
-        <div style='text-align: center;'>
-            <h1 style='font-size: 70px; margin-bottom: 0px;'>
-                <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
+        <div style='position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; text-align: center; width: 100%;'>
+            <h1 style='font-size: 100px; margin-bottom: 0px;'>
+                <span style='color: #003366; text-shadow: 0 0 10px rgba(0,51,102,0.8);'>G</span><span style='color: #FFFFFF;'>M</span><span style='color: #C41E3A; text-shadow: 0 0 10px rgba(196,30,58,0.8);'>I</span>
             </h1>
-            <p style='letter-spacing: 10px; color: gray; font-size: 14px;'>GESTIÓN INMOBILIARIA</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Cálculo del tiempo hasta el 31 de Octubre
-    fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
-    ahora = datetime.datetime.now()
-    dif = fecha_limite - ahora
-    
-    dias = dif.days
-    horas, resto = divmod(dif.seconds, 3600)
-    minutos, _ = divmod(resto, 60)
+            <p style='color: white; letter-spacing: 15px; font-size: 14px; margin-bottom: 40px;'>PROTOCOLOS DE GESTIÓN ACTIVADOS</p>
+    """, unsafe_allow_html=True)
 
-    # Mostrar la caja del contador
-    st.markdown(f"""
-        <div class="countdown-container">
-            <p style='color: white; letter-spacing: 5px; font-size: 16px; margin-bottom: 10px;'>GRAND OPENING</p>
-            <div class="digital-clock">
-                {dias:02d}:{horas:02d}:{minutos:02d}
-            </div>
-            <div class="label-clock">
-                DÍAS &nbsp;&nbsp;&nbsp; HORAS &nbsp;&nbsp;&nbsp; MINUTOS
-            </div>
-            <p style='color: #666; font-size: 12px; margin-top: 30px;'>31 . OCTUBRE . 2026</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Contador
+    fecha_limite = datetime.datetime(2026, 10, 31, 0, 0)
+    dif = fecha_limite - datetime.datetime.now()
+    dias, horas, minutos = dif.days, divmod(dif.seconds, 3600)[0], divmod(dif.seconds % 3600, 60)[0]
+    
+    st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}</div>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #666; letter-spacing: 5px;'>SISTEMA EN DESARROLLO - 31.OCT.26</p><br>", unsafe_allow_html=True)
 
     # Botón de entrada
     col_b1, col_b2, col_b3 = st.columns([1,2,1])
     with col_b2:
-        if st.button("MIRA LOS AVANCES DE NUESTRA WEB"):
-            st.session_state.entrar = True
+        if st.button("DESBLOQUEAR AVANCES"):
+            st.session_state.acceso_concedido = True
             st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
-else:
-    # --- PANTALLA 2: LA WEB PROVISIONAL (GMI LUXURY) ---
-    st.markdown("""
-        <div style='text-align: center; margin-top: 30px;'>
-            <h1 style='font-size: 60px; margin-bottom: 0px;'>
-                <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
-            </h1>
-            <p style='letter-spacing: 8px; color: #808080; font-size: 12px;'>GESTIÓN INMOBILIARIA</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("<hr style='opacity: 0.2;'>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; letter-spacing: 4px; font-weight: 300;'>EXCLUSIVOS EN OBRA</h3>", unsafe_allow_html=True)
-    st.write("")
+# --- CONTENIDO DE LA WEB (LO QUE SE VE ATRÁS) ---
+st.markdown("<div class='main-content'>", unsafe_allow_html=True)
 
-    # Cuadrícula de propiedades (como ya las teníamos)
-    c1, c2, c3 = st.columns(3)
-    
-    propiedades = [
-        {"zona": "PUERTO MADERO", "precio": "850.000", "img": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"},
-        {"zona": "RECOLETA", "precio": "1.200.000", "img": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"},
-        {"zona": "NORDELTA", "precio": "540.000", "img": "https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80"}
-    ]
+# Logo GMI principal (ya en la web)
+st.markdown("""
+    <div style='text-align: center; margin-top: 30px;'>
+        <h1 style='font-size: 60px; margin-bottom: 0px;'>
+            <span style='color: #003366;'>G</span><span style='color: #1a1a1a;'>M</span><span style='color: #C41E3A;'>I</span>
+        </h1>
+        <p style='letter-spacing: 8px; color: #808080; font-size: 12px;'>GESTIÓN INMOBILIARIA</p>
+    </div>
+    <hr style='opacity: 0.1;'>
+    """, unsafe_allow_html=True)
 
-    cols = [c1, c2, c3]
-    for i, p in enumerate(propiedades):
-        with cols[i]:
-            st.image(p["img"])
-            st.markdown(f"**{p['zona']}**")
-            st.markdown(f"USD {p['precio']}")
-            st.button("MÁS INFO", key=f"p{i}")
+# Grilla de propiedades
+c1, c2, c3 = st.columns(3)
+with c1:
+    st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80")
+    st.markdown("**EXCLUSIVO PUERTO MADERO**")
+with c2:
+    st.image("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80")
+    st.markdown("**PISO RECOLETA**")
+with c3:
+    st.image("https://images.unsplash.com/photo-1600607687940-4e5a9942d4b3?auto=format&fit=crop&w=800&q=80")
+    st.markdown("**CASA NORDELTA**")
 
-    st.write("")
-    if st.button("← VOLVER AL CONTADOR"):
-        st.session_state.entrar = False
+st.markdown("</div>", unsafe_allow_html=True)
+
+if st.session_state.acceso_concedido:
+    if st.button("VOLVER AL PROTOCOLO"):
+        st.session_state.acceso_concedido = False
         st.rerun()
