@@ -18,50 +18,44 @@ if st.session_state.estado == 'intro':
         .stApp {
             background-color: #000000 !important;
         }
-        /* Contenedor principal para centrar todo el bloque */
-        .main-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
         .digital-clock {
             font-family: 'Courier New', Courier, monospace;
             color: #FF0000;
             font-size: 80px;
             font-weight: bold;
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-            letter-spacing: 5px;
             text-align: center;
-            width: 700px; /* Ancho fijo para el reloj */
+            margin-top: 50px;
+            letter-spacing: 5px;
         }
         .labels {
             color: #444;
+            text-align: center;
             letter-spacing: 15px;
             font-size: 12px;
+            margin-bottom: 50px;
             text-transform: uppercase;
-            text-align: center;
-            width: 700px;
-            margin-bottom: 40px;
         }
-        /* Forzamos el botón a tener el mismo ancho que el reloj (700px) */
+        
+        /* AJUSTE DEL BOTÓN COMPACTO */
         div.stButton > button {
-            width: 700px !important;
+            display: block;
+            margin: 0 auto !important; /* Centrado horizontal */
+            width: fit-content !important; /* El cuadro envuelve solo el texto */
             background-color: transparent !important;
             color: white !important;
             border: 1px solid #444 !important;
-            padding: 15px 0px !important;
+            padding: 10px 25px !important; /* Espacio interno reducido */
             text-transform: uppercase;
-            letter-spacing: 5px;
-            font-size: 14px;
-            display: block;
-            margin: 0 auto !important;
+            letter-spacing: 2px;
+            font-size: 13px;
+            transition: 0.3s;
+            border-radius: 4px;
         }
         div.stButton > button:hover {
             border: 1px solid #FF0000 !important;
             color: #FF0000 !important;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
         </style>
         """, unsafe_allow_html=True)
@@ -84,11 +78,10 @@ if st.session_state.estado == 'intro':
     dias, horas, resto = dif.days, divmod(dif.seconds, 3600)[0], divmod(dif.seconds % 3600, 60)
     minutos, segundos = resto[0], resto[1]
 
-    # Render del bloque central (Reloj + Labels + Botón)
-    st.markdown(f'<div class="main-block"><div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
-    st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="digital-clock">{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="labels">DÍAS HORAS MIN SEG</div>', unsafe_allow_html=True)
 
-    # El botón ahora se ajusta al CSS de arriba (700px)
+    # Botón centrado y ajustado al texto
     if st.button("MIRA EL AVANCE DE NUESTRA WEB"):
         st.session_state.estado = 'web'
         st.rerun()
