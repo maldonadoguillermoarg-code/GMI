@@ -118,7 +118,32 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- CAMBIO QUIRÚRGICO AISLADO: BOTÓN VER OPORTUNIDADES --- */
+    /* --- CAMBIO QUIRÚRGICO AISLADO: BOTONES GRISES --- */
+    /* Estilo para los botones de sub-navegación y filtros internos */
+    div[data-testid="column"] button {{
+        background-color: #e0e0e0 !important;
+        border-radius: 20px !important;
+        height: 45px !important;
+        width: 100% !important;
+        border: none !important;
+        color: #333333 !important;
+        font-weight: 800 !important;
+        font-size: 11px !important;
+        letter-spacing: 1px !important;
+    }}
+
+    div[data-testid="column"] button:hover {{
+        background-color: #d0d0d0 !important;
+        border: 1px solid #1a1a1a !important;
+    }}
+
+    /* Resaltado de botón activo */
+    .btn-activo button {{
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }}
+
+    /* Botón específico de Ver Oportunidades (se mantiene grande y oscuro) */
     button[key="btn_all_props"] {{
         background-color: #444444 !important;
         width: 100% !important;
@@ -134,27 +159,17 @@ st.markdown(f"""
     }}
 
     button[key="btn_all_props"] p {{
-        color: #000000 !important;
+        color: #ffffff !important;
         font-family: 'Inter', sans-serif !important;
         font-weight: 900 !important;
         font-size: 18px !important;
         text-transform: uppercase !important;
         letter-spacing: 2px !important;
     }}
-
-    /* Estilo para sub-navbar de categorías */
-    .sub-nav-container {{
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin-bottom: 30px;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 10px;
-    }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATOS (Agregamos campo 'operacion' para el filtro) ---
+# --- DATOS ---
 propiedades = [
     {"id": 1, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
     {"id": 2, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg"},
@@ -280,16 +295,14 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- SECCIÓN BANNER Y BOTÓN (CAMBIO QUIRÚRGICO) ---
+        # --- SECCIÓN BANNER Y BOTÓN ---
         if st.session_state.categoria_actual is None:
             st.markdown("<br><br>", unsafe_allow_html=True)
-            # Título estilo EXPLORAR arriba de la imagen
             st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>TODAS LAS PROPIEDADES</div>", unsafe_allow_html=True)
             
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            # Botón con nuevo texto VER OPORTUNIDADES
             if st.button("VER OPORTUNIDADES", key="btn_all_props", use_container_width=True):
                 st.session_state.categoria_actual = "TODAS"
                 st.session_state.operacion_filtro = None
@@ -340,43 +353,42 @@ elif st.session_state.estado == 'web':
         else:
             cat = st.session_state.categoria_actual
             
-            # --- SUB-NAVBAR DE CATEGORÍAS (Para navegar entre ellas una vez adentro) ---
+            # --- SUB-NAVBAR DE CATEGORÍAS ESTILO GRIS ---
             sub_col1, sub_col2, sub_col3, sub_col4 = st.columns([1,1,1,1])
             with sub_col1:
-                if st.button("TODAS", use_container_width=True):
+                if st.button("TODAS", key="sub_todas", use_container_width=True):
                     st.session_state.categoria_actual = "TODAS"
                     st.session_state.operacion_filtro = None
                     st.rerun()
             with sub_col2:
-                if st.button("DEPARTAMENTOS", use_container_width=True):
+                if st.button("DEPARTAMENTOS", key="sub_deptos", use_container_width=True):
                     st.session_state.categoria_actual = "DEPARTAMENTOS"
                     st.session_state.operacion_filtro = None
                     st.rerun()
             with sub_col3:
-                if st.button("CASAS", use_container_width=True):
+                if st.button("CASAS", key="sub_casas", use_container_width=True):
                     st.session_state.categoria_actual = "CASAS"
                     st.session_state.operacion_filtro = None
                     st.rerun()
             with sub_col4:
-                if st.button("TERRENOS", use_container_width=True):
+                if st.button("TERRENOS", key="sub_terrenos", use_container_width=True):
                     st.session_state.categoria_actual = "TERRENOS"
                     st.session_state.operacion_filtro = None
                     st.rerun()
 
             st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin: 30px 0;'>{cat}</div>", unsafe_allow_html=True)
             
-            # --- BOTONES DE FILTRO INTERNOS (HOJAS) ---
+            # --- BOTONES DE FILTRO INTERNOS (FORMA GRIS) ---
             if cat in ["DEPARTAMENTOS", "CASAS"]:
                 btn_v, btn_a = st.columns(2)
-                if btn_v.button("EN VENTA", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Venta" else "secondary"):
+                if btn_v.button("VENTA", key="filter_venta", use_container_width=True):
                     st.session_state.operacion_filtro = "Venta"
                     st.rerun()
-                if btn_a.button("EN ALQUILER", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Alquiler" else "secondary"):
+                if btn_a.button("ALQUILER", key="filter_alquiler", use_container_width=True):
                     st.session_state.operacion_filtro = "Alquiler"
                     st.rerun()
             elif cat == "TERRENOS":
-                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", use_container_width=True):
-                    # Aquí irá el formulario en el futuro
+                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", key="filter_planes", use_container_width=True):
                     st.session_state.pagina_actual = "Planes_Construccion"
                     st.rerun()
 
@@ -384,13 +396,11 @@ elif st.session_state.estado == 'web':
             if cat == "TODAS":
                 propiedades_filtradas = propiedades
             else:
-                # Filtrar por categoría
                 propiedades_filtradas = [p for p in propiedades if p["tipo"] == cat]
-                # Filtrar por operación si hay una seleccionada
                 if st.session_state.operacion_filtro:
                     propiedades_filtradas = [p for p in propiedades_filtradas if p["operacion"] == st.session_state.operacion_filtro]
                 
-            # --- RENDERIZADO DE FICHAS (Solo si no estamos en la "hoja" de planes) ---
+            # --- RENDERIZADO DE FICHAS ---
             _, col_list, _ = st.columns([1, 2, 1])
             for i, p in enumerate(propiedades_filtradas):
                 with col_list:
@@ -407,14 +417,14 @@ elif st.session_state.estado == 'web':
                     """, unsafe_allow_html=True)
                     st.button(f"VER DETALLES", key=f"ficha_{cat}_{i}", use_container_width=True)
 
-            if st.button("← VOLVER AL MENÚ PRINCIPAL", use_container_width=True):
+            if st.button("← VOLVER AL MENÚ PRINCIPAL", key="btn_back_main", use_container_width=True):
                 st.session_state.categoria_actual = None
                 st.session_state.operacion_filtro = None
                 st.rerun()
 
     elif st.session_state.pagina_actual == "Planes_Construccion":
         st.markdown("<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>PLANES DE CONSTRUCCIÓN</h2><p style='color: #666;'>Sección en desarrollo para formulario de contacto.</p></div>", unsafe_allow_html=True)
-        if st.button("← VOLVER A TERRENOS", use_container_width=True):
+        if st.button("← VOLVER A TERRENOS", key="btn_back_terrenos", use_container_width=True):
             st.session_state.pagina_actual = "Principal"
             st.session_state.categoria_actual = "TERRENOS"
             st.rerun()
