@@ -604,6 +604,68 @@ elif st.session_state.estado == 'web':
 
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # --- PÁGINA: ADMINISTRACIÓN ---
+    elif st.session_state.pagina_actual == "Administracion":
+        st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
+        
+        adm_col_left, adm_col_main = st.columns([1, 2])
+        
+        with adm_col_left:
+            st.markdown("<div class='tasacion-titulo'>ADMINISTRACIÓN</div>", unsafe_allow_html=True)
+            st.markdown("""
+                <div class='tasacion-descripcion'>
+                    Gestión integral de propiedades. Administramos consorcios, 
+                    alquileres anuales y alquileres temporales con la mayor 
+                    eficiencia y transparencia del mercado.
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with adm_col_main:
+            # Fila 1
+            st.markdown("<p class='tasacion-label'>TIPO DE PROPIEDAD O CONSORCIO</p>", unsafe_allow_html=True)
+            tipo_adm = st.text_input("adm1", placeholder="ej: Edificio, Casa, Departamento, Complejo...", label_visibility="collapsed")
+            
+            # Fila 2
+            c1_adm, c2_adm = st.columns(2)
+            with c1_adm:
+                st.markdown("<p class='tasacion-label'>LOCALIDAD</p>", unsafe_allow_html=True)
+                loc_adm = st.text_input("adm2", placeholder="ej: Córdoba Capital", label_visibility="collapsed")
+            with c2_adm:
+                st.markdown("<p class='tasacion-label'>BARRIO</p>", unsafe_allow_html=True)
+                bar_adm = st.text_input("adm3", placeholder="ej: Nueva Córdoba", label_visibility="collapsed")
+            
+            # Fila 3
+            c3_adm, c4_adm = st.columns(2)
+            with c3_adm:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE CUBIERTA</p>", unsafe_allow_html=True)
+                m_cub_adm = st.text_input("adm4", placeholder="Cantidad de m2 cubiertos", label_visibility="collapsed")
+            with c4_adm:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE TOTAL</p>", unsafe_allow_html=True)
+                m_tot_adm = st.text_input("adm5", placeholder="Cantidad de m2 totales", label_visibility="collapsed")
+            
+            # Fila 4
+            st.markdown("<p class='tasacion-label'>DETALLES PARA ADMINISTRACIÓN</p>", unsafe_allow_html=True)
+            desc_adm = st.text_area("adm6", placeholder="Indique si es consorcio, alquiler anual o temporal y detalles adicionales...", height=100, label_visibility="collapsed")
+            
+            st.markdown("<hr style='margin: 40px 0; border: 0.5px solid #ccc; opacity: 0.3;'>", unsafe_allow_html=True)
+            
+            # Fila 5: Contacto
+            c5_adm, c6_adm, c7_adm = st.columns(3)
+            with c5_adm:
+                st.markdown("<p class='tasacion-label'>NOMBRE</p>", unsafe_allow_html=True)
+                nom_adm = st.text_input("adm7", placeholder="Su nombre", label_visibility="collapsed")
+            with c6_adm:
+                st.markdown("<p class='tasacion-label'>TELÉFONO</p>", unsafe_allow_html=True)
+                tel_adm = st.text_input("adm8", placeholder="Su teléfono", label_visibility="collapsed")
+            with c7_adm:
+                st.markdown("<p class='tasacion-label'>EMAIL</p>", unsafe_allow_html=True)
+                mail_adm = st.text_input("adm9", placeholder="Su email", label_visibility="collapsed")
+            
+            if st.button("ENVIAR SOLICITUD DE ADMINISTRACIÓN", key="btn_send_adm", type="primary"):
+                st.success("Solicitud enviada con éxito. Nuestro departamento de administración se contactará con usted.")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
     # --- FOOTER ---
     st.markdown(f"""
         <div class='footer-container'>
