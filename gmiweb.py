@@ -231,6 +231,35 @@ st.markdown(f"""
         -webkit-text-fill-color: transparent !important;
         animation: scan 3s linear infinite !important;
     }}
+
+    /* Estilos Redes Sociales Contacto */
+    .social-icon-box {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        transition: 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }}
+    .social-icon-box:hover {{
+        background: #fcfcfc;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        border-color: #C41E3A;
+    }}
+    .social-icon-label {{
+        margin-top: 15px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: 12px;
+        color: #1a1a1a;
+        letter-spacing: 1px;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -616,7 +645,7 @@ elif st.session_state.estado == 'web':
                 <div class='tasacion-descripcion'>
                     Gestión integral de propiedades. Administramos consorcios, 
                     alquileres anuales y alquileres temporales con la mayor 
-                    eficiencia del mercado.
+                    eficiencia y transparencia del mercado.
                 </div>
             """, unsafe_allow_html=True)
         
@@ -663,6 +692,50 @@ elif st.session_state.estado == 'web':
             
             if st.button("ENVIAR SOLICITUD DE ADMINISTRACIÓN", key="btn_send_adm", type="primary"):
                 st.success("Solicitud enviada con éxito. Nuestro departamento de administración se contactará con usted.")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- PÁGINA: CONTACTO ---
+    elif st.session_state.pagina_actual == "Contacto":
+        st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
+        
+        cont_col_left, cont_col_main = st.columns([1, 2])
+        
+        with cont_col_left:
+            st.markdown("<div class='tasacion-titulo'>CONTACTO</div>", unsafe_allow_html=True)
+            st.markdown("""
+                <div class='tasacion-descripcion'>
+                    Muchas gracias por visitar nuestro sitio. No dudes en contactarnos, 
+                    estamos encantados de ayudarte a encontrar tu próximo hogar o inversión.
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with cont_col_main:
+            st.markdown("<br>", unsafe_allow_html=True)
+            # Grilla de Redes Sociales
+            r1, r2, r3 = st.columns(3)
+            r4, r5, r6 = st.columns(3)
+            
+            redes = [
+                {"n": "INSTAGRAM", "i": "📸", "l": "https://instagram.com", "col": r1},
+                {"n": "TIKTOK", "i": "🎵", "l": "https://tiktok.com", "col": r2},
+                {"n": "FACEBOOK", "i": "👤", "l": "https://facebook.com", "col": r3},
+                {"n": "LINKEDIN", "i": "💼", "l": "https://linkedin.com", "col": r4},
+                {"n": "WHATSAPP", "i": "💬", "l": "https://wa.me/543510000000", "col": r5},
+                {"n": "GMAIL", "i": "✉️", "l": "mailto:info@gminmobiliaria.com.ar", "col": r6}
+            ]
+            
+            for red in redes:
+                with red["col"]:
+                    st.markdown(f"""
+                        <a href="{red['l']}" target="_blank" style="text-decoration: none;">
+                            <div class="social-icon-box">
+                                <span style="font-size: 30px;">{red['i']}</span>
+                                <span class="social-icon-label">{red['n']}</span>
+                            </div>
+                        </a>
+                        <br>
+                    """, unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
