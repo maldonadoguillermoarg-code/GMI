@@ -49,22 +49,32 @@ st.markdown(f"""
     /* Super Filtro Estilo ZonaProp */
     .filter-box {{
         background-color: #ffffff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        margin-top: -50px;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-top: -60px;
         position: relative;
         z-index: 100;
-        border: 1px solid #eee;
+        border: 1px solid #eeeeee;
     }}
     
-    /* Footer */
+    .filter-label {{
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }}
+
+    /* Footer Estilo Institucional */
     .footer-container {{
         background-color: #1a1a1a;
         color: #ffffff;
-        padding: 60px 50px;
+        padding: 80px 60px;
         font-family: 'Inter', sans-serif;
-        margin-top: 50px;
+        margin-top: 80px;
     }}
 
     /* Navbar Custom */
@@ -111,7 +121,6 @@ if st.session_state.estado == 'intro':
             font-size: 20px; text-align: center; letter-spacing: 3px; margin-top: 40px;
             animation: blinker 1.2s linear infinite; text-transform: uppercase;
         }
-        /* Botón invisible que cubre toda la pantalla para entrar */
         div.stButton > button {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: transparent !important; border: none !important; color: transparent !important; z-index: 999;
@@ -170,38 +179,47 @@ elif st.session_state.estado == 'web':
 
     st.markdown("<hr style='margin: 15px 0; border: 0.5px solid #d1d1d1; opacity: 0.3;'>", unsafe_allow_html=True)
 
-    # --- CONTENIDO DE PÁGINA PRINCIPAL ---
+    # --- CONTENIDO ---
     if st.session_state.pagina_actual == "Principal":
-        
-        # 1. MAPA
+        # Mapa
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # 2. SUPER FILTRO (Estilo ZonaProp)
+        # SUPER FILTRO (Con Labels Detallados)
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
         col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns([2, 1.5, 1.5, 1.5, 1])
         
         with col_f1:
-            st.selectbox("Ubicación", ["Argentina, Córdoba", "Argentina, Buenos Aires", "Uruguay, Punta del Este"], label_visibility="collapsed")
-            st.text_input("Barrio o Localidad", placeholder="Ej: Nueva Córdoba, Cerro...", label_visibility="collapsed")
+            st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
+            st.selectbox("País, Provincia, Localidad", ["Argentina, Córdoba", "Argentina, Buenos Aires", "Uruguay"], label_visibility="collapsed")
+            st.markdown("<p class='filter-label' style='margin-top:12px;'>BUSCADOR</p>", unsafe_allow_html=True)
+            st.text_input("Buscador libre", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed")
+            
         with col_f2:
-            st.selectbox("Propiedad", ["Departamentos", "Casas", "Terrenos", "Oficinas", "Cocheras"], label_visibility="collapsed")
-            st.selectbox("Dormitorios", ["Dormitorios: Todos", "1+", "2+", "3+", "4+"], label_visibility="collapsed")
+            st.markdown("<p class='filter-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
+            st.selectbox("Propiedad", ["Departamentos", "Casas", "Terrenos", "Locales", "Oficinas"], label_visibility="collapsed")
+            st.markdown("<p class='filter-label' style='margin-top:12px;'>DORMITORIOS</p>", unsafe_allow_html=True)
+            st.selectbox("Dorms", ["Todos", "1+", "2+", "3+", "4+"], label_visibility="collapsed")
+            
         with col_f3:
-            st.text_input("Mínimo (USD)", placeholder="Precio Min.", label_visibility="collapsed")
-            st.text_input("Máximo (USD)", placeholder="Precio Max.", label_visibility="collapsed")
+            st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
+            st.text_input("Minimo", placeholder="Mínimo USD", label_visibility="collapsed")
+            st.text_input("Maximo", placeholder="Máximo USD", label_visibility="collapsed")
+            
         with col_f4:
-            st.selectbox("Operación", ["En Venta", "En Alquiler", "Temp."], label_visibility="collapsed")
-            st.checkbox("Apto Crédito")
-        with col_f5:
+            st.markdown("<p class='filter-label'>OPERACIÓN</p>", unsafe_allow_html=True)
+            st.selectbox("Operacion", ["En Venta", "En Alquiler", "Alquiler Temp."], label_visibility="collapsed")
             st.markdown("<br>", unsafe_allow_html=True)
+            st.checkbox("Apto Crédito")
+            
+        with col_f5:
+            st.markdown("<br><br>", unsafe_allow_html=True)
             if st.button("BUSCAR", use_container_width=True):
-                st.toast("Filtrando propiedades...")
+                st.toast("Buscando en GMI...")
         st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<br><br><br>", unsafe_allow_html=True)
 
-        # 3. CATEGORÍAS (EXPLORAR)
         if st.session_state.categoria_actual is None:
             st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns(3)
@@ -214,8 +232,8 @@ elif st.session_state.estado == 'web':
                     if st.button(nombre, key=f"cat_{nombre}", use_container_width=True):
                         st.session_state.categoria_actual = nombre
                         st.rerun()
-            
-            # 4. PROPIEDADES DESTACADAS
+
+            # SECCIÓN: PROPIEDADES DESTACADAS
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
             d_col1, d_col2, d_col3 = st.columns(3)
             
@@ -223,21 +241,21 @@ elif st.session_state.estado == 'web':
                 with [d_col1, d_col2, d_col3][i]:
                     img_b64 = get_image_base64(p["img"])
                     st.markdown(f"""
-                        <div class='listing-card' style='background: white; border: 1px solid #eee; padding: 10px; border-radius: 8px;'>
-                            <div style='height: 220px; overflow: hidden; border-radius: 4px;'>
+                        <div class='listing-card' style='background: white; border: 1px solid #eeeeee; padding: 15px; border-radius: 10px;'>
+                            <div style='height: 240px; overflow: hidden; border-radius: 6px;'>
                                 <img src='data:image/jpeg;base64,{img_b64}' style='width: 100%; height: 100%; object-fit: cover;'>
                             </div>
-                            <div style='padding: 15px 5px;'>
+                            <div style='padding: 20px 5px;'>
                                 <p class='prop-precio'>{p['precio']}</p>
                                 <p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p>
-                                <p class='prop-detalles'>{p['amb']} AMB. • {p['m2']} M²</p>
+                                <p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.button(f"VER FICHA", key=f"btn_dest_{i}", use_container_width=True)
+                    st.button(f"VER FICHA COMPLETA", key=f"btn_dest_{i}", use_container_width=True)
 
         else:
-            # VISTA DE CATEGORÍA FILTRADA
+            # Vista de categoría filtrada
             cat = st.session_state.categoria_actual
             st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
             
@@ -257,58 +275,60 @@ elif st.session_state.estado == 'web':
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.button(f"VER FICHA COMPLETA", key=f"ficha_{i}", use_container_width=True)
+                    st.button(f"VER DETALLES", key=f"ficha_{i}", use_container_width=True)
 
             if st.button("← VOLVER A CATEGORÍAS", use_container_width=True):
                 st.session_state.categoria_actual = None
                 st.rerun()
 
     else:
-        # CONTENIDO PARA OTRAS PESTAÑAS
-        st.markdown(f"<div style='text-align: center; padding: 100px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Sección en desarrollo para la inmobiliaria GMI.</p></div>", unsafe_allow_html=True)
+        # Secciones vacías para completar luego
+        st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
 
-    # --- 5. PIE DE PÁGINA (FOOTER) ---
+    # --- PIE DE PÁGINA (FOOTER) ---
     st.markdown("""
         <div class="footer-container">
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 250px; margin-bottom: 20px;">
+                <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
                     <h2 style="color: white; margin: 0;"><span style="color: #003366;">G</span>M<span style="color: #C41E3A;">I</span></h2>
-                    <p style="font-size: 12px; letter-spacing: 2px; color: #888;">NEGOCIOS INMOBILIARIOS</p>
-                    <p style="margin-top: 20px; font-size: 14px; color: #bbb; max-width: 200px;">
-                        Líderes en gestión de propiedades y tasaciones profesionales en Córdoba.
+                    <p style="font-size: 11px; letter-spacing: 3px; color: #666; font-weight: 800; margin-top: 5px;">NEGOCIOS INMOBILIARIOS</p>
+                    <p style="margin-top: 25px; font-size: 14px; color: #888; line-height: 1.6; max-width: 250px;">
+                        Excelencia y transparencia en servicios inmobiliarios. Tu próxima inversión comienza aquí.
                     </p>
                 </div>
-                <div style="flex: 1; min-width: 200px; margin-bottom: 20px;">
-                    <h4 style="color: white; margin-bottom: 20px; font-size: 14px; letter-spacing: 1px;">NAVEGACIÓN</h4>
-                    <p style="font-size: 13px; color: #bbb;">Ventas</p>
-                    <p style="font-size: 13px; color: #bbb;">Alquileres</p>
-                    <p style="font-size: 13px; color: #bbb;">Tasaciones</p>
-                    <p style="font-size: 13px; color: #bbb;">Inversiones</p>
+                <div style="flex: 1; min-width: 200px; margin-bottom: 30px;">
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">SERVICIOS</h4>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Venta de Propiedades</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Alquileres Anuales</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Tasaciones Profesionales</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Administración de Consorcios</p>
                 </div>
-                <div style="flex: 1; min-width: 200px; margin-bottom: 20px;">
-                    <h4 style="color: white; margin-bottom: 20px; font-size: 14px; letter-spacing: 1px;">CONTACTO</h4>
-                    <p style="font-size: 13px; color: #bbb;">Av. Rafael Núñez 4500, Córdoba</p>
-                    <p style="font-size: 13px; color: #bbb;">+54 351 123 4567</p>
-                    <p style="font-size: 13px; color: #bbb;">info@gmi-inmo.com.ar</p>
+                <div style="flex: 1; min-width: 200px; margin-bottom: 30px;">
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">CONTACTO</h4>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Bv. Chacabuco 1234, Córdoba</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">+54 351 123 4567</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">info@gminegocios.com.ar</p>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
-                    <h4 style="color: white; margin-bottom: 20px; font-size: 14px; letter-spacing: 1px;">SÍGUENOS</h4>
-                    <div style="display: flex; gap: 15px;">
-                        <span style="color: #bbb; font-size: 13px;">Instagram</span>
-                        <span style="color: #bbb; font-size: 13px;">Facebook</span>
-                        <span style="color: #bbb; font-size: 13px;">LinkedIn</span>
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">SÍGUENOS</h4>
+                    <div style="display: flex; gap: 20px;">
+                        <span style="color: #888; font-size: 13px;">Instagram</span>
+                        <span style="color: #888; font-size: 13px;">Facebook</span>
+                        <span style="color: #888; font-size: 13px;">LinkedIn</span>
                     </div>
                 </div>
             </div>
-            <hr style="border: 0.1px solid #333; margin: 40px 0;">
-            <p style="text-align: center; font-size: 11px; color: #555;">© 2026 GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS. DISEÑO PROFESIONAL.</p>
+            <hr style="border: 0.1px solid #333; margin: 60px 0 40px 0;">
+            <p style="text-align: center; font-size: 10px; color: #444; letter-spacing: 1px;">
+                © 2026 GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS.
+            </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # Botón para volver al inicio
+    # Botón de cierre de sesión al final
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
-    if fcol.button("CERRAR SESIÓN / INICIO", use_container_width=True):
+    if fcol.button("VOLVER AL INICIO / CERRAR", use_container_width=True):
         st.session_state.estado = 'intro'
         st.session_state.pagina_actual = 'Principal'
         st.session_state.categoria_actual = None
