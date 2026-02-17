@@ -36,7 +36,6 @@ st.markdown(f"""
     
     @keyframes blinker {{ 50% {{ opacity: 0.1; }} }}
 
-    /* Estilos de la Web (Post-Intro) */
     .prop-precio {{ font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; color: #1a1a1a !important; margin: 0; }}
     .prop-ubicacion {{ font-family: 'Nunito Sans', sans-serif; font-size: 14px; color: #444 !important; text-transform: uppercase; margin: 5px 0; font-weight: 600; }}
     .prop-detalles {{ color: #666 !important; font-size: 13px; font-weight: 400; }}
@@ -46,10 +45,10 @@ st.markdown(f"""
     .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
     .img-container-listing:hover img {{ transform: scale(1.03); }}
 
-    /* Super Filtro Estilo ZonaProp */
+    /* Super Filtro - CAMBIO QUIRÚRGICO PARA ALINEACIÓN */
     .filter-box {{
         background-color: #ffffff;
-        padding: 30px;
+        padding: 25px;
         border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         margin-top: -60px;
@@ -63,25 +62,32 @@ st.markdown(f"""
         font-size: 11px;
         font-weight: 800;
         color: #1a1a1a;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         letter-spacing: 1.5px;
         text-transform: uppercase;
+        height: 15px;
     }}
 
-    /* CAMBIO QUIRÚRGICO: Visibilidad Checkbox y Botón Buscar */
+    /* Forzar alineación de widgets de Streamlit */
+    [data-testid="stVerticalBlock"] > div {{
+        gap: 0rem !important;
+    }}
+
     div[data-testid="stCheckbox"] label p {{
         color: #1a1a1a !important;
         font-weight: 600;
+        margin-top: 5px;
     }}
 
-    .stButton > button.btn-buscar {{
+    /* Botón buscar prolijo */
+    div.stButton > button.btn-buscar-pro {{
         background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border-radius: 6px !important;
-        padding: 10px 20px !important;
-        height: 45px !important;
+        color: white !important;
+        border-radius: 4px !important;
         width: 100% !important;
-        margin-top: 10px !important;
+        height: 45px !important;
+        font-weight: 700 !important;
+        margin-top: 25px !important; /* Alinea con los inputs de abajo */
     }}
 
     /* Footer Estilo Institucional */
@@ -169,7 +175,6 @@ if st.session_state.estado == 'intro':
 elif st.session_state.estado == 'web':
     st.markdown("<style>.stApp { background-color: #f4f4f2 !important; }</style>", unsafe_allow_html=True)
     
-    # --- HEADER Y NAVBAR ---
     st.markdown("<br>", unsafe_allow_html=True)
     head_col1, head_col2 = st.columns([1.5, 3])
     
@@ -197,49 +202,45 @@ elif st.session_state.estado == 'web':
 
     st.markdown("<hr style='margin: 15px 0; border: 0.5px solid #d1d1d1; opacity: 0.3;'>", unsafe_allow_html=True)
 
-    # --- CONTENIDO ---
     if st.session_state.pagina_actual == "Principal":
-        # Mapa
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # SUPER FILTRO
+        # --- SUPER FILTRO REESTRUCTURADO ---
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
-        col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns([2, 1.5, 1.5, 1.5, 1.2])
+        fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns([2, 1.5, 1.5, 1.5, 1.2])
         
-        with col_f1:
+        with fcol1:
             st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
-            st.selectbox("País, Provincia, Localidad", ["Argentina, Córdoba", "Argentina, Buenos Aires", "Uruguay"], label_visibility="collapsed")
-            st.markdown("<p class='filter-label' style='margin-top:12px;'>BUSCADOR</p>", unsafe_allow_html=True)
-            st.text_input("Buscador libre", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed")
+            st.selectbox("u", ["Argentina, Córdoba", "Argentina, Buenos Aires"], label_visibility="collapsed", key="u1")
+            st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
+            st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
             
-        with col_f2:
+        with fcol2:
             st.markdown("<p class='filter-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
-            st.selectbox("Propiedad", ["Departamentos", "Casas", "Terrenos", "Locales", "Oficinas"], label_visibility="collapsed")
-            st.markdown("<p class='filter-label' style='margin-top:12px;'>DORMITORIOS</p>", unsafe_allow_html=True)
-            st.selectbox("Dorms", ["Todos", "1+", "2+", "3+", "4+"], label_visibility="collapsed")
+            st.selectbox("t", ["Departamentos", "Casas", "Terrenos"], label_visibility="collapsed", key="t1")
+            st.markdown("<p class='filter-label' style='margin-top:15px;'>DORMITORIOS</p>", unsafe_allow_html=True)
+            st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
             
-        with col_f3:
+        with fcol3:
             st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
-            st.markdown("<div style='margin-top:2px;'></div>", unsafe_allow_html=True) # Ajuste de altura
-            st.text_input("Minimo", placeholder="Mínimo USD", label_visibility="collapsed")
-            st.text_input("Maximo", placeholder="Máximo USD", label_visibility="collapsed")
+            st.text_input("m1", placeholder="Mínimo USD", label_visibility="collapsed", key="m1")
+            st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True) # Espaciador prolijo
+            st.text_input("m2", placeholder="Máximo USD", label_visibility="collapsed", key="m2")
             
-        with col_f4:
+        with fcol4:
             st.markdown("<p class='filter-label'>OPERACIÓN</p>", unsafe_allow_html=True)
-            st.selectbox("Operacion", ["En Venta", "En Alquiler", "Alquiler Temp."], label_visibility="collapsed")
-            st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            st.checkbox("Apto Crédito", key="apto_credito")
+            st.selectbox("o", ["En Venta", "En Alquiler"], label_visibility="collapsed", key="o1")
+            st.markdown("<div style='margin-top:25px;'></div>", unsafe_allow_html=True)
+            st.checkbox("Apto Crédito", key="apto_check")
             
-        with col_f5:
-            st.markdown("<div style='margin-top:38px;'></div>", unsafe_allow_html=True)
-            if st.button("BUSCAR", key="btn_principal_buscar", help="Click para filtrar", use_container_width=True):
-                st.toast("Buscando en GMI...")
-            # Aplicamos la clase CSS personalizada mediante un pequeño hack de markdown para el estilo del botón buscar
-            st.markdown('<style>#btn_principal_buscar { background-color: #1a1a1a !important; color: white !important; }</style>', unsafe_allow_html=True)
+        with fcol5:
+            # Botón alineado con la fila de abajo
+            if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
+                st.toast("Filtrando...")
+            st.markdown('<style>div[data-testid="stButton"] > button[kind="primary"] { background-color: #1a1a1a !important; height: 45px !important; margin-top: 25px !important; }</style>', unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
-
         st.markdown("<br><br><br>", unsafe_allow_html=True)
 
         if st.session_state.categoria_actual is None:
@@ -255,7 +256,6 @@ elif st.session_state.estado == 'web':
                         st.session_state.categoria_actual = nombre
                         st.rerun()
 
-            # SECCIÓN: PROPIEDADES DESTACADAS
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
             d_col1, d_col2, d_col3 = st.columns(3)
             
@@ -277,13 +277,10 @@ elif st.session_state.estado == 'web':
                     st.button(f"VER FICHA COMPLETA", key=f"btn_dest_{i}", use_container_width=True)
 
         else:
-            # Vista de categoría filtrada
             cat = st.session_state.categoria_actual
             st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
-            
             propiedades_filtradas = [p for p in propiedades if p["tipo"] == cat]
             _, col_list, _ = st.columns([1, 2, 1])
-            
             for i, p in enumerate(propiedades_filtradas):
                 with col_list:
                     img_b64 = get_image_base64(p["img"])
@@ -304,7 +301,6 @@ elif st.session_state.estado == 'web':
                 st.rerun()
 
     else:
-        # Secciones vacías para completar luego
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
 
     # --- PIE DE PÁGINA (FOOTER) ---
@@ -347,7 +343,6 @@ elif st.session_state.estado == 'web':
         </div>
     """, unsafe_allow_html=True)
 
-    # Botón de cierre de sesión al final
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
     if fcol.button("VOLVER AL INICIO / CERRAR", use_container_width=True):
