@@ -328,7 +328,7 @@ elif st.session_state.estado == 'web':
         with f_col4:
             st.markdown("<div style='margin-top:35px;'></div>", unsafe_allow_html=True)
             # CAMBIO 1: Texto negro para Apto Crédito
-            st.checkbox(":black[Apto Crédito]", key="apto_check")
+            st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.categoria_actual is None:
