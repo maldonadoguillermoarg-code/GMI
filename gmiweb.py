@@ -44,7 +44,7 @@ st.markdown(f"""
         100% {{ background-position: 200% 0; }}
     }}
 
-    /* Animación: Doble Titileo */
+    /* Nueva Animación: Doble Titileo */
     @keyframes doble-titileo {{
         0%, 50%, 100% {{ opacity: 1; }}
         25%, 75% {{ opacity: 0.4; }}
@@ -94,9 +94,9 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
-    /* Footer Institucional - NEGRO PROFUNDO UNIFICADO */
+    /* Footer Institucional - DISEÑO DE MARCA GMI */
     .footer-container {{
-        background-color: #080808;
+        background-color: #111111;
         color: #ffffff;
         padding: 60px 40px;
         font-family: 'Inter', sans-serif;
@@ -406,7 +406,7 @@ elif st.session_state.estado == 'web':
             if st.button("VOLVER", key="btn_volver_main"): st.session_state.categoria_actual = None; st.session_state.operacion_filtro = None; st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- BLOQUE DE FOOTER UNIFICADO (QUIRÚRGICO) ---
+    # --- FOOTER FINAL (CONSTRUIDO RESPETANDO LA MARCA) ---
     st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
     foot_col1, foot_col2, foot_col3, foot_col4 = st.columns(4)
     with foot_col1:
@@ -422,10 +422,7 @@ elif st.session_state.estado == 'web':
     with foot_col4:
         st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px;'>CONTACTO</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #888; font-size: 13px;'>📍 Córdoba, Argentina<br>📞 +54 351 000 0000<br>✉️ info@gmi-inmobiliaria.com.ar</p>", unsafe_allow_html=True)
-    
-    # Texto de créditos unificado dentro del mismo contenedor oscuro
-    st.markdown("<hr style='border: 0.1px solid #333; margin: 40px 0;'><p style='text-align: center; color: #444; font-size: 10px; letter-spacing: 2px; margin-bottom: 0;'>GMI NEGOCIOS INMOBILIARIOS © 2026 - TODOS LOS DERECHOS RESERVADOS</p>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 0.1px solid #333; margin: 40px 0;'><p style='text-align: center; color: #444; font-size: 10px; letter-spacing: 2px;'>GMI NEGOCIOS INMOBILIARIOS © 2026 - TODOS LOS DERECHOS RESERVADOS</p></div>", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
