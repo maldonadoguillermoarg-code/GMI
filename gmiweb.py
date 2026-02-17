@@ -337,13 +337,13 @@ elif st.session_state.estado == 'web':
             st.markdown("<p class='filter-label' style='margin-top:15px;'>DORMITORIOS</p>", unsafe_allow_html=True)
             st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
         with f_col3:
-            st.markdown("<p class='filter-label' style='margin-top:15px;'>TELÉFONO</p>", unsafe_allow_html=True)
+            st.markdown("<p class='filter-label' style='margin-top:15px; border-bottom: 1px solid #ddd; display: inline-block;'>TELÉFONO</p>", unsafe_allow_html=True)
             st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
             if st.button("CONSULTAR POR TELÉFONO", key="btn_tel_filter", use_container_width=True):
                 st.toast("Llamando al +54 351 000 0000")
             st.markdown("</div>", unsafe_allow_html=True)
         with f_col4:
-            st.markdown("<p class='filter-label' style='margin-top:15px;'>WHATSAPP</p>", unsafe_allow_html=True)
+            st.markdown("<p class='filter-label' style='margin-top:15px; border-bottom: 1px solid #ddd; display: inline-block;'>WHATSAPP</p>", unsafe_allow_html=True)
             st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
             if st.button("ENVIAR WHATSAPP", key="btn_ws_filter", use_container_width=True):
                 st.toast("Abriendo WhatsApp...")
