@@ -15,6 +15,8 @@ if 'pagina_actual' not in st.session_state:
     st.session_state.pagina_actual = 'Principal'
 if 'categoria_actual' not in st.session_state:
     st.session_state.categoria_actual = None
+if 'operacion_filtro' not in st.session_state:
+    st.session_state.operacion_filtro = None
 
 # Función para imágenes
 def get_image_base64(path):
@@ -139,20 +141,30 @@ st.markdown(f"""
         text-transform: uppercase !important;
         letter-spacing: 2px !important;
     }}
+
+    /* Estilo para sub-navbar de categorías */
+    .sub-nav-container {{
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATOS ---
+# --- DATOS (Agregamos campo 'operacion' para el filtro) ---
 propiedades = [
-    {"id": 1, "tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
-    {"id": 2, "tipo": "DEPARTAMENTOS", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg"},
-    {"id": 3, "tipo": "DEPARTAMENTOS", "titulo": "Torre Duomo", "precio": "USD 160.000", "barrio": "Nueva Córdoba", "amb": "2", "m2": "65", "img": "Deptos.jpeg"},
-    {"id": 4, "tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
-    {"id": 5, "tipo": "CASAS", "titulo": "Casona del Cerro", "precio": "USD 450.000", "barrio": "Cerro de las Rosas", "amb": "5", "m2": "320", "img": "Casas.jpeg"},
-    {"id": 6, "tipo": "CASAS", "titulo": "Moderna Manantiales", "precio": "USD 280.000", "barrio": "Manantiales", "amb": "4", "m2": "210", "img": "Casas.jpeg"},
-    {"id": 7, "tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
-    {"id": 8, "tipo": "TERRENOS", "titulo": "Lote Valle Escondido", "precio": "USD 125.000", "barrio": "Valle Escondido", "amb": "-", "m2": "600", "img": "Terreno.jpeg"},
-    {"id": 9, "tipo": "TERRENOS", "titulo": "Lote Tejas 3", "precio": "USD 55.000", "barrio": "Ruta 20", "amb": "-", "m2": "350", "img": "Terreno.jpeg"},
+    {"id": 1, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
+    {"id": 2, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg"},
+    {"id": 3, "tipo": "DEPARTAMENTOS", "operacion": "Alquiler", "titulo": "Torre Duomo", "precio": "$ 450.000", "barrio": "Nueva Córdoba", "amb": "2", "m2": "65", "img": "Deptos.jpeg"},
+    {"id": 4, "tipo": "CASAS", "operacion": "Venta", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
+    {"id": 5, "tipo": "CASAS", "operacion": "Alquiler", "titulo": "Casona del Cerro", "precio": "$ 980.000", "barrio": "Cerro de las Rosas", "amb": "5", "m2": "320", "img": "Casas.jpeg"},
+    {"id": 6, "tipo": "CASAS", "operacion": "Venta", "titulo": "Moderna Manantiales", "precio": "USD 280.000", "barrio": "Manantiales", "amb": "4", "m2": "210", "img": "Casas.jpeg"},
+    {"id": 7, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
+    {"id": 8, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Valle Escondido", "precio": "USD 125.000", "barrio": "Valle Escondido", "amb": "-", "m2": "600", "img": "Terreno.jpeg"},
+    {"id": 9, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Tejas 3", "precio": "USD 55.000", "barrio": "Ruta 20", "amb": "-", "m2": "350", "img": "Terreno.jpeg"},
 ]
 
 # --- PANTALLA 1: RELOJ (INTRO) ---
@@ -280,6 +292,7 @@ elif st.session_state.estado == 'web':
             # Botón con nuevo texto VER OPORTUNIDADES
             if st.button("VER OPORTUNIDADES", key="btn_all_props", use_container_width=True):
                 st.session_state.categoria_actual = "TODAS"
+                st.session_state.operacion_filtro = None
                 st.rerun()
         
         st.markdown("<br><br><br>", unsafe_allow_html=True)
@@ -294,10 +307,12 @@ elif st.session_state.estado == 'web':
                     img_b64 = get_image_base64(img)
                     if st.button(f" ", key=f"img_cat_{nombre}"):
                         st.session_state.categoria_actual = nombre
+                        st.session_state.operacion_filtro = None
                         st.rerun()
                     st.markdown(f"<div style='margin-top: -65px;' class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
                     if st.button(nombre, key=f"cat_{nombre}", use_container_width=True):
                         st.session_state.categoria_actual = nombre
+                        st.session_state.operacion_filtro = None
                         st.rerun()
 
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
@@ -324,13 +339,58 @@ elif st.session_state.estado == 'web':
 
         else:
             cat = st.session_state.categoria_actual
-            st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
             
+            # --- SUB-NAVBAR DE CATEGORÍAS (Para navegar entre ellas una vez adentro) ---
+            sub_col1, sub_col2, sub_col3, sub_col4 = st.columns([1,1,1,1])
+            with sub_col1:
+                if st.button("TODAS", use_container_width=True):
+                    st.session_state.categoria_actual = "TODAS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+            with sub_col2:
+                if st.button("DEPARTAMENTOS", use_container_width=True):
+                    st.session_state.categoria_actual = "DEPARTAMENTOS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+            with sub_col3:
+                if st.button("CASAS", use_container_width=True):
+                    st.session_state.categoria_actual = "CASAS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+            with sub_col4:
+                if st.button("TERRENOS", use_container_width=True):
+                    st.session_state.categoria_actual = "TERRENOS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+
+            st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin: 30px 0;'>{cat}</div>", unsafe_allow_html=True)
+            
+            # --- BOTONES DE FILTRO INTERNOS (HOJAS) ---
+            if cat in ["DEPARTAMENTOS", "CASAS"]:
+                btn_v, btn_a = st.columns(2)
+                if btn_v.button("EN VENTA", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Venta" else "secondary"):
+                    st.session_state.operacion_filtro = "Venta"
+                    st.rerun()
+                if btn_a.button("EN ALQUILER", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Alquiler" else "secondary"):
+                    st.session_state.operacion_filtro = "Alquiler"
+                    st.rerun()
+            elif cat == "TERRENOS":
+                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", use_container_width=True):
+                    # Aquí irá el formulario en el futuro
+                    st.session_state.pagina_actual = "Planes_Construccion"
+                    st.rerun()
+
+            # --- LÓGICA DE FILTRADO DE DATOS ---
             if cat == "TODAS":
                 propiedades_filtradas = propiedades
             else:
+                # Filtrar por categoría
                 propiedades_filtradas = [p for p in propiedades if p["tipo"] == cat]
+                # Filtrar por operación si hay una seleccionada
+                if st.session_state.operacion_filtro:
+                    propiedades_filtradas = [p for p in propiedades_filtradas if p["operacion"] == st.session_state.operacion_filtro]
                 
+            # --- RENDERIZADO DE FICHAS (Solo si no estamos en la "hoja" de planes) ---
             _, col_list, _ = st.columns([1, 2, 1])
             for i, p in enumerate(propiedades_filtradas):
                 with col_list:
@@ -340,16 +400,24 @@ elif st.session_state.estado == 'web':
                             <div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>
                             <div style='padding: 20px 0;'>
                                 <p class='prop-precio'>{p['precio']}</p>
-                                <p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p>
+                                <p class='prop-ubicacion'>{p['titulo']} | {p['barrio']} ({p['operacion'].upper()})</p>
                                 <p class='prop-detalles'>{p['amb']} AMBIENTES  •  {p['m2']} M²</p>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
                     st.button(f"VER DETALLES", key=f"ficha_{cat}_{i}", use_container_width=True)
 
-            if st.button("← VOLVER A CATEGORÍAS", use_container_width=True):
+            if st.button("← VOLVER AL MENÚ PRINCIPAL", use_container_width=True):
                 st.session_state.categoria_actual = None
+                st.session_state.operacion_filtro = None
                 st.rerun()
+
+    elif st.session_state.pagina_actual == "Planes_Construccion":
+        st.markdown("<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>PLANES DE CONSTRUCCIÓN</h2><p style='color: #666;'>Sección en desarrollo para formulario de contacto.</p></div>", unsafe_allow_html=True)
+        if st.button("← VOLVER A TERRENOS", use_container_width=True):
+            st.session_state.pagina_actual = "Principal"
+            st.session_state.categoria_actual = "TERRENOS"
+            st.rerun()
 
     else:
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
@@ -400,4 +468,5 @@ elif st.session_state.estado == 'web':
         st.session_state.estado = 'intro'
         st.session_state.pagina_actual = 'Principal'
         st.session_state.categoria_actual = None
+        st.session_state.operacion_filtro = None
         st.rerun()
