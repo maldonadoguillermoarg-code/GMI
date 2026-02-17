@@ -616,7 +616,7 @@ elif st.session_state.estado == 'web':
                 <div class='tasacion-descripcion'>
                     Gestión integral de propiedades. Administramos consorcios, 
                     alquileres anuales y alquileres temporales con la mayor 
-                    eficiencia y transparencia del mercado.
+                    eficiencia del mercado.
                 </div>
             """, unsafe_allow_html=True)
         
