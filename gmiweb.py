@@ -282,25 +282,21 @@ if st.session_state.estado == 'intro':
         <style>
         .stApp { background-color: #000000 !important; }
         .digital-timer {
-            font-family: 'Seven Segment', sans-serif;
-            color: #FF0000;
+            font-family: 'Seven Segment', sans-serif; color: #FF0000;
             font-size: clamp(45px, 10vw, 90px); text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
             text-align: center; letter-spacing: 5px; line-height: 1;
         }
         .labels-timer {
-            color: #8B0000;
-            text-align: center; letter-spacing: 12px; font-size: 14px;
+            color: #8B0000; text-align: center; letter-spacing: 12px; font-size: 14px;
             font-weight: 800; text-transform: uppercase; margin-top: 15px;
         }
         .text-link-titileo {
-            color: #FF0000 !important;
-            font-family: 'Inter', sans-serif; font-weight: 900;
+            color: #FF0000 !important; font-family: 'Inter', sans-serif; font-weight: 900;
             font-size: 20px; text-align: center; letter-spacing: 3px; margin-top: 40px;
             animation: blinker 1.2s linear infinite; text-transform: uppercase;
         }
         div.stButton > button {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: transparent !important; border: none !important; color: transparent !important; z-index: 999;
         }
         </style>
@@ -387,7 +383,7 @@ elif st.session_state.estado == 'web':
         with f_col5:
             if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
                 st.toast("Filtrando resultados...")
-            
+        
         with f_col1:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
             st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
@@ -491,15 +487,18 @@ elif st.session_state.estado == 'web':
     elif st.session_state.pagina_actual == "En Venta":
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN VENTA</div>", unsafe_allow_html=True)
+        
         col1, col2, col3 = st.columns(3)
         categorias_v = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
+        
         for i, (nombre, img) in enumerate(categorias_v):
             with [col1, col2, col3][i]:
                 img_b64 = get_image_base64(img)
                 st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
                 color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
                 st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
-                if st.button(nombre, key=f"venta_cat_{nombre}"): st.session_state.categoria_actual = nombre; st.rerun()
+                if st.button(nombre, key=f"venta_cat_{nombre}"):
+                    st.session_state.categoria_actual = nombre; st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.categoria_actual == "TERRENOS":
@@ -511,6 +510,7 @@ elif st.session_state.estado == 'web':
                 st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
+
         cat = st.session_state.categoria_actual
         operacion = "Venta"
         prop_venta = [p for p in propiedades if p["operacion"] == operacion]
@@ -518,7 +518,7 @@ elif st.session_state.estado == 'web':
         
         label_seccion = f"RESULTADOS: {cat} EN VENTA" if cat else "TODAS LAS PROPIEDADES EN VENTA"
         st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{label_seccion}</div>", unsafe_allow_html=True)
-        
+
         _, col_list_v, _ = st.columns([1, 2, 1])
         if prop_venta:
             for i, p in enumerate(prop_venta):
@@ -535,18 +535,22 @@ elif st.session_state.estado == 'web':
     elif st.session_state.pagina_actual == "Alquiler":
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN ALQUILER</div>", unsafe_allow_html=True)
+        
         _, col1, col2, _ = st.columns([0.5, 1, 1, 0.5])
         categorias_a = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg")]
+        
         for i, (nombre, img) in enumerate(categorias_a):
             with [col1, col2][i]:
                 img_b64 = get_image_base64(img)
                 st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
                 color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
                 st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
-                if st.button(nombre, key=f"alq_cat_{nombre}"): st.session_state.categoria_actual = nombre; st.rerun()
+                if st.button(nombre, key=f"alq_cat_{nombre}"):
+                    st.session_state.categoria_actual = nombre; st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
+
         cat = st.session_state.categoria_actual
         operacion = "Alquiler"
         prop_alq = [p for p in propiedades if p["operacion"] == operacion]
@@ -554,7 +558,7 @@ elif st.session_state.estado == 'web':
         
         label_seccion = f"RESULTADOS: {cat} EN ALQUILER" if cat else "TODAS LAS PROPIEDADES EN ALQUILER"
         st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{label_seccion}</div>", unsafe_allow_html=True)
-        
+
         _, col_list_a, _ = st.columns([1, 2, 1])
         if prop_alq:
             for i, p in enumerate(prop_alq):
@@ -565,119 +569,210 @@ elif st.session_state.estado == 'web':
                     if st.button("VER DETALLES", key=f"ficha_alq_{i}"): st.toast(f"Cargando {p['titulo']}...")
                     st.markdown("</div><br>", unsafe_allow_html=True)
         else:
-            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades.</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades en alquiler disponibles en esta categoría.</p>", unsafe_allow_html=True)
 
     # --- PÁGINA: TASACIONES ---
     elif st.session_state.pagina_actual == "Tasaciones":
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        t_col1, t_col2 = st.columns([1, 1])
-        with t_col1:
-            st.markdown("<div style='padding-left: 50px;'>", unsafe_allow_html=True)
-            st.markdown("<p class='tasacion-titulo'>TASACIONES<br>PROFESIONALES</p>", unsafe_allow_html=True)
-            st.markdown("<p class='tasacion-descripcion'>Obtén el valor real de tu propiedad en el mercado actual con nuestro equipo de expertos certificados.</p>", unsafe_allow_html=True)
-            
-            st.markdown("<p class='tasacion-label'>NOMBRE COMPLETO</p>", unsafe_allow_html=True)
-            st.text_input("nom", placeholder="Ej: Juan Pérez", label_visibility="collapsed")
-            st.markdown("<p class='tasacion-label'>TELÉFONO DE CONTACTO</p>", unsafe_allow_html=True)
-            st.text_input("tel", placeholder="+54 351 ...", label_visibility="collapsed")
-            st.markdown("<p class='tasacion-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
-            st.selectbox("tipo_t", ["Departamento", "Casa", "Terreno", "Local Comercial"], label_visibility="collapsed")
-            
-            if st.button("SOLICITAR TASACIÓN", type="primary", use_container_width=True):
-                st.success("Solicitud enviada. Nos contactaremos a la brevedad.")
-            st.markdown("</div>", unsafe_allow_html=True)
-        with t_col2:
-            img_b64 = get_image_base64("Deptos.jpeg")
-            st.markdown(f"<div style='height: 100%; min-height: 600px; overflow: hidden; border-radius: 12px 0 0 12px;'><img src='data:image/jpeg;base64,{img_b64}' style='width: 100%; height: 100%; object-fit: cover;'></div>", unsafe_allow_html=True)
-
-    # --- PÁGINA: ADMINISTRACION ---
-    elif st.session_state.pagina_actual == "Administracion":
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>ADMINISTRACIÓN DE CONSORCIOS</div>", unsafe_allow_html=True)
-        st.markdown("<div style='text-align: center; font-family: Nunito Sans; color: #666; max-width: 700px; margin: 0 auto 50px;'>Gestión transparente y eficiente para edificios y barrios cerrados. Tecnología aplicada al servicio del copropietario.</div>", unsafe_allow_html=True)
+        st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
         
-        _, adm_col, _ = st.columns([1, 2, 1])
-        with adm_col:
+        t_col_left, t_col_main = st.columns([1, 2])
+        
+        with t_col_left:
+            st.markdown("<div class='tasacion-titulo'>TASACIONES</div>", unsafe_allow_html=True)
             st.markdown("""
-                <div style='background: white; padding: 40px; border-radius: 15px; border: 1px solid #eee;'>
-                    <p style='font-family: Inter; font-weight: 800; font-size: 14px; margin-bottom: 25px;'>ACCESO A COPROPIETARIOS</p>
-                    <input type='text' placeholder='Usuario / Email' style='width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px;'>
-                    <input type='password' placeholder='Contraseña' style='width: 100%; padding: 12px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 6px;'>
+                <div class='tasacion-descripcion'>
+                    Obtenga un valor real de mercado para su propiedad. 
+                    Nuestro equipo técnico analiza variables de ubicación, 
+                    entorno y tendencias actuales para brindar un informe preciso.
                 </div>
             """, unsafe_allow_html=True)
-            if st.button("INGRESAR AL PORTAL", key="btn_adm_login", type="primary"):
-                st.error("Credenciales no válidas.")
+        
+        with t_col_main:
+            # Fila 1
+            st.markdown("<p class='tasacion-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
+            tipo_t = st.text_input("t1", placeholder="ej: Casa, Departamento, Oficina...", label_visibility="collapsed")
             
-            st.markdown("<br><p style='text-align: center; font-size: 12px; color: #888;'>¿Tu consorcio aún no trabaja con nosotros? <a href='#' style='color: #C41E3A;'>Solicitar Propuesta</a></p>", unsafe_allow_html=True)
+            # Fila 2
+            c1, c2 = st.columns(2)
+            with c1:
+                st.markdown("<p class='tasacion-label'>LOCALIDAD</p>", unsafe_allow_html=True)
+                loc_t = st.text_input("t2", placeholder="ej: Córdoba Capital", label_visibility="collapsed")
+            with c2:
+                st.markdown("<p class='tasacion-label'>BARRIO</p>", unsafe_allow_html=True)
+                bar_t = st.text_input("t3", placeholder="ej: Nueva Córdoba", label_visibility="collapsed")
+            
+            # Fila 3
+            c3, c4 = st.columns(2)
+            with c3:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE CUBIERTA</p>", unsafe_allow_html=True)
+                m_cub_t = st.text_input("t4", placeholder="Cantidad de m2 cubiertos", label_visibility="collapsed")
+            with c4:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE TOTAL</p>", unsafe_allow_html=True)
+                m_tot_t = st.text_input("t5", placeholder="Cantidad de m2 totales", label_visibility="collapsed")
+            
+            # Fila 4
+            st.markdown("<p class='tasacion-label'>DESCRIPCIÓN DE LA PROPIEDAD</p>", unsafe_allow_html=True)
+            desc_t = st.text_area("t6", placeholder="Detalle ambientes, estado, antiguedad, etc...", height=100, label_visibility="collapsed")
+            
+            st.markdown("<hr style='margin: 40px 0; border: 0.5px solid #ccc; opacity: 0.3;'>", unsafe_allow_html=True)
+            
+            # Fila 5: Contacto
+            c5, c6, c7 = st.columns(3)
+            with c5:
+                st.markdown("<p class='tasacion-label'>NOMBRE</p>", unsafe_allow_html=True)
+                nom_t = st.text_input("t7", placeholder="Su nombre", label_visibility="collapsed")
+            with c6:
+                st.markdown("<p class='tasacion-label'>TELÉFONO</p>", unsafe_allow_html=True)
+                tel_t = st.text_input("t8", placeholder="Su teléfono", label_visibility="collapsed")
+            with c7:
+                st.markdown("<p class='tasacion-label'>EMAIL</p>", unsafe_allow_html=True)
+                mail_t = st.text_input("t9", placeholder="Su email", label_visibility="collapsed")
+            
+            if st.button("ENVIAR SOLICITUD DE TASACIÓN", key="btn_send_tasa", type="primary"):
+                st.success("Solicitud enviada con éxito. Nos contactaremos a la brevedad.")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- PÁGINA: ADMINISTRACIÓN ---
+    elif st.session_state.pagina_actual == "Administracion":
+        st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
+        
+        adm_col_left, adm_col_main = st.columns([1, 2])
+        
+        with adm_col_left:
+            st.markdown("<div class='tasacion-titulo'>ADMINISTRACIÓN</div>", unsafe_allow_html=True)
+            st.markdown("""
+                <div class='tasacion-descripcion'>
+                    Gestión integral de propiedades. Administramos consorcios, 
+                    alquileres anuales y alquileres temporales con la mayor 
+                    eficiencia y transparencia del mercado.
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with adm_col_main:
+            # Fila 1
+            st.markdown("<p class='tasacion-label'>TIPO DE PROPIEDAD O CONSORCIO</p>", unsafe_allow_html=True)
+            tipo_adm = st.text_input("adm1", placeholder="ej: Edificio, Casa, Departamento, Complejo...", label_visibility="collapsed")
+            
+            # Fila 2
+            c1_adm, c2_adm = st.columns(2)
+            with c1_adm:
+                st.markdown("<p class='tasacion-label'>LOCALIDAD</p>", unsafe_allow_html=True)
+                loc_adm = st.text_input("adm2", placeholder="ej: Córdoba Capital", label_visibility="collapsed")
+            with c2_adm:
+                st.markdown("<p class='tasacion-label'>BARRIO</p>", unsafe_allow_html=True)
+                bar_adm = st.text_input("adm3", placeholder="ej: Nueva Córdoba", label_visibility="collapsed")
+            
+            # Fila 3
+            c3_adm, c4_adm = st.columns(2)
+            with c3_adm:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE CUBIERTA</p>", unsafe_allow_html=True)
+                m_cub_adm = st.text_input("adm4", placeholder="Cantidad de m2 cubiertos", label_visibility="collapsed")
+            with c4_adm:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE TOTAL</p>", unsafe_allow_html=True)
+                m_tot_adm = st.text_input("adm5", placeholder="Cantidad de m2 totales", label_visibility="collapsed")
+            
+            # Fila 4
+            st.markdown("<p class='tasacion-label'>DETALLES PARA ADMINISTRACIÓN</p>", unsafe_allow_html=True)
+            desc_adm = st.text_area("adm6", placeholder="Indique si es consorcio, alquiler anual o temporal y detalles adicionales...", height=100, label_visibility="collapsed")
+            
+            st.markdown("<hr style='margin: 40px 0; border: 0.5px solid #ccc; opacity: 0.3;'>", unsafe_allow_html=True)
+            
+            # Fila 5: Contacto
+            c5_adm, c6_adm, c7_adm = st.columns(3)
+            with c5_adm:
+                st.markdown("<p class='tasacion-label'>NOMBRE</p>", unsafe_allow_html=True)
+                nom_adm = st.text_input("adm7", placeholder="Su nombre", label_visibility="collapsed")
+            with c6_adm:
+                st.markdown("<p class='tasacion-label'>TELÉFONO</p>", unsafe_allow_html=True)
+                tel_adm = st.text_input("adm8", placeholder="Su teléfono", label_visibility="collapsed")
+            with c7_adm:
+                st.markdown("<p class='tasacion-label'>EMAIL</p>", unsafe_allow_html=True)
+                mail_adm = st.text_input("adm9", placeholder="Su email", label_visibility="collapsed")
+            
+            if st.button("ENVIAR SOLICITUD DE ADMINISTRACIÓN", key="btn_send_adm", type="primary"):
+                st.success("Solicitud enviada con éxito. Nuestro departamento de administración se contactará con usted.")
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # --- PÁGINA: CONTACTO ---
     elif st.session_state.pagina_actual == "Contacto":
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 50px;'>CONTACTO</div>", unsafe_allow_html=True)
+        st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
         
-        c_col1, c_col2, c_col3 = st.columns(3)
-        with c_col1:
+        cont_col_left, cont_col_main = st.columns([1, 2])
+        
+        with cont_col_left:
+            st.markdown("<div class='tasacion-titulo'>CONTACTO</div>", unsafe_allow_html=True)
             st.markdown("""
-                <a href='https://wa.me/543510000000' class='social-icon-box'>
-                    <span style='font-size: 30px;'>💬</span>
-                    <span class='social-icon-label'>WHATSAPP</span>
-                </a>
+                <div class='tasacion-descripcion'>
+                    Muchas gracias por visitar nuestro sitio. No dudes en contactarnos, 
+                    estamos encantados de ayudarte a encontrar tu próximo hogar o inversión.
+                </div>
             """, unsafe_allow_html=True)
-        with c_col2:
-            st.markdown("""
-                <a href='https://instagram.com' class='social-icon-box'>
-                    <span style='font-size: 30px;'>📸</span>
-                    <span class='social-icon-label'>INSTAGRAM</span>
-                </a>
-            """, unsafe_allow_html=True)
-        with c_col3:
-            st.markdown("""
-                <a href='mailto:info@gminmobiliaria.com.ar' class='social-icon-box'>
-                    <span style='font-size: 30px;'>✉️</span>
-                    <span class='social-icon-label'>EMAIL</span>
-                </a>
-            """, unsafe_allow_html=True)
+        
+        with cont_col_main:
+            st.markdown("<br>", unsafe_allow_html=True)
+            # Grilla de Redes Sociales
+            r1, r2, r3 = st.columns(3)
+            r4, r5, r6 = st.columns(3)
             
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("""
-            <div style='background: #1a1a1a; color: white; padding: 50px; border-radius: 15px; text-align: center;'>
-                <p style='font-family: Inter; font-weight: 800; font-size: 20px; letter-spacing: 3px; margin-bottom: 20px;'>NUESTRA OFICINA</p>
-                <p style='font-family: Nunito Sans; font-size: 16px; color: #aaa;'>Av. Rafael Nuñez 4500, Cerro de las Rosas<br>Córdoba, Argentina</p>
-                <p style='font-family: Nunito Sans; font-size: 14px; color: #666; margin-top: 20px;'>Lunes a Viernes: 09:00 a 18:00hs</p>
-            </div>
-        """, unsafe_allow_html=True)
+            redes = [
+                {"n": "INSTAGRAM", "i": "📸", "l": "https://instagram.com", "col": r1},
+                {"n": "TIKTOK", "i": "🎵", "l": "https://tiktok.com", "col": r2},
+                {"n": "FACEBOOK", "i": "👤", "l": "https://facebook.com", "col": r3},
+                {"n": "LINKEDIN", "i": "💼", "l": "https://linkedin.com", "col": r4},
+                {"n": "WHATSAPP", "i": "💬", "l": "https://wa.me/543510000000", "col": r5},
+                {"n": "GMAIL", "i": "✉️", "l": "mailto:info@gminmobiliaria.com.ar", "col": r6}
+            ]
+            
+            for red in redes:
+                with red["col"]:
+                    st.markdown(f"""
+                        <a href="{red['l']}" target="_blank" style="text-decoration: none;">
+                            <div class="social-icon-box">
+                                <span style="font-size: 30px;">{red['i']}</span>
+                                <span class="social-icon-label">{red['n']}</span>
+                            </div>
+                        </a>
+                        <br>
+                    """, unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # --- FOOTER ---
     st.markdown(f"""
-        <div class="footer-container">
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-                <div style="flex: 1; min-width: 300px; margin-bottom: 40px;">
-                    <div class="footer-title"><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
-                    <div class="footer-subtitle">Negocios Inmobiliarios</div>
-                    <p style="color: #666; font-size: 13px; line-height: 1.8; max-width: 250px;">
-                        Líderes en el mercado inmobiliario de Córdoba, brindando soluciones integrales y confianza en cada operación.
-                    </p>
-                </div>
-                <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
-                    <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">NAVEGACIÓN</div>
-                    <div style="display: flex; flex-direction: column;">
-                        <a href="#" class="footer-link">Propiedades en Venta</a>
-                        <a href="#" class="footer-link">Propiedades en Alquiler</a>
-                        <a href="#" class="footer-link">Tasaciones Profesionales</a>
-                        <a href="#" class="footer-link">Administración de Consorcios</a>
+        <div class='footer-container'>
+            <div style='max-width: 1200px; margin: 0 auto;'>
+                <div class="row" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                    <div style="flex: 1; min-width: 300px; margin-bottom: 40px;">
+                        <div class="footer-title">GMI</div>
+                        <div class="footer-subtitle">Negocios Inmobiliarios</div>
+                        <p style="color: #666; font-size: 13px; line-height: 1.8; max-width: 250px;">
+                            Expertos en el mercado inmobiliario de Córdoba. 
+                            Compromiso, transparencia y resultados.
+                        </p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">NAVEGACIÓN</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <a href="#" class="footer-link">Propiedades en Venta</a>
+                            <a href="#" class="footer-link">Propiedades en Alquiler</a>
+                            <a href="#" class="footer-link">Tasaciones Profesionales</a>
+                            <a href="#" class="footer-link">Administración de Consorcios</a>
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">CONTACTO</div>
+                        <p style="color: #888; font-size: 13px; line-height: 2;">
+                            📍 Av. Rafael Nuñez 4500, Córdoba<br>
+                            📞 +54 351 000 0000<br>
+                            ✉️ info@gminmobiliaria.com.ar
+                        </p>
                     </div>
                 </div>
-                <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
-                    <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">CONTACTO</div>
-                    <p style="color: #888; font-size: 13px; line-height: 2;">
-                        📍 Av. Rafael Nuñez 4500, Córdoba<br>
-                        📞 +54 351 000 0000<br>
-                        ✉️ info@gminmobiliaria.com.ar
-                    </p>
+                <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #222; text-align: center; color: #444; font-size: 11px; letter-spacing: 1px;">
+                    © {datetime.datetime.now().year} GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS.
                 </div>
-            </div>
-            <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #222; text-align: center; color: #444; font-size: 11px; letter-spacing: 1px;">
-                © {datetime.datetime.now().year} GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS.
             </div>
         </div>
     """, unsafe_allow_html=True)
