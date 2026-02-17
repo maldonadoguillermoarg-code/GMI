@@ -28,7 +28,7 @@ def get_image_base64(path):
 # --- ESTILOS GLOBALES ---
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Nunito+Sans:wght@300;400;600&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
     html, body {{ scrollbar-width: none; }}
@@ -68,12 +68,6 @@ st.markdown(f"""
         height: 15px;
     }}
 
-    div[data-testid="stCheckbox"] label p {{
-        color: #1a1a1a !important;
-        font-weight: 600;
-        margin-top: 5px;
-    }}
-
     /* Botón Buscar Estilo Morty */
     div.stButton > button[kind="primary"] {{
         background-color: #1a1a1a !important;
@@ -84,15 +78,6 @@ st.markdown(f"""
         font-weight: 700 !important;
         margin-top: 25px !important;
         border-radius: 6px !important;
-    }}
-
-    /* Footer */
-    .footer-container {{
-        background-color: #1a1a1a;
-        color: #ffffff;
-        padding: 80px 60px;
-        font-family: 'Inter', sans-serif;
-        margin-top: 80px;
     }}
 
     /* Navbar Custom */
@@ -106,9 +91,6 @@ st.markdown(f"""
         text-transform: uppercase;
         font-size: 12px;
         transition: 0.3s;
-    }}
-    div.stButton > button:hover {{
-        color: #C41E3A !important;
     }}
 
     /* Banner Córdoba */
@@ -125,33 +107,29 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- CAMBIO QUIRÚRGICO: BOTÓN PROPIEDADES DISPONIBLES (ESTILO BUSCAR) --- */
-    /* Forzamos el estilo usando selectores de alta prioridad */
-    div[data-testid="stVerticalBlock"] div.stButton > button {{
-        transition: all 0.3s ease !important;
-    }}
-
-    /* Específico para el botón por su contenido de texto para asegurar que se aplique */
-    button:has(p:contains("PROPIEDADES DISPONIBLES")), 
+    /* --- CAMBIO QUIRÚRGICO: BOTÓN TODAS LAS PROPIEDADES DISPONIBLES --- */
+    /* Usamos el ID del contenedor para máxima prioridad */
     div.stButton > button[key="btn_all_props"] {{
         background-color: #444444 !important;
-        color: white !important;
         width: 100% !important;
-        border-radius: 10px !important;
-        height: 55px !important;
+        border-radius: 15px !important;
+        height: 60px !important;
         border: none !important;
-        margin-top: 10px !important;
+        transition: background-color 0.3s ease !important;
     }}
 
     div.stButton > button[key="btn_all_props"]:hover {{
         background-color: #C41E3A !important;
-        color: white !important;
     }}
 
+    /* Forzamos tipografía MAYÚSCULAS y COLOR NEGRO */
     div.stButton > button[key="btn_all_props"] p {{
-        font-weight: 800 !important;
-        font-size: 16px !important;
-        letter-spacing: 1px !important;
+        color: #000000 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 900 !important;
+        font-size: 20px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -282,13 +260,13 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- SECCIÓN BANNER Y BOTÓN (CAMBIO SOLICITADO) ---
+        # --- SECCIÓN BANNER Y BOTÓN ---
         if st.session_state.categoria_actual is None:
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            # El botón ahora ocupa el ancho completo de la imagen
-            if st.button("PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
+            # CAMBIO QUIRÚRGICO: Texto exacto, tipografía mayúsculas y negra
+            if st.button("TODAS LAS PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
                 st.session_state.categoria_actual = "TODAS"
                 st.rerun()
         
@@ -387,14 +365,6 @@ elif st.session_state.estado == 'web':
                     <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Bv. Chacabuco 1234, Córdoba</p>
                     <p style="font-size: 13px; color: #888; margin-bottom: 12px;">+54 351 123 4567</p>
                     <p style="font-size: 13px; color: #888; margin-bottom: 12px;">info@gminegocios.com.ar</p>
-                </div>
-                <div style="flex: 1; min-width: 200px;">
-                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">SÍGUENOS</h4>
-                    <div style="display: flex; gap: 20px;">
-                        <span style="color: #888; font-size: 13px;">Instagram</span>
-                        <span style="color: #888; font-size: 13px;">Facebook</span>
-                        <span style="color: #888; font-size: 13px;">LinkedIn</span>
-                    </div>
                 </div>
             </div>
             <hr style="border: 0.1px solid #333; margin: 60px 0 40px 0;">
