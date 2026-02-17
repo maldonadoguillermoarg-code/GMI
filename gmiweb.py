@@ -118,6 +118,29 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
+    /* Formas visuales detras de los botones */
+    .forma-boton {{
+        background-color: #e0e0e0;
+        height: 50px;
+        width: 100%;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        color: #1a1a1a;
+        letter-spacing: 2px;
+        position: absolute;
+        z-index: 0;
+    }}
+
+    .container-relativo {{
+        position: relative;
+        height: 60px;
+        margin-top: 10px;
+    }}
+
     /* --- CAMBIO QUIRÚRGICO AISLADO: BOTÓN VER OPORTUNIDADES --- */
     button[key="btn_all_props"] {{
         background-color: #444444 !important;
@@ -303,12 +326,9 @@ elif st.session_state.estado == 'web':
             for i, (nombre, img) in enumerate(categorias):
                 with [col1, col2, col3][i]:
                     img_b64 = get_image_base64(img)
-                    if st.button(f" ", key=f"img_cat_{nombre}"):
-                        st.session_state.categoria_actual = nombre
-                        st.session_state.operacion_filtro = None
-                        st.rerun()
-                    st.markdown(f"<div style='margin-top: -65px;' class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
-                    if st.button(nombre, key=f"cat_{nombre}", use_container_width=True):
+                    st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton'>{nombre}</div></div>", unsafe_allow_html=True)
+                    if st.button(" ", key=f"cat_{nombre}", use_container_width=True):
                         st.session_state.categoria_actual = nombre
                         st.session_state.operacion_filtro = None
                         st.rerun()
@@ -319,10 +339,8 @@ elif st.session_state.estado == 'web':
             for i, p in enumerate([propiedades[0], propiedades[3], propiedades[6]]):
                 with [d_col1, d_col2, d_col3][i]:
                     img_b64 = get_image_base64(p["img"])
-                    if st.button(f"  ", key=f"img_p_{i}"):
-                        st.toast(f"Cargando ficha de {p['titulo']}...")
                     st.markdown(f"""
-                        <div style='margin-top: -65px;' class='listing-card' style='background: white; border: 1px solid #eeeeee; padding: 15px; border-radius: 10px;'>
+                        <div class='listing-card' style='background: white; border: 1px solid #eeeeee; padding: 15px; border-radius: 10px;'>
                             <div style='height: 240px; overflow: hidden; border-radius: 6px;'>
                                 <img src='data:image/jpeg;base64,{img_b64}' style='width: 100%; height: 100%; object-fit: cover;'>
                             </div>
@@ -333,7 +351,9 @@ elif st.session_state.estado == 'web':
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.button(f"VER FICHA COMPLETA", key=f"btn_dest_{i}", use_container_width=True)
+                    st.markdown("<div class='container-relativo'><div class='forma-boton' style='background-color:#1a1a1a; color:white; font-size:12px;'>VER FICHA COMPLETA</div></div>", unsafe_allow_html=True)
+                    if st.button(" ", key=f"btn_dest_{i}", use_container_width=True):
+                         st.toast(f"Cargando ficha de {p['titulo']}...")
 
         else:
             cat = st.session_state.categoria_actual
