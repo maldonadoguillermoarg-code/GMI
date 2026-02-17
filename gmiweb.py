@@ -265,7 +265,8 @@ if st.session_state.estado == 'intro':
 
 # --- PANTALLA 2: SITIO WEB ---
 elif st.session_state.estado == 'web':
-    st.markdown("<style>.stApp { background-color: #F1F2F4 !important; }</style>", unsafe_allow_html=True)
+    # MODIFICACIÓN QUIRÚRGICA: Fondo gris un poco más oscuro para mayor contraste y profundidad
+    st.markdown("<style>.stApp { background-color: #E5E7EB !important; }</style>", unsafe_allow_html=True)
     
     # Botón Flotante de Contacto
     st.markdown("""<a href='#' class='btn-float'>📩</a>""", unsafe_allow_html=True)
@@ -423,7 +424,6 @@ elif st.session_state.estado == 'web':
         st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px;'>CONTACTO</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #888; font-size: 13px;'>📍 Córdoba, Argentina<br>📞 +54 351 000 0000<br>✉️ info@gmi-inmobiliaria.com.ar</p>", unsafe_allow_html=True)
     
-    # Esta es la sección unificada que pediste: Logo y Copyright dentro del bloque negro
     st.markdown("""
         <hr style='border: 0.1px solid #333; margin: 40px 0;'>
         <div style='text-align: center;'>
@@ -437,7 +437,7 @@ elif st.session_state.estado == 'web':
     """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Botón de Logout (mantiene su posición fuera para facilitar el cierre de sesión)
+    # Botón de Logout
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
     with fcol:
