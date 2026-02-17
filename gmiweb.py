@@ -38,13 +38,11 @@ st.markdown(f"""
     
     @keyframes blinker {{ 50% {{ opacity: 0.1; }} }}
 
-    /* Animación Scanner Light */
     @keyframes scan {{
         0% {{ background-position: -200% 0; }}
         100% {{ background-position: 200% 0; }}
     }}
 
-    /* Nueva Animación: Doble Titileo */
     @keyframes doble-titileo {{
         0%, 50%, 100% {{ opacity: 1; }}
         25%, 75% {{ opacity: 0.4; }}
@@ -59,7 +57,6 @@ st.markdown(f"""
     .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
     .img-container-listing:hover img {{ transform: scale(1.03); }}
 
-    /* Super Filtro - PROHIBIDO MODIFICAR */
     .filter-box {{
         background-color: #ffffff;
         padding: 25px;
@@ -82,7 +79,6 @@ st.markdown(f"""
         height: 15px;
     }}
 
-    /* Botón Buscar Estilo */
     div.stButton > button[kind="primary"] {{
         background-color: #1a1a1a !important;
         border: none !important;
@@ -94,7 +90,6 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
-    /* Estilo para botones de contacto en el filtro */
     .btn-filtro-contacto div.stButton > button {{
         background-color: #f8f9fa !important;
         border: 1px solid #ddd !important;
@@ -104,7 +99,6 @@ st.markdown(f"""
         margin-top: 0px !important;
     }}
 
-    /* Footer Institucional - DISEÑO DE MARCA GMI (OSCURO UNIFICADO) */
     .footer-container {{
         background-color: #080808;
         color: #ffffff;
@@ -118,7 +112,6 @@ st.markdown(f"""
     .footer-link {{ color: #888; text-decoration: none; font-size: 13px; transition: 0.3s; line-height: 2; }}
     .footer-link:hover {{ color: #ffffff; padding-left: 5px; }}
 
-    /* Navbar Custom */
     div.stButton > button {{
         border: none !important;
         background-color: transparent !important;
@@ -131,7 +124,6 @@ st.markdown(f"""
         transition: 0.3s;
     }}
 
-    /* Botón de Contacto Flotante */
     .btn-float {{
         position: fixed;
         right: 30px;
@@ -152,7 +144,6 @@ st.markdown(f"""
     }}
     .btn-float:hover {{ transform: scale(1.1) rotate(15deg); }}
 
-    /* --- ARQUITECTURA DE CAPAS ESTÉTICA --- */
     .container-relativo {{
         position: relative;
         height: 50px;
@@ -277,7 +268,6 @@ if st.session_state.estado == 'intro':
 elif st.session_state.estado == 'web':
     st.markdown("<style>.stApp { background-color: #E5E7EB !important; }</style>", unsafe_allow_html=True)
     
-    # Botón Flotante de Contacto
     st.markdown("""<a href='#' class='btn-float'>📩</a>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -303,7 +293,6 @@ elif st.session_state.estado == 'web':
             if nav_cols[i].button(label, key=f"nav_{pag}"):
                 st.session_state.pagina_actual = pag
                 st.session_state.categoria_actual = None
-                # Si va a En Venta, preparamos el filtro de operación
                 if pag == "En Venta":
                     st.session_state.operacion_filtro = "Venta"
                 elif pag == "Alquiler":
@@ -336,7 +325,6 @@ elif st.session_state.estado == 'web':
             if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
                 st.toast("Filtrando resultados...")
         
-        # SEGUNDA FILA DEL FILTRO - SIMETRÍA TOTAL
         with f_col1:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
             st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
@@ -356,7 +344,6 @@ elif st.session_state.estado == 'web':
                 st.toast("Abriendo WhatsApp...")
             st.markdown("</div>", unsafe_allow_html=True)
         with f_col5:
-            # Columna vacía para mantener la simetría con el botón buscar de arriba
             pass
             
         st.markdown("</div>", unsafe_allow_html=True)
@@ -437,12 +424,11 @@ elif st.session_state.estado == 'web':
             if st.button("VOLVER", key="btn_volver_main"): st.session_state.categoria_actual = None; st.session_state.operacion_filtro = None; st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- NUEVA PÁGINA: EN VENTA ---
+    # --- PÁGINA: EN VENTA ---
     elif st.session_state.pagina_actual == "En Venta":
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN VENTA</div>", unsafe_allow_html=True)
         
-        # Selector de Tipo (Copia de los botones de la Principal)
         col1, col2, col3 = st.columns(3)
         categorias_v = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
         
@@ -450,64 +436,83 @@ elif st.session_state.estado == 'web':
             with [col1, col2, col3][i]:
                 img_b64 = get_image_base64(img)
                 st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
-                
                 color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
                 st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
                 if st.button(nombre, key=f"venta_cat_{nombre}"):
-                    st.session_state.categoria_actual = nombre
-                    st.rerun()
+                    st.session_state.categoria_actual = nombre; st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
 
-        # BLOQUE ADICIONAL PARA TERRENOS: CONSULTAR PLANES DE CONSTRUCCIÓN
         if st.session_state.categoria_actual == "TERRENOS":
             st.markdown("<br>", unsafe_allow_html=True)
             _, b_col_plans, _ = st.columns([1, 1, 1])
             with b_col_plans:
                 st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
-                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", key="btn_planes_const"):
-                    st.toast("Cargando planes de construcción para terrenos...")
+                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", key="btn_planes_const"): st.toast("Cargando planes...")
                 st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
 
-        # Lógica de Listado Filtrado
         cat = st.session_state.categoria_actual
         operacion = "Venta"
+        prop_venta = [p for p in propiedades if p["operacion"] == operacion]
+        if cat: prop_venta = [p for p in prop_venta if p["tipo"] == cat]
         
-        if cat:
-            prop_venta = [p for p in propiedades if p["tipo"] == cat and p["operacion"] == operacion]
-            label_seccion = f"RESULTADOS: {cat} EN VENTA"
-        else:
-            prop_venta = [p for p in propiedades if p["operacion"] == operacion]
-            label_seccion = "TODAS LAS PROPIEDADES EN VENTA"
-
+        label_seccion = f"RESULTADOS: {cat} EN VENTA" if cat else "TODAS LAS PROPIEDADES EN VENTA"
         st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{label_seccion}</div>", unsafe_allow_html=True)
 
-        # Mostrar Listado
         _, col_list_v, _ = st.columns([1, 2, 1])
         if prop_venta:
             for i, p in enumerate(prop_venta):
                 with col_list_v:
                     img_b64 = get_image_base64(p["img"])
-                    st.markdown(f"""
-                        <div class='listing-card'>
-                            <div class='img-container-listing'>
-                                <img src='data:image/jpeg;base64,{img_b64}'>
-                            </div>
-                            <div style='padding: 20px 0;'>
-                                <p class='prop-precio'>{p['precio']}</p>
-                                <p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p>
-                                <p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(f"<div class='listing-card'><div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div><div style='padding: 20px 0;'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p><p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
                     st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
-                    if st.button("VER DETALLES", key=f"ficha_venta_{i}"):
-                        st.toast(f"Cargando {p['titulo']}...")
+                    if st.button("VER DETALLES", key=f"ficha_venta_{i}"): st.toast(f"Cargando {p['titulo']}...")
                     st.markdown("</div><br>", unsafe_allow_html=True)
         else:
-            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades en esta categoría.</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades.</p>", unsafe_allow_html=True)
 
+    # --- NUEVA PÁGINA: ALQUILER ---
+    elif st.session_state.pagina_actual == "Alquiler":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN ALQUILER</div>", unsafe_allow_html=True)
+        
+        # Selector de Tipo: Solo Departamentos y Casas
+        _, col1, col2, _ = st.columns([0.5, 1, 1, 0.5])
+        categorias_a = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg")]
+        
+        for i, (nombre, img) in enumerate(categorias_a):
+            with [col1, col2][i]:
+                img_b64 = get_image_base64(img)
+                st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
+                st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
+                if st.button(nombre, key=f"alq_cat_{nombre}"):
+                    st.session_state.categoria_actual = nombre; st.rerun()
+                st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
+
+        cat = st.session_state.categoria_actual
+        operacion = "Alquiler"
+        # Filtrar datos de alquiler
+        prop_alq = [p for p in propiedades if p["operacion"] == operacion]
+        if cat: prop_alq = [p for p in prop_alq if p["tipo"] == cat]
+        
+        label_seccion = f"RESULTADOS: {cat} EN ALQUILER" if cat else "TODAS LAS PROPIEDADES EN ALQUILER"
+        st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{label_seccion}</div>", unsafe_allow_html=True)
+
+        _, col_list_a, _ = st.columns([1, 2, 1])
+        if prop_alq:
+            for i, p in enumerate(prop_alq):
+                with col_list_a:
+                    img_b64 = get_image_base64(p["img"])
+                    st.markdown(f"<div class='listing-card'><div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div><div style='padding: 20px 0;'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p><p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
+                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
+                    if st.button("VER DETALLES", key=f"ficha_alq_{i}"): st.toast(f"Cargando {p['titulo']}...")
+                    st.markdown("</div><br>", unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades en alquiler disponibles en esta categoría.</p>", unsafe_allow_html=True)
 
     # --- FOOTER UNIFICADO ---
     st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
@@ -539,7 +544,6 @@ elif st.session_state.estado == 'web':
     """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Botón de Logout
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
     with fcol:
