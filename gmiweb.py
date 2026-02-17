@@ -449,10 +449,8 @@ elif st.session_state.estado == 'web':
         for i, (nombre, img) in enumerate(categorias_v):
             with [col1, col2, col3][i]:
                 img_b64 = get_image_base64(img)
-                # Estilo de tarjeta de categoría
                 st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
                 
-                # Botón con indicador si está seleccionado
                 color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
                 st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
                 if st.button(nombre, key=f"venta_cat_{nombre}"):
@@ -460,14 +458,22 @@ elif st.session_state.estado == 'web':
                     st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
 
+        # BLOQUE ADICIONAL PARA TERRENOS: CONSULTAR PLANES DE CONSTRUCCIÓN
+        if st.session_state.categoria_actual == "TERRENOS":
+            st.markdown("<br>", unsafe_allow_html=True)
+            _, b_col_plans, _ = st.columns([1, 1, 1])
+            with b_col_plans:
+                st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
+                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", key="btn_planes_const"):
+                    st.toast("Cargando planes de construcción para terrenos...")
+                st.markdown("</div>", unsafe_allow_html=True)
+
         st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
 
         # Lógica de Listado Filtrado
         cat = st.session_state.categoria_actual
-        # Forzamos operación Venta
         operacion = "Venta"
         
-        # Filtrado de datos
         if cat:
             prop_venta = [p for p in propiedades if p["tipo"] == cat and p["operacion"] == operacion]
             label_seccion = f"RESULTADOS: {cat} EN VENTA"
