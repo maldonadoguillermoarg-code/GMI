@@ -25,7 +25,7 @@ def get_image_base64(path):
     except:
         return ""
 
-# --- ESTILOS GLOBALES (La confiramcion de Morty) ---
+# --- ESTILOS GLOBALES ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
@@ -111,15 +111,6 @@ st.markdown(f"""
         color: #C41E3A !important;
     }}
 
-    /* Estilo para botones de imagen invisibles */
-    .stButton>button:has(div.img-container-listing), 
-    .stButton>button:has(div.listing-card) {{
-        padding: 0 !important;
-        border: none !important;
-        background: none !important;
-        width: 100% !important;
-    }}
-
     /* Banner Córdoba */
     .banner-cordoba {{
         width: 100%;
@@ -134,29 +125,33 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- CAMBIO QUIRÚRGICO: BOTÓN TODAS LAS PROPIEDADES --- */
-    /* Seleccionamos específicamente el botón por su clave para no afectar otros botones */
+    /* --- CAMBIO QUIRÚRGICO: BOTÓN PROPIEDADES DISPONIBLES (ESTILO BUSCAR) --- */
+    /* Forzamos el estilo usando selectores de alta prioridad */
+    div[data-testid="stVerticalBlock"] div.stButton > button {{
+        transition: all 0.3s ease !important;
+    }}
+
+    /* Específico para el botón por su contenido de texto para asegurar que se aplique */
+    button:has(p:contains("PROPIEDADES DISPONIBLES")), 
     div.stButton > button[key="btn_all_props"] {{
         background-color: #444444 !important;
         color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        height: 65px !important;
         width: 100% !important;
-        transition: background-color 0.4s ease !important;
+        border-radius: 10px !important;
+        height: 55px !important;
+        border: none !important;
+        margin-top: 10px !important;
     }}
-    
+
     div.stButton > button[key="btn_all_props"]:hover {{
         background-color: #C41E3A !important;
+        color: white !important;
     }}
 
     div.stButton > button[key="btn_all_props"] p {{
-        font-family: 'Inter', sans-serif !important;
         font-weight: 800 !important;
-        font-size: 18px !important;
-        letter-spacing: 2px !important;
-        text-transform: uppercase !important;
-        margin-bottom: 0px !important;
+        font-size: 16px !important;
+        letter-spacing: 1px !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -287,18 +282,15 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- RECONSTRUCCIÓN SECCIÓN BANNER Y BOTÓN ---
+        # --- SECCIÓN BANNER Y BOTÓN (CAMBIO SOLICITADO) ---
         if st.session_state.categoria_actual is None:
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            st.markdown("<br>", unsafe_allow_html=True)
-            # El botón ahora ocupa casi todo el ancho disponible mediante columnas de ajuste
-            _, col_boton, _ = st.columns([0.05, 0.9, 0.05])
-            with col_boton:
-                if st.button("PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
-                    st.session_state.categoria_actual = "TODAS"
-                    st.rerun()
+            # El botón ahora ocupa el ancho completo de la imagen
+            if st.button("PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
+                st.session_state.categoria_actual = "TODAS"
+                st.rerun()
         
         st.markdown("<br><br><br>", unsafe_allow_html=True)
 
@@ -372,7 +364,7 @@ elif st.session_state.estado == 'web':
     else:
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
 
-    # --- PIE DE PÁGINA (FOOTER EXACTO) ---
+    # --- PIE DE PÁGINA ---
     st.markdown("""
         <div class="footer-container">
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
