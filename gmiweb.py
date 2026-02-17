@@ -107,7 +107,7 @@ st.markdown(f"""
         width: 100%;
         border-radius: 8px;
         overflow: hidden;
-        margin-top: 40px;
+        margin-top: 20px;
         height: 350px;
     }}
     .banner-cordoba img {{
@@ -116,7 +116,7 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- CAMBIO QUIRÚRGICO AISLADO: BOTÓN TODAS LAS PROPIEDADES --- */
+    /* --- CAMBIO QUIRÚRGICO AISLADO: BOTÓN VER OPORTUNIDADES --- */
     button[key="btn_all_props"] {{
         background-color: #444444 !important;
         width: 100% !important;
@@ -124,6 +124,7 @@ st.markdown(f"""
         height: 60px !important;
         border: none !important;
         transition: all 0.3s ease !important;
+        margin-top: 10px !important;
     }}
 
     button[key="btn_all_props"]:hover {{
@@ -267,13 +268,17 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- SECCIÓN BANNER Y BOTÓN ---
+        # --- SECCIÓN BANNER Y BOTÓN (CAMBIO QUIRÚRGICO) ---
         if st.session_state.categoria_actual is None:
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            # Título estilo EXPLORAR arriba de la imagen
+            st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>TODAS LAS PROPIEDADES</div>", unsafe_allow_html=True)
+            
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            # BOTÓN TODAS LAS PROPIEDADES DISPONIBLES
-            if st.button("TODAS LAS PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
+            # Botón con nuevo texto VER OPORTUNIDADES
+            if st.button("VER OPORTUNIDADES", key="btn_all_props", use_container_width=True):
                 st.session_state.categoria_actual = "TODAS"
                 st.rerun()
         
@@ -349,7 +354,7 @@ elif st.session_state.estado == 'web':
     else:
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
 
-    # --- PIE DE PÁGINA RESTAURADO ---
+    # --- PIE DE PÁGINA ---
     st.markdown("""
         <div class="footer-container">
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
