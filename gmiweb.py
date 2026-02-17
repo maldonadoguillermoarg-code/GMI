@@ -74,7 +74,7 @@ st.markdown(f"""
         margin-top: 5px;
     }}
 
-    /* CAMBIO QUIRÚRGICO: Botón Buscar Estilo Morty */
+    /* Botón Buscar Estilo Morty */
     div.stButton > button[kind="primary"] {{
         background-color: #1a1a1a !important;
         border: none !important;
@@ -202,45 +202,37 @@ elif st.session_state.estado == 'web':
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # --- SUPER FILTRO CON ALINEACIÓN SOLICITADA ---
+        # --- SUPER FILTRO CON CAMBIO QUIRÚRGICO: SOLO RANGO ---
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
         
-        # FILA 1: - - - - =
-        f1_c1, f1_c2, f1_c3, f1_c4, f1_c5 = st.columns([1, 1, 1, 1, 1])
-        with f1_c1:
+        f_col1, f_col2, f_col3, f_col4, f_col5 = st.columns([1, 1, 1, 1, 1])
+        
+        # FILA 1
+        with f_col1:
             st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
             st.selectbox("u", ["Argentina, Córdoba", "Argentina, Buenos Aires"], label_visibility="collapsed", key="u1")
-        with f1_c2:
+        with f_col2:
             st.markdown("<p class='filter-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
             st.selectbox("t", ["Departamentos", "Casas", "Terrenos"], label_visibility="collapsed", key="t1")
-        with f1_c3:
+        with f_col3:
+            # CAMBIO QUIRÚRGICO: Solo Rango de Presupuesto
             st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
-            st.text_input("min", placeholder="Mínimo USD", label_visibility="collapsed", key="m1")
-        with f1_c4:
+            st.selectbox("rango", ["Seleccionar Rango", "0 a 50.000", "50.000 a 100.000", "100.000 a 350.000", "350.000 a 500.000", "+500.000"], label_visibility="collapsed", key="rango_p")
+        with f_col4:
             st.markdown("<p class='filter-label'>OPERACIÓN</p>", unsafe_allow_html=True)
             st.selectbox("o", ["En Venta", "En Alquiler"], label_visibility="collapsed", key="o1")
-        with f1_c5:
+        with f_col5:
             if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
                 st.toast("Filtrando resultados...")
 
-        # FILA 2:     -
-        f2_c1, f2_c2, f2_c3, f2_c4, f2_c5 = st.columns([1, 1, 1, 1, 1])
-        with f2_c3:
-            st.markdown("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-            st.selectbox("rango", ["Seleccionar Rango", "0 a 50.000", "50.000 a 100.000", "100.000 a 350.000", "350.000 a 500.000", "+500.000"], label_visibility="collapsed", key="rango_p")
-
-        # FILA 3: - - -
-        f3_c1, f3_c2, f3_c3, f3_c4, f3_c5 = st.columns([1, 1, 1, 1, 1])
-        with f3_c1:
+        # FILA 2 (Para mantener la alineación de los otros campos)
+        with f_col1:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
             st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
-        with f3_c2:
+        with f_col2:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>DORMITORIOS</p>", unsafe_allow_html=True)
             st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
-        with f3_c3:
-            st.markdown("<div style='margin-top:25px;'></div>", unsafe_allow_html=True)
-            st.text_input("max", placeholder="Máximo USD", label_visibility="collapsed", key="m2")
-        with f3_c4:
+        with f_col4:
             st.markdown("<div style='margin-top:35px;'></div>", unsafe_allow_html=True)
             st.checkbox("Apto Crédito", key="apto_check")
 
