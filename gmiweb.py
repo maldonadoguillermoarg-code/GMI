@@ -79,6 +79,16 @@ st.markdown(f"""
         height: 15px;
     }}
 
+    /* Estilos específicos para el formulario de Tasaciones */
+    .form-desc-text {{
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 18px;
+        color: #444;
+        line-height: 1.6;
+        border-left: 4px solid #C41E3A;
+        padding-left: 20px;
+    }}
+
     div.stButton > button[kind="primary"] {{
         background-color: #1a1a1a !important;
         border: none !important;
@@ -352,7 +362,7 @@ elif st.session_state.estado == 'web':
             st.markdown("<br><br>", unsafe_allow_html=True)
             st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>TODAS LAS PROPIEDADES</div>", unsafe_allow_html=True)
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
-            st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}' style='width:100%; height:300px; object-fit:cover; border-radius:8px;'></div>", unsafe_allow_html=True)
             st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
             if st.button("VER OPORTUNIDADES", key="btn_all_props"):
                 st.session_state.categoria_actual = "TODAS"; st.session_state.operacion_filtro = None; st.rerun()
@@ -477,7 +487,6 @@ elif st.session_state.estado == 'web':
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN ALQUILER</div>", unsafe_allow_html=True)
         
-        # Selector de Tipo: Solo Departamentos y Casas
         _, col1, col2, _ = st.columns([0.5, 1, 1, 0.5])
         categorias_a = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg")]
         
@@ -495,7 +504,6 @@ elif st.session_state.estado == 'web':
 
         cat = st.session_state.categoria_actual
         operacion = "Alquiler"
-        # Filtrar datos de alquiler
         prop_alq = [p for p in propiedades if p["operacion"] == operacion]
         if cat: prop_alq = [p for p in prop_alq if p["tipo"] == cat]
         
@@ -513,6 +521,46 @@ elif st.session_state.estado == 'web':
                     st.markdown("</div><br>", unsafe_allow_html=True)
         else:
             st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades en alquiler disponibles en esta categoría.</p>", unsafe_allow_html=True)
+
+    # --- NUEVA PÁGINA: TASACIONES (Cambio Quirúrgico) ---
+    elif st.session_state.pagina_actual == "Tasaciones":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 60px;'>TASACIONES PROFESIONALES</div>", unsafe_allow_html=True)
+        
+        t_col1, t_col2 = st.columns([1, 1.2], gap="large")
+        
+        with t_col1:
+            st.markdown(f"""
+                <div class='form-desc-text'>
+                    En GMI | Negocios Inmobiliarios, entendemos que conocer el valor real de su propiedad es el primer paso para una operación exitosa.<br><br>
+                    Nuestro proceso combina el análisis técnico de superficies, la evaluación del estado constructivo y un profundo estudio de las tendencias actuales del mercado en Córdoba.<br><br>
+                    Complete el formulario y un especialista de nuestro equipo lo contactará para coordinar una visita técnica sin compromiso.
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with t_col2:
+            with st.container():
+                st.markdown("<p class='filter-label'>DATOS DE LA PROPIEDAD</p>", unsafe_allow_html=True)
+                c1, c2 = st.columns(2)
+                tipo = c1.selectbox("Tipo de Propiedad", ["Departamento", "Casa", "Terreno", "Local/Oficina"], label_visibility="collapsed")
+                loc = c2.text_input("Localidad", placeholder="Localidad")
+                barrio = st.text_input("Barrio", placeholder="Nombre del Barrio")
+                
+                c3, c4 = st.columns(2)
+                m_cub = c3.number_input("M2 Cubiertos", min_value=0, key="m_cub_tas")
+                m_tot = c4.number_input("M2 Totales", min_value=0, key="m_tot_tas")
+                
+                desc_p = st.text_area("Descripción", placeholder="ej: 3 dormitorios, baño, con cochera y patio...", height=100)
+                
+                st.markdown("<p class='filter-label' style='margin-top:20px;'>DATOS DE CONTACTO</p>", unsafe_allow_html=True)
+                nom = st.text_input("Nombre y Apellido", placeholder="Nombre y Apellido")
+                tel = st.text_input("Teléfono", placeholder="WhatsApp / Teléfono")
+                mail = st.text_input("Email", placeholder="Correo electrónico")
+                
+                st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
+                if st.button("SOLICITAR TASACIÓN", key="btn_send_tas"):
+                    st.success("Solicitud enviada exitosamente.")
+                st.markdown("</div>", unsafe_allow_html=True)
 
     # --- FOOTER UNIFICADO ---
     st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
@@ -549,6 +597,5 @@ elif st.session_state.estado == 'web':
     with fcol:
         st.markdown("<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:4px;'></div>", unsafe_allow_html=True)
         if st.button("LOGOUT", key="btn_close"):
-            st.session_state.estado = 'intro'; st.session_state.pagina_actual = 'Principal'
-            st.session_state.categoria_actual = None; st.session_state.operacion_filtro = None; st.rerun()
+            st.session_state.estado = 'intro'; st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
