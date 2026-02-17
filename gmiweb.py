@@ -80,6 +80,15 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
+    /* Footer Container Original */
+    .footer-container {{
+        background-color: #1a1a1a;
+        color: #ffffff;
+        padding: 80px 60px;
+        font-family: 'Inter', sans-serif;
+        margin-top: 80px;
+    }}
+
     /* Navbar Custom */
     div.stButton > button {{
         border: none !important;
@@ -107,27 +116,25 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- CAMBIO QUIRÚRGICO: BOTÓN TODAS LAS PROPIEDADES DISPONIBLES --- */
-    /* Usamos el ID del contenedor para máxima prioridad */
-    div.stButton > button[key="btn_all_props"] {{
+    /* --- CAMBIO QUIRÚRGICO AISLADO: BOTÓN TODAS LAS PROPIEDADES --- */
+    button[key="btn_all_props"] {{
         background-color: #444444 !important;
         width: 100% !important;
         border-radius: 15px !important;
         height: 60px !important;
         border: none !important;
-        transition: background-color 0.3s ease !important;
+        transition: all 0.3s ease !important;
     }}
 
-    div.stButton > button[key="btn_all_props"]:hover {{
+    button[key="btn_all_props"]:hover {{
         background-color: #C41E3A !important;
     }}
 
-    /* Forzamos tipografía MAYÚSCULAS y COLOR NEGRO */
-    div.stButton > button[key="btn_all_props"] p {{
+    button[key="btn_all_props"] p {{
         color: #000000 !important;
         font-family: 'Inter', sans-serif !important;
         font-weight: 900 !important;
-        font-size: 20px !important;
+        font-size: 18px !important;
         text-transform: uppercase !important;
         letter-spacing: 2px !important;
     }}
@@ -265,7 +272,7 @@ elif st.session_state.estado == 'web':
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            # CAMBIO QUIRÚRGICO: Texto exacto, tipografía mayúsculas y negra
+            # BOTÓN TODAS LAS PROPIEDADES DISPONIBLES
             if st.button("TODAS LAS PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
                 st.session_state.categoria_actual = "TODAS"
                 st.rerun()
@@ -342,7 +349,7 @@ elif st.session_state.estado == 'web':
     else:
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
 
-    # --- PIE DE PÁGINA ---
+    # --- PIE DE PÁGINA RESTAURADO ---
     st.markdown("""
         <div class="footer-container">
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
@@ -365,6 +372,14 @@ elif st.session_state.estado == 'web':
                     <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Bv. Chacabuco 1234, Córdoba</p>
                     <p style="font-size: 13px; color: #888; margin-bottom: 12px;">+54 351 123 4567</p>
                     <p style="font-size: 13px; color: #888; margin-bottom: 12px;">info@gminegocios.com.ar</p>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">SÍGUENOS</h4>
+                    <div style="display: flex; gap: 20px;">
+                        <span style="color: #888; font-size: 13px;">Instagram</span>
+                        <span style="color: #888; font-size: 13px;">Facebook</span>
+                        <span style="color: #888; font-size: 13px;">LinkedIn</span>
+                    </div>
                 </div>
             </div>
             <hr style="border: 0.1px solid #333; margin: 60px 0 40px 0;">
