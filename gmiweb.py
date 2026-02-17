@@ -79,14 +79,25 @@ st.markdown(f"""
         height: 15px;
     }}
 
-    /* Estilos específicos para el formulario de Tasaciones */
-    .form-desc-text {{
-        font-family: 'Nunito Sans', sans-serif;
-        font-size: 18px;
-        color: #444;
-        line-height: 1.6;
-        border-left: 4px solid #C41E3A;
-        padding-left: 20px;
+    /* Estilos Tasaciones Especiales */
+    .tasacion-titulo {{
+        color: #C41E3A;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: 60px;
+        text-align: left;
+        margin-bottom: 40px;
+        letter-spacing: -1px;
+    }}
+
+    .tasacion-label {{
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        color: #000000 !important;
+        margin-bottom: 8px;
+        margin-top: 15px;
+        text-transform: uppercase;
     }}
 
     div.stButton > button[kind="primary"] {{
@@ -362,7 +373,7 @@ elif st.session_state.estado == 'web':
             st.markdown("<br><br>", unsafe_allow_html=True)
             st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>TODAS LAS PROPIEDADES</div>", unsafe_allow_html=True)
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
-            st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}' style='width:100%; height:300px; object-fit:cover; border-radius:8px;'></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}' style='width: 100%; height: 350px; object-fit: cover; border-radius: 8px;'></div>", unsafe_allow_html=True)
             st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
             if st.button("VER OPORTUNIDADES", key="btn_all_props"):
                 st.session_state.categoria_actual = "TODAS"; st.session_state.operacion_filtro = None; st.rerun()
@@ -482,7 +493,7 @@ elif st.session_state.estado == 'web':
         else:
             st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades.</p>", unsafe_allow_html=True)
 
-    # --- NUEVA PÁGINA: ALQUILER ---
+    # --- PÁGINA: ALQUILER ---
     elif st.session_state.pagina_actual == "Alquiler":
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN ALQUILER</div>", unsafe_allow_html=True)
@@ -522,45 +533,62 @@ elif st.session_state.estado == 'web':
         else:
             st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades en alquiler disponibles en esta categoría.</p>", unsafe_allow_html=True)
 
-    # --- NUEVA PÁGINA: TASACIONES (Cambio Quirúrgico) ---
+    # --- PÁGINA: TASACIONES (Cambio Quirúrgico) ---
     elif st.session_state.pagina_actual == "Tasaciones":
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 60px;'>TASACIONES PROFESIONALES</div>", unsafe_allow_html=True)
+        st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
+        st.markdown("<div class='tasacion-titulo'>TASACIONES</div>", unsafe_allow_html=True)
         
-        t_col1, t_col2 = st.columns([1, 1.2], gap="large")
+        _, t_col_main, _ = st.columns([0.1, 2, 0.1])
         
-        with t_col1:
-            st.markdown(f"""
-                <div class='form-desc-text'>
-                    En GMI | Negocios Inmobiliarios, entendemos que conocer el valor real de su propiedad es el primer paso para una operación exitosa.<br><br>
-                    Nuestro proceso combina el análisis técnico de superficies, la evaluación del estado constructivo y un profundo estudio de las tendencias actuales del mercado en Córdoba.<br><br>
-                    Complete el formulario y un especialista de nuestro equipo lo contactará para coordinar una visita técnica sin compromiso.
-                </div>
-            """, unsafe_allow_html=True)
+        with t_col_main:
+            # Fila 1
+            st.markdown("<p class='tasacion-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
+            tipo_t = st.text_input("t1", placeholder="ej: Casa, Departamento, Oficina...", label_visibility="collapsed")
             
-        with t_col2:
-            with st.container():
-                st.markdown("<p class='filter-label'>DATOS DE LA PROPIEDAD</p>", unsafe_allow_html=True)
-                c1, c2 = st.columns(2)
-                tipo = c1.selectbox("Tipo de Propiedad", ["Departamento", "Casa", "Terreno", "Local/Oficina"], label_visibility="collapsed")
-                loc = c2.text_input("Localidad", placeholder="Localidad")
-                barrio = st.text_input("Barrio", placeholder="Nombre del Barrio")
-                
-                c3, c4 = st.columns(2)
-                m_cub = c3.number_input("M2 Cubiertos", min_value=0, key="m_cub_tas")
-                m_tot = c4.number_input("M2 Totales", min_value=0, key="m_tot_tas")
-                
-                desc_p = st.text_area("Descripción", placeholder="ej: 3 dormitorios, baño, con cochera y patio...", height=100)
-                
-                st.markdown("<p class='filter-label' style='margin-top:20px;'>DATOS DE CONTACTO</p>", unsafe_allow_html=True)
-                nom = st.text_input("Nombre y Apellido", placeholder="Nombre y Apellido")
-                tel = st.text_input("Teléfono", placeholder="WhatsApp / Teléfono")
-                mail = st.text_input("Email", placeholder="Correo electrónico")
-                
-                st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
-                if st.button("SOLICITAR TASACIÓN", key="btn_send_tas"):
-                    st.success("Solicitud enviada exitosamente.")
-                st.markdown("</div>", unsafe_allow_html=True)
+            # Fila 2
+            c1, c2 = st.columns(2)
+            with c1:
+                st.markdown("<p class='tasacion-label'>LOCALIDAD</p>", unsafe_allow_html=True)
+                loc_t = st.text_input("t2", placeholder="ej: Córdoba Capital", label_visibility="collapsed")
+            with c2:
+                st.markdown("<p class='tasacion-label'>BARRIO</p>", unsafe_allow_html=True)
+                bar_t = st.text_input("t3", placeholder="ej: Nueva Córdoba", label_visibility="collapsed")
+            
+            # Fila 3
+            c3, c4 = st.columns(2)
+            with c3:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE CUBIERTA</p>", unsafe_allow_html=True)
+                m_cub_t = st.text_input("t4", placeholder="Cantidad de m2 cubiertos", label_visibility="collapsed")
+            with c4:
+                st.markdown("<p class='tasacion-label'>SUPERFICIE TOTAL</p>", unsafe_allow_html=True)
+                m_tot_t = st.text_input("t5", placeholder="Cantidad de m2 totales", label_visibility="collapsed")
+            
+            # Fila 4
+            st.markdown("<p class='tasacion-label'>DESCRIPCIÓN DE LA PROPIEDAD</p>", unsafe_allow_html=True)
+            desc_t = st.text_area("t6", placeholder="Detalle ambientes, estado, antiguedad, etc...", height=100, label_visibility="collapsed")
+            
+            st.markdown("<hr style='margin: 40px 0; border: 0.5px solid #ccc; opacity: 0.3;'>", unsafe_allow_html=True)
+            
+            # Fila 5: Contacto
+            c5, c6, c7 = st.columns(3)
+            with c5:
+                st.markdown("<p class='tasacion-label'>NOMBRE</p>", unsafe_allow_html=True)
+                nom_t = st.text_input("t7", placeholder="Tu nombre", label_visibility="collapsed")
+            with c6:
+                st.markdown("<p class='tasacion-label'>TELÉFONO</p>", unsafe_allow_html=True)
+                tel_t = st.text_input("t8", placeholder="Tu WhatsApp", label_visibility="collapsed")
+            with c7:
+                st.markdown("<p class='tasacion-label'>EMAIL</p>", unsafe_allow_html=True)
+                em_t = st.text_input("t9", placeholder="Tu correo", label_visibility="collapsed")
+            
+            # Botón Final
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
+            if st.button("SOLICITAR TASACIÓN", key="btn_exec_tas"):
+                st.toast("Solicitud enviada correctamente. Un asesor se contactará con usted.")
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # --- FOOTER UNIFICADO ---
     st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
