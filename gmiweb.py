@@ -86,8 +86,17 @@ st.markdown(f"""
         font-weight: 900;
         font-size: 60px;
         text-align: left;
-        margin-bottom: 40px;
+        margin-bottom: 10px;
         letter-spacing: -1px;
+    }}
+
+    .tasacion-descripcion {{
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        max-width: 400px;
     }}
 
     .tasacion-label {{
@@ -533,12 +542,21 @@ elif st.session_state.estado == 'web':
         else:
             st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades en alquiler disponibles en esta categoría.</p>", unsafe_allow_html=True)
 
-    # --- PÁGINA: TASACIONES (Cambio Quirúrgico) ---
+    # --- PÁGINA: TASACIONES ---
     elif st.session_state.pagina_actual == "Tasaciones":
         st.markdown("<div style='padding: 20px 40px;'>", unsafe_allow_html=True)
-        st.markdown("<div class='tasacion-titulo'>TASACIONES</div>", unsafe_allow_html=True)
         
-        _, t_col_main, _ = st.columns([0.1, 2, 0.1])
+        t_col_left, t_col_main = st.columns([1, 2])
+        
+        with t_col_left:
+            st.markdown("<div class='tasacion-titulo'>TASACIONES</div>", unsafe_allow_html=True)
+            st.markdown("""
+                <div class='tasacion-descripcion'>
+                    Obtenga un valor real de mercado para su propiedad. 
+                    Nuestro equipo técnico analiza variables de ubicación, 
+                    entorno y tendencias actuales para brindar un informe preciso.
+                </div>
+            """, unsafe_allow_html=True)
         
         with t_col_main:
             # Fila 1
@@ -573,57 +591,53 @@ elif st.session_state.estado == 'web':
             c5, c6, c7 = st.columns(3)
             with c5:
                 st.markdown("<p class='tasacion-label'>NOMBRE</p>", unsafe_allow_html=True)
-                nom_t = st.text_input("t7", placeholder="Tu nombre", label_visibility="collapsed")
+                nom_t = st.text_input("t7", placeholder="Su nombre", label_visibility="collapsed")
             with c6:
                 st.markdown("<p class='tasacion-label'>TELÉFONO</p>", unsafe_allow_html=True)
-                tel_t = st.text_input("t8", placeholder="Tu WhatsApp", label_visibility="collapsed")
+                tel_t = st.text_input("t8", placeholder="Su teléfono", label_visibility="collapsed")
             with c7:
                 st.markdown("<p class='tasacion-label'>EMAIL</p>", unsafe_allow_html=True)
-                em_t = st.text_input("t9", placeholder="Tu correo", label_visibility="collapsed")
+                mail_t = st.text_input("t9", placeholder="Su email", label_visibility="collapsed")
             
-            # Botón Final
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
-            if st.button("SOLICITAR TASACIÓN", key="btn_exec_tas"):
-                st.toast("Solicitud enviada correctamente. Un asesor se contactará con usted.")
-            st.markdown("</div>", unsafe_allow_html=True)
-            
+            if st.button("ENVIAR SOLICITUD DE TASACIÓN", key="btn_send_tasa", type="primary"):
+                st.success("Solicitud enviada con éxito. Nos contactaremos a la brevedad.")
+
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- FOOTER UNIFICADO ---
-    st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
-    foot_col1, foot_col2, foot_col3, foot_col4 = st.columns(4)
-    with foot_col1:
-        st.markdown("<div class='footer-title'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>", unsafe_allow_html=True)
-        st.markdown("<div class='footer-subtitle'>NEGOCIOS INMOBILIARIOS</div>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #666; font-size: 12px;'>Expertos en el mercado inmobiliario de Córdoba, brindando soluciones integrales y confianza en cada operación.</p>", unsafe_allow_html=True)
-    with foot_col2:
-        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #ffffff;'>NAVEGACIÓN</div>", unsafe_allow_html=True)
-        st.markdown("<a href='#' class='footer-link'>Propiedades en Venta</a><br><a href='#' class='footer-link'>Alquileres Vigentes</a><br><a href='#' class='footer-link'>Tasaciones Oficiales</a><br><a href='#' class='footer-link'>Administración de Consorcios</a>", unsafe_allow_html=True)
-    with foot_col3:
-        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #ffffff;'>SERVICIOS</div>", unsafe_allow_html=True)
-        st.markdown("<a href='#' class='footer-link'>Inversiones en Pozo</a><br><a href='#' class='footer-link'>Asesoría Legal</a><br><a href='#' class='footer-link'>Desarrollos Urbanos</a><br><a href='#' class='footer-link'>Créditos Hipotecarios</a>", unsafe_allow_html=True)
-    with foot_col4:
-        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #ffffff;'>CONTACTO</div>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #888; font-size: 13px;'>📍 Córdoba, Argentina<br>📞 +54 351 000 0000<br>✉️ info@gmi-inmobiliaria.com.ar</p>", unsafe_allow_html=True)
-    
-    st.markdown("""
-        <hr style='border: 0.1px solid #333; margin: 40px 0;'>
-        <div style='text-align: center;'>
-            <div style='font-family: "Inter"; font-size: 28px; font-weight: 800; color: #ffffff; margin-bottom: 5px;'>
-                <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
+    # --- FOOTER ---
+    st.markdown(f"""
+        <div class='footer-container'>
+            <div style='max-width: 1200px; margin: 0 auto;'>
+                <div class="row" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                    <div style="flex: 1; min-width: 300px; margin-bottom: 40px;">
+                        <div class="footer-title">GMI</div>
+                        <div class="footer-subtitle">Negocios Inmobiliarios</div>
+                        <p style="color: #666; font-size: 13px; line-height: 1.8; max-width: 250px;">
+                            Expertos en el mercado inmobiliario de Córdoba. 
+                            Compromiso, transparencia y resultados.
+                        </p>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">NAVEGACIÓN</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <a href="#" class="footer-link">Propiedades en Venta</a>
+                            <a href="#" class="footer-link">Propiedades en Alquiler</a>
+                            <a href="#" class="footer-link">Tasaciones Profesionales</a>
+                            <a href="#" class="footer-link">Administración de Consorcios</a>
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
+                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">CONTACTO</div>
+                        <p style="color: #888; font-size: 13px; line-height: 2;">
+                            📍 Av. Rafael Nuñez 4500, Córdoba<br>
+                            📞 +54 351 000 0000<br>
+                            ✉️ info@gminmobiliaria.com.ar
+                        </p>
+                    </div>
+                </div>
+                <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #222; text-align: center; color: #444; font-size: 11px; letter-spacing: 1px;">
+                    © {datetime.datetime.now().year} GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS.
+                </div>
             </div>
-            <p style='color: #444; font-size: 10px; letter-spacing: 2px; text-transform: uppercase;'>
-                GMI NEGOCIOS INMOBILIARIOS © 2026 - TODOS LOS DERECHOS RESERVADOS
-            </p>
         </div>
     """, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    _, fcol, _ = st.columns([2, 1, 2])
-    with fcol:
-        st.markdown("<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:4px;'></div>", unsafe_allow_html=True)
-        if st.button("LOGOUT", key="btn_close"):
-            st.session_state.estado = 'intro'; st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
