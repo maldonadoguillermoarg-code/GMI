@@ -94,6 +94,16 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
+    /* Estilo para botones de contacto en el filtro */
+    .btn-filtro-contacto div.stButton > button {{
+        background-color: #f8f9fa !important;
+        border: 1px solid #ddd !important;
+        color: #1a1a1a !important;
+        height: 45px !important;
+        font-size: 10px !important;
+        margin-top: 0px !important;
+    }}
+
     /* Footer Institucional - DISEÑO DE MARCA GMI (OSCURO UNIFICADO) */
     .footer-container {{
         background-color: #080808;
@@ -319,16 +329,29 @@ elif st.session_state.estado == 'web':
             if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
                 st.toast("Filtrando resultados...")
         
+        # SEGUNDA FILA DEL FILTRO - SIMETRÍA TOTAL
         with f_col1:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
             st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
         with f_col2:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>DORMITORIOS</p>", unsafe_allow_html=True)
             st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
+        with f_col3:
+            st.markdown("<p class='filter-label' style='margin-top:15px;'>TELÉFONO</p>", unsafe_allow_html=True)
+            st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
+            if st.button("CONSULTAR POR TELÉFONO", key="btn_tel_filter", use_container_width=True):
+                st.toast("Llamando al +54 351 000 0000")
+            st.markdown("</div>", unsafe_allow_html=True)
         with f_col4:
-            st.markdown("<div style='margin-top:35px;'></div>", unsafe_allow_html=True)
-            # CAMBIO 1: Texto negro para Apto Crédito
-            st.checkbox("Apto Crédito", key="apto_check")
+            st.markdown("<p class='filter-label' style='margin-top:15px;'>WHATSAPP</p>", unsafe_allow_html=True)
+            st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
+            if st.button("ENVIAR WHATSAPP", key="btn_ws_filter", use_container_width=True):
+                st.toast("Abriendo WhatsApp...")
+            st.markdown("</div>", unsafe_allow_html=True)
+        with f_col5:
+            # Columna vacía para mantener la simetría con el botón buscar de arriba
+            pass
+            
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.categoria_actual is None:
@@ -415,15 +438,12 @@ elif st.session_state.estado == 'web':
         st.markdown("<div class='footer-subtitle'>NEGOCIOS INMOBILIARIOS</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #666; font-size: 12px;'>Expertos en el mercado inmobiliario de Córdoba, brindando soluciones integrales y confianza en cada operación.</p>", unsafe_allow_html=True)
     with foot_col2:
-        # CAMBIO 2: Texto negro para NAVEGACIÓN
         st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #000000;'>NAVEGACIÓN</div>", unsafe_allow_html=True)
         st.markdown("<a href='#' class='footer-link'>Propiedades en Venta</a><br><a href='#' class='footer-link'>Alquileres Vigentes</a><br><a href='#' class='footer-link'>Tasaciones Oficiales</a><br><a href='#' class='footer-link'>Administración de Consorcios</a>", unsafe_allow_html=True)
     with foot_col3:
-        # CAMBIO 3: Texto negro para SERVICIOS
         st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #000000;'>SERVICIOS</div>", unsafe_allow_html=True)
         st.markdown("<a href='#' class='footer-link'>Inversiones en Pozo</a><br><a href='#' class='footer-link'>Asesoría Legal</a><br><a href='#' class='footer-link'>Desarrollos Urbanos</a><br><a href='#' class='footer-link'>Créditos Hipotecarios</a>", unsafe_allow_html=True)
     with foot_col4:
-        # CAMBIO 4: Texto negro para CONTACTO
         st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #000000;'>CONTACTO</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #888; font-size: 13px;'>📍 Córdoba, Argentina<br>📞 +54 351 000 0000<br>✉️ info@gmi-inmobiliaria.com.ar</p>", unsafe_allow_html=True)
     
