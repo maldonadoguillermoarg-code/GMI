@@ -23,7 +23,7 @@ def get_image_base64(path):
     except:
         return ""
 
-# --- ESTILOS GLOBALES (La confirmación de Morty) ---
+# --- ESTILOS GLOBALES ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
@@ -34,34 +34,22 @@ st.markdown(f"""
     
     @keyframes blinker {{ 50% {{ opacity: 0.1; }} }}
 
-    /* Estilo de Tarjetas */
-    .listing-card {{ background-color: transparent; margin-bottom: 40px; transition: 0.3s; }}
-    .img-container-listing {{ width: 100%; height: 400px; overflow: hidden; border-radius: 0px; }}
-    .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }}
-    .img-container-listing:hover img {{ transform: scale(1.03); }}
-    
-    .info-container {{ padding: 20px 0; border-bottom: 1px solid #e0e0e0; }}
-    .prop-precio {{ font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; color: #1a1a1a; margin: 0; }}
-    .prop-ubicacion {{ font-family: 'Nunito Sans', sans-serif; font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 2px; margin: 8px 0; }}
-    
-    /* Botones Minimalistas */
-    .stButton>button {{
-        border-radius: 0px; border: 1px solid #1a1a1a; background-color: transparent;
-        color: #1a1a1a; font-family: 'Inter'; font-weight: 700; letter-spacing: 2px;
-        transition: 0.4s;
-    }}
-    .stButton>button:hover {{ background-color: #1a1a1a !important; color: white !important; }}
+    .listing-card {{ background-color: transparent; margin-bottom: 20px; transition: 0.3s; }}
+    .img-container-listing {{ width: 100%; height: 350px; overflow: hidden; border-radius: 2px; }}
+    .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
+    .img-container-listing:hover img {{ transform: scale(1.05); }}
+    .info-container {{ padding: 15px 0; border-bottom: 1px solid #d1d1d1; }}
+    .prop-precio {{ font-family: 'Inter', sans-serif; font-weight: 800; font-size: 20px; color: #1a1a1a; margin: 0; }}
+    .prop-ubicacion {{ font-family: 'Nunito Sans', sans-serif; font-size: 14px; color: #666; text-transform: uppercase; margin: 5px 0; }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- DATOS ---
 propiedades = [
-    {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg", "coords": [-31.417, -64.183]},
-    {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg", "coords": [-31.390, -64.220]},
-    {"tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg", "coords": [-31.450, -64.250]},
+    {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
+    {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
+    {"tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
 ]
-
-# --- LÓGICA DE NAVEGACIÓN ---
 
 if st.session_state.estado == 'intro':
     st.markdown("""
@@ -96,12 +84,18 @@ if st.session_state.estado == 'intro':
     dias, horas, residuo = dif.days, *divmod(dif.seconds, 3600)
     minutos, segundos = divmod(residuo, 60)
     
-    st.markdown(f"<div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div><div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div><div class='text-link-titileo'>>>> MIRA LOS AVANCES DE NUESTRA WEB <<<</div>", unsafe_allow_html=True)
+    # Texto sin flechas y con titileo aplicado
+    st.markdown(f"""
+        <div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div>
+        <div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div>
+        <div class='text-link-titileo'>MIRA LOS AVANCES DE NUESTRA WEB</div>
+        """, unsafe_allow_html=True)
 
+    # El botón invisible permite que al tocar el texto se acceda a la web
     if st.button("ENTER"):
         st.session_state.estado = 'web'
         st.rerun()
-    
+
     time.sleep(1)
     st.rerun()
 
@@ -119,25 +113,13 @@ elif st.session_state.estado == 'web':
         """, unsafe_allow_html=True)
 
     # --- MAPA CÓRDOBA ---
-    m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
+    m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron')
+    st_folium(m, height=300, use_container_width=True, key="mapa_principal")
     
-    # Añadir marcadores de propiedades al mapa
-    for p in propiedades:
-        folium.CircleMarker(
-            location=p["coords"],
-            radius=6,
-            color="#003366",
-            fill=True,
-            fill_color="#C41E3A",
-            popup=p["titulo"]
-        ).add_to(m)
-
-    st_folium(m, height=350, use_container_width=True, key="mapa_principal")
-    
-    st.markdown("<hr style='border: 0.5px solid #d1d1d1; margin: 40px 0;'>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
     if st.session_state.categoria_actual is None:
-        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 10px; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 10px; border-top: 1px solid #d1d1d1; padding-top: 20px; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns(3)
         
         categorias = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
@@ -154,33 +136,28 @@ elif st.session_state.estado == 'web':
         st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
         
         propiedades_filtradas = [p for p in propiedades if p["tipo"] == cat]
+        col_list, col_spacer = st.columns([1, 2])
         
-        # Diseño de listado centrado
-        _, col_list, _ = st.columns([1, 4, 1])
-        
-        with col_list:
-            for i, p in enumerate(propiedades_filtradas):
+        for i, p in enumerate(propiedades_filtradas):
+            with col_list:
                 img_b64 = get_image_base64(p["img"])
                 st.markdown(f"""
                     <div class="listing-card">
                         <div class="img-container-listing"><img src="data:image/jpeg;base64,{img_b64}"></div>
                         <div class="info-container">
                             <p class="prop-precio">{p['precio']}</p>
-                            <p class="prop-ubicacion">{p['titulo']} • {p['barrio']}</p>
-                            <p style='color: #888; font-size: 13px; letter-spacing: 1px;'>{p['amb']} AMB  |  {p['m2']} M²</p>
+                            <p class="prop-ubicacion">{p['titulo']} | {p['barrio']}</p>
+                            <p style='color: #888; font-size: 13px;'>{p['amb']} AMB  •  {p['m2']} M²</p>
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
-                if st.button("VER DETALLES", key=f"ficha_{i}", use_container_width=True):
-                    pass # Aquí iría la lógica de la ficha
+                st.button("VER FICHA COMPLETA", key=f"ficha_{i}")
 
-            if st.button("← VOLVER A CATEGORÍAS", use_container_width=True):
-                st.session_state.categoria_actual = None
-                st.rerun()
+        if st.button("← VOLVER A CATEGORÍAS"):
+            st.session_state.categoria_actual = None
+            st.rerun()
 
-    # Footer de navegación
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    if st.button("SALIR AL INICIO", use_container_width=False):
+    if st.button("← VOLVER AL INICIO"):
         st.session_state.estado = 'intro'
         st.session_state.categoria_actual = None
         st.rerun()
