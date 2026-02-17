@@ -134,16 +134,25 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* CAMBIO QUIRÚRGICO: Estilo resaltado para el botón "Propiedades Disponibles" */
-    div.stButton > button:has(div[data-testid="stMarkdownContainer"] p:contains("PROPIEDADES DISPONIBLES")),
+    /* CAMBIO QUIRÚRGICO: Estilo mejorado para el botón "Propiedades Disponibles" */
     div.stButton > button[key="btn_all_props"] {{
-        background-color: transparent !important;
-        border: 2px solid #1a1a1a !important;
+        background-color: #444444 !important;
+        border: none !important;
+        color: #ffffff !important;
+        border-radius: 30px !important;
+        padding: 15px 0 !important;
+        height: 60px !important;
+        transition: all 0.3s ease-in-out !important;
     }}
     div.stButton > button[key="btn_all_props"] p {{
-        font-size: 22px !important;
-        font-weight: 900 !important;
-        color: #1a1a1a !important;
+        font-size: 18px !important;
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        letter-spacing: 2px !important;
+    }}
+    div.stButton > button[key="btn_all_props"]:hover {{
+        background-color: #C41E3A !important;
+        box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4) !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -279,7 +288,8 @@ elif st.session_state.estado == 'web':
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            _, col_center_btn, _ = st.columns([1.5, 1, 1.5])
+            # CAMBIO QUIRÚRGICO: Ajuste de columnas para botón gris ancho con bordes redondeados
+            _, col_center_btn, _ = st.columns([0.2, 4.6, 0.2])
             with col_center_btn:
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
