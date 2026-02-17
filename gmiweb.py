@@ -265,7 +265,6 @@ if st.session_state.estado == 'intro':
 
 # --- PANTALLA 2: SITIO WEB ---
 elif st.session_state.estado == 'web':
-    # MODIFICACIÓN QUIRÚRGICA: Fondo gris un poco más oscuro para mayor contraste y profundidad
     st.markdown("<style>.stApp { background-color: #E5E7EB !important; }</style>", unsafe_allow_html=True)
     
     # Botón Flotante de Contacto
@@ -328,7 +327,8 @@ elif st.session_state.estado == 'web':
             st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
         with f_col4:
             st.markdown("<div style='margin-top:35px;'></div>", unsafe_allow_html=True)
-            st.checkbox("Apto Crédito", key="apto_check")
+            # CAMBIO 1: Texto negro para Apto Crédito
+            st.checkbox(":black[Apto Crédito]", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.categoria_actual is None:
@@ -407,7 +407,7 @@ elif st.session_state.estado == 'web':
             if st.button("VOLVER", key="btn_volver_main"): st.session_state.categoria_actual = None; st.session_state.operacion_filtro = None; st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- FOOTER UNIFICADO (QUIRÚRGICO: LOGO Y CRÉDITOS DENTRO DEL BLOQUE NEGRO) ---
+    # --- FOOTER UNIFICADO ---
     st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
     foot_col1, foot_col2, foot_col3, foot_col4 = st.columns(4)
     with foot_col1:
@@ -415,13 +415,16 @@ elif st.session_state.estado == 'web':
         st.markdown("<div class='footer-subtitle'>NEGOCIOS INMOBILIARIOS</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #666; font-size: 12px;'>Expertos en el mercado inmobiliario de Córdoba, brindando soluciones integrales y confianza en cada operación.</p>", unsafe_allow_html=True)
     with foot_col2:
-        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px;'>NAVEGACIÓN</div>", unsafe_allow_html=True)
+        # CAMBIO 2: Texto negro para NAVEGACIÓN
+        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #000000;'>NAVEGACIÓN</div>", unsafe_allow_html=True)
         st.markdown("<a href='#' class='footer-link'>Propiedades en Venta</a><br><a href='#' class='footer-link'>Alquileres Vigentes</a><br><a href='#' class='footer-link'>Tasaciones Oficiales</a><br><a href='#' class='footer-link'>Administración de Consorcios</a>", unsafe_allow_html=True)
     with foot_col3:
-        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px;'>SERVICIOS</div>", unsafe_allow_html=True)
+        # CAMBIO 3: Texto negro para SERVICIOS
+        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #000000;'>SERVICIOS</div>", unsafe_allow_html=True)
         st.markdown("<a href='#' class='footer-link'>Inversiones en Pozo</a><br><a href='#' class='footer-link'>Asesoría Legal</a><br><a href='#' class='footer-link'>Desarrollos Urbanos</a><br><a href='#' class='footer-link'>Créditos Hipotecarios</a>", unsafe_allow_html=True)
     with foot_col4:
-        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px;'>CONTACTO</div>", unsafe_allow_html=True)
+        # CAMBIO 4: Texto negro para CONTACTO
+        st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #000000;'>CONTACTO</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #888; font-size: 13px;'>📍 Córdoba, Argentina<br>📞 +54 351 000 0000<br>✉️ info@gmi-inmobiliaria.com.ar</p>", unsafe_allow_html=True)
     
     st.markdown("""
