@@ -133,6 +133,13 @@ st.markdown(f"""
         height: 100%;
         object-fit: cover;
     }}
+
+    /* Cambio Quirúrgico: Estilo para el botón de Propiedades Disponibles */
+    div.stButton > button[key="btn_all_props"] {{
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        letter-spacing: 1px !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -262,7 +269,7 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- CAMBIO QUIRÚRGICO: BANNER Y BOTÓN TODAS LAS PROPIEDADES ---
+        # --- BANNER Y BOTÓN TODAS LAS PROPIEDADES ---
         if st.session_state.categoria_actual is None:
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
@@ -284,7 +291,6 @@ elif st.session_state.estado == 'web':
             for i, (nombre, img) in enumerate(categorias):
                 with [col1, col2, col3][i]:
                     img_b64 = get_image_base64(img)
-                    # Cambio Quirúrgico: Botón sobre la imagen para navegación
                     if st.button(f" ", key=f"img_cat_{nombre}"):
                         st.session_state.categoria_actual = nombre
                         st.rerun()
@@ -296,11 +302,9 @@ elif st.session_state.estado == 'web':
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
             d_col1, d_col2, d_col3 = st.columns(3)
             
-            # Mostramos 1 por tipo (IDs 1, 4, 7)
             for i, p in enumerate([propiedades[0], propiedades[3], propiedades[6]]):
                 with [d_col1, d_col2, d_col3][i]:
                     img_b64 = get_image_base64(p["img"])
-                    # Cambio Quirúrgico: Botón invisible para la ficha
                     if st.button(f"  ", key=f"img_p_{i}"):
                         st.toast(f"Cargando ficha de {p['titulo']}...")
                     st.markdown(f"""
@@ -321,7 +325,6 @@ elif st.session_state.estado == 'web':
             cat = st.session_state.categoria_actual
             st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
             
-            # Lógica para mostrar todas o por categoría
             if cat == "TODAS":
                 propiedades_filtradas = propiedades
             else:
