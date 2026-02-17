@@ -94,9 +94,9 @@ st.markdown(f"""
         border-radius: 6px !important;
     }}
 
-    /* Footer Institucional - DISEÑO DE MARCA GMI */
+    /* Footer Institucional - DISEÑO DE MARCA GMI (OSCURO UNIFICADO) */
     .footer-container {{
-        background-color: #111111;
+        background-color: #080808;
         color: #ffffff;
         padding: 60px 40px;
         font-family: 'Inter', sans-serif;
@@ -406,7 +406,7 @@ elif st.session_state.estado == 'web':
             if st.button("VOLVER", key="btn_volver_main"): st.session_state.categoria_actual = None; st.session_state.operacion_filtro = None; st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- FOOTER FINAL (CONSTRUIDO RESPETANDO LA MARCA) ---
+    # --- FOOTER UNIFICADO (QUIRÚRGICO: LOGO Y CRÉDITOS DENTRO DEL BLOQUE NEGRO) ---
     st.markdown("<div class='footer-container'>", unsafe_allow_html=True)
     foot_col1, foot_col2, foot_col3, foot_col4 = st.columns(4)
     with foot_col1:
@@ -422,8 +422,22 @@ elif st.session_state.estado == 'web':
     with foot_col4:
         st.markdown("<div style='font-weight: 800; font-size: 14px; margin-bottom: 15px;'>CONTACTO</div>", unsafe_allow_html=True)
         st.markdown("<p style='color: #888; font-size: 13px;'>📍 Córdoba, Argentina<br>📞 +54 351 000 0000<br>✉️ info@gmi-inmobiliaria.com.ar</p>", unsafe_allow_html=True)
-    st.markdown("<hr style='border: 0.1px solid #333; margin: 40px 0;'><p style='text-align: center; color: #444; font-size: 10px; letter-spacing: 2px;'>GMI NEGOCIOS INMOBILIARIOS © 2026 - TODOS LOS DERECHOS RESERVADOS</p></div>", unsafe_allow_html=True)
+    
+    # Esta es la sección unificada que pediste: Logo y Copyright dentro del bloque negro
+    st.markdown("""
+        <hr style='border: 0.1px solid #333; margin: 40px 0;'>
+        <div style='text-align: center;'>
+            <div style='font-family: "Inter"; font-size: 28px; font-weight: 800; color: #ffffff; margin-bottom: 5px;'>
+                <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
+            </div>
+            <p style='color: #444; font-size: 10px; letter-spacing: 2px; text-transform: uppercase;'>
+                GMI NEGOCIOS INMOBILIARIOS © 2026 - TODOS LOS DERECHOS RESERVADOS
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
+    # Botón de Logout (mantiene su posición fuera para facilitar el cierre de sesión)
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
     with fcol:
