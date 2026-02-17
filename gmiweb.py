@@ -118,8 +118,7 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- CAMBIO QUIRÚRGICO: ESTILO FALSO BOTÓN (FORMA GRIS) --- */
-    /* Aplicamos el fondo gris a los botones secundarios que no son de la Navbar */
+    /* --- ESTILO FALSO BOTÓN (FORMA GRIS) --- */
     div.stButton > button[kind="secondary"] {{
         background-color: #e0e0e0 !important;
         color: #1a1a1a !important;
@@ -163,7 +162,7 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATOS (Cambio de TERRENOS a LOTES) ---
+# --- DATOS ---
 propiedades = [
     {"id": 1, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
     {"id": 2, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg"},
@@ -308,7 +307,6 @@ elif st.session_state.estado == 'web':
             st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns(3)
             
-            # Cambio de nombres a LOTES
             categorias = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("LOTES", "Terreno.jpeg")]
             for i, (nombre, img) in enumerate(categorias):
                 with [col1, col2, col3][i]:
@@ -332,4 +330,130 @@ elif st.session_state.estado == 'web':
                             </div>
                             <div style='padding: 20px 5px;'>
                                 <p class='prop-precio'>{p['precio']}</p>
-                                <p class='
+                                <p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p>
+                                <p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    st.button(f"VER FICHA COMPLETA", key=f"btn_dest_{i}", use_container_width=True, type="secondary")
+
+        else:
+            cat = st.session_state.categoria_actual
+            
+            # --- SUB-NAVBAR ---
+            sub_col1, sub_col2, sub_col3, sub_col4 = st.columns([1,1,1,1])
+            with sub_col1:
+                if st.button("TODAS", use_container_width=True, type="primary" if cat=="TODAS" else "secondary"):
+                    st.session_state.categoria_actual = "TODAS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+            with sub_col2:
+                if st.button("DEPARTAMENTOS", use_container_width=True, type="primary" if cat=="DEPARTAMENTOS" else "secondary"):
+                    st.session_state.categoria_actual = "DEPARTAMENTOS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+            with sub_col3:
+                if st.button("CASAS", use_container_width=True, type="primary" if cat=="CASAS" else "secondary"):
+                    st.session_state.categoria_actual = "CASAS"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+            with sub_col4:
+                if st.button("LOTES", use_container_width=True, type="primary" if cat=="LOTES" else "secondary"):
+                    st.session_state.categoria_actual = "LOTES"
+                    st.session_state.operacion_filtro = None
+                    st.rerun()
+
+            st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin: 30px 0;'>{cat}</div>", unsafe_allow_html=True)
+            
+            # --- FILTROS INTERNOS ---
+            if cat in ["DEPARTAMENTOS", "CASAS"]:
+                btn_v, btn_a = st.columns(2)
+                if btn_v.button("EN VENTA", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Venta" else "secondary"):
+                    st.session_state.operacion_filtro = "Venta"
+                    st.rerun()
+                if btn_a.button("EN ALQUILER", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Alquiler" else "secondary"):
+                    st.session_state.operacion_filtro = "Alquiler"
+                    st.rerun()
+            elif cat == "LOTES":
+                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", use_container_width=True, type="secondary"):
+                    st.session_state.pagina_actual = "Planes_Construccion"
+                    st.rerun()
+
+            # --- LÓGICA DE FILTRADO ---
+            propiedades_filtradas = propiedades if cat == "TODAS" else [p for p in propiedades if p["tipo"] == cat]
+            if st.session_state.operacion_filtro:
+                propiedades_filtradas = [p for p in propiedades_filtradas if p["operacion"] == st.session_state.operacion_filtro]
+                
+            # --- RENDERIZADO DE FICHAS ---
+            _, col_list, _ = st.columns([1, 2, 1])
+            for i, p in enumerate(propiedades_filtradas):
+                with col_list:
+                    img_b64 = get_image_base64(p["img"])
+                    st.markdown(f"""
+                        <div class='listing-card'>
+                            <div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>
+                            <div style='padding: 20px 0;'>
+                                <p class='prop-precio'>{p['precio']}</p>
+                                <p class='prop-ubicacion'>{p['titulo']} | {p['barrio']} ({p['operacion'].upper()})</p>
+                                <p class='prop-detalles'>{p['amb']} AMBIENTES  •  {p['m2']} M²</p>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    st.button(f"VER DETALLES", key=f"ficha_{cat}_{i}", use_container_width=True, type="secondary")
+
+            if st.button("← VOLVER AL MENÚ PRINCIPAL", use_container_width=True, type="secondary"):
+                st.session_state.categoria_actual = None
+                st.session_state.operacion_filtro = None
+                st.rerun()
+
+    elif st.session_state.pagina_actual == "Planes_Construccion":
+        st.markdown("<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>PLANES DE CONSTRUCCIÓN</h2><p style='color: #666;'>Sección en desarrollo para formulario de contacto.</p></div>", unsafe_allow_html=True)
+        if st.button("← VOLVER A LOTES", use_container_width=True, type="secondary"):
+            st.session_state.pagina_actual = "Principal"
+            st.session_state.categoria_actual = "LOTES"
+            st.rerun()
+
+    else:
+        st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga.</p></div>", unsafe_allow_html=True)
+
+    # --- PIE DE PÁGINA ---
+    st.markdown("""
+        <div class="footer-container">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+                    <h2 style="color: white; margin: 0;"><span style="color: #003366;">G</span>M<span style="color: #C41E3A;">I</span></h2>
+                    <p style="font-size: 11px; letter-spacing: 3px; color: #666; font-weight: 800; margin-top: 5px;">NEGOCIOS INMOBILIARIOS</p>
+                    <p style="margin-top: 25px; font-size: 14px; color: #888; line-height: 1.6; max-width: 250px;">Excelencia y transparencia en servicios inmobiliarios.</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; margin-bottom: 30px;">
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">SERVICIOS</h4>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Venta de Propiedades</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Alquileres Anuales</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Tasaciones Profesionales</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; margin-bottom: 30px;">
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">CONTACTO</h4>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Bv. Chacabuco 1234, Córdoba</p>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">info@gminegocios.com.ar</p>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <h4 style="color: white; font-size: 14px; letter-spacing: 2px; margin-bottom: 25px;">SÍGUENOS</h4>
+                    <div style="display: flex; gap: 20px;">
+                        <span style="color: #888; font-size: 13px;">Instagram</span>
+                        <span style="color: #888; font-size: 13px;">Facebook</span>
+                    </div>
+                </div>
+            </div>
+            <hr style="border: 0.1px solid #333; margin: 60px 0 40px 0;">
+            <p style="text-align: center; font-size: 10px; color: #444; letter-spacing: 1px;">© 2026 GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    _, fcol, _ = st.columns([2, 1, 2])
+    if fcol.button("VOLVER AL INICIO / CERRAR", key="btn_close", use_container_width=True, type="secondary"):
+        st.session_state.estado = 'intro'
+        st.session_state.pagina_actual = 'Principal'
+        st.session_state.categoria_actual = None
+        st.session_state.operacion_filtro = None
+        st.rerun()
