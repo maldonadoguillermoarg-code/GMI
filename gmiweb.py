@@ -134,30 +134,34 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* CAMBIO QUIRÚRGICO: Estilo mejorado para el botón "Propiedades Disponibles" */
+    /* --- CAMBIO QUIRÚRGICO: BOTÓN TODAS LAS PROPIEDADES --- */
+    /* Seleccionamos específicamente el botón por su clave para no afectar otros botones */
     div.stButton > button[key="btn_all_props"] {{
         background-color: #444444 !important;
+        color: white !important;
         border: none !important;
-        color: #ffffff !important;
-        border-radius: 30px !important;
-        padding: 15px 0 !important;
-        height: 60px !important;
-        transition: all 0.3s ease-in-out !important;
+        border-radius: 12px !important;
+        height: 65px !important;
+        width: 100% !important;
+        transition: background-color 0.4s ease !important;
     }}
-    div.stButton > button[key="btn_all_props"] p {{
-        font-size: 18px !important;
-        font-weight: 800 !important;
-        color: #ffffff !important;
-        letter-spacing: 2px !important;
-    }}
+    
     div.stButton > button[key="btn_all_props"]:hover {{
         background-color: #C41E3A !important;
-        box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4) !important;
+    }}
+
+    div.stButton > button[key="btn_all_props"] p {{
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 800 !important;
+        font-size: 18px !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase !important;
+        margin-bottom: 0px !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATOS (Ampliados a 3 por categoría para Córdoba) ---
+# --- DATOS ---
 propiedades = [
     {"id": 1, "tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
     {"id": 2, "tipo": "DEPARTAMENTOS", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg"},
@@ -283,15 +287,15 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- BANNER Y BOTÓN TODAS LAS PROPIEDADES ---
+        # --- RECONSTRUCCIÓN SECCIÓN BANNER Y BOTÓN ---
         if st.session_state.categoria_actual is None:
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            # CAMBIO QUIRÚRGICO: Ajuste de columnas para botón gris ancho con bordes redondeados
-            _, col_center_btn, _ = st.columns([0.2, 4.6, 0.2])
-            with col_center_btn:
-                st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            # El botón ahora ocupa casi todo el ancho disponible mediante columnas de ajuste
+            _, col_boton, _ = st.columns([0.05, 0.9, 0.05])
+            with col_boton:
                 if st.button("PROPIEDADES DISPONIBLES", key="btn_all_props", use_container_width=True):
                     st.session_state.categoria_actual = "TODAS"
                     st.rerun()
