@@ -25,7 +25,7 @@ def get_image_base64(path):
     except:
         return ""
 
-# --- ESTILOS GLOBALES (La confirmación de Morty) ---
+# --- ESTILOS GLOBALES (La confiramcion de Morty) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
@@ -66,6 +66,22 @@ st.markdown(f"""
         margin-bottom: 8px;
         letter-spacing: 1.5px;
         text-transform: uppercase;
+    }}
+
+    /* CAMBIO QUIRÚRGICO: Visibilidad Checkbox y Botón Buscar */
+    div[data-testid="stCheckbox"] label p {{
+        color: #1a1a1a !important;
+        font-weight: 600;
+    }}
+
+    .stButton > button.btn-buscar {{
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border-radius: 6px !important;
+        padding: 10px 20px !important;
+        height: 45px !important;
+        width: 100% !important;
+        margin-top: 10px !important;
     }}
 
     /* Footer Estilo Institucional */
@@ -149,7 +165,7 @@ if st.session_state.estado == 'intro':
     time.sleep(1)
     st.rerun()
 
-# --- PANTALLA 2: SITIO WEB (La confirmación de Morty) ---
+# --- PANTALLA 2: SITIO WEB (La confiramcion de Morty) ---
 elif st.session_state.estado == 'web':
     st.markdown("<style>.stApp { background-color: #f4f4f2 !important; }</style>", unsafe_allow_html=True)
     
@@ -163,7 +179,9 @@ elif st.session_state.estado == 'web':
                 <div style='font-family: "Inter"; font-size: 45px; font-weight: 800; line-height: 0.9; color: #1a1a1a;'>
                     <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
                 </div>
-                <div style='letter-spacing: 4px; color: #666; font-size: 10px; font-weight: 700; margin-top: 5px;'>NEGOCIOS INMOBILIARIOS</div>
+                <div style='letter-spacing: 4px; color: #666; font-size: 10px; font-weight: 700; margin-top: 5px; line-height: 1.2;'>
+                    NEGOCIOS<br>INMOBILIARIOS
+                </div>
             </div>
             """, unsafe_allow_html=True)
             
@@ -185,9 +203,9 @@ elif st.session_state.estado == 'web':
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # SUPER FILTRO (Con Labels Detallados)
+        # SUPER FILTRO
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
-        col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns([2, 1.5, 1.5, 1.5, 1])
+        col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns([2, 1.5, 1.5, 1.5, 1.2])
         
         with col_f1:
             st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
@@ -203,19 +221,23 @@ elif st.session_state.estado == 'web':
             
         with col_f3:
             st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-top:2px;'></div>", unsafe_allow_html=True) # Ajuste de altura
             st.text_input("Minimo", placeholder="Mínimo USD", label_visibility="collapsed")
             st.text_input("Maximo", placeholder="Máximo USD", label_visibility="collapsed")
             
         with col_f4:
             st.markdown("<p class='filter-label'>OPERACIÓN</p>", unsafe_allow_html=True)
             st.selectbox("Operacion", ["En Venta", "En Alquiler", "Alquiler Temp."], label_visibility="collapsed")
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.checkbox("Apto Crédito")
+            st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            st.checkbox("Apto Crédito", key="apto_credito")
             
         with col_f5:
-            st.markdown("<br><br>", unsafe_allow_html=True)
-            if st.button("BUSCAR", use_container_width=True):
+            st.markdown("<div style='margin-top:38px;'></div>", unsafe_allow_html=True)
+            if st.button("BUSCAR", key="btn_principal_buscar", help="Click para filtrar", use_container_width=True):
                 st.toast("Buscando en GMI...")
+            # Aplicamos la clase CSS personalizada mediante un pequeño hack de markdown para el estilo del botón buscar
+            st.markdown('<style>#btn_principal_buscar { background-color: #1a1a1a !important; color: white !important; }</style>', unsafe_allow_html=True)
+
         st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("<br><br><br>", unsafe_allow_html=True)
