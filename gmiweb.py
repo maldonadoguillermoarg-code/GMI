@@ -41,7 +41,7 @@ st.markdown(f"""
     .prop-detalles {{ color: #666 !important; font-size: 13px; font-weight: 400; }}
     
     .listing-card {{ background-color: transparent; margin-bottom: 30px; border-bottom: 1px solid #d1d1d1; padding-bottom: 20px; }}
-    .img-container-listing {{ width: 100%; height: 380px; overflow: hidden; border-radius: 4px; }}
+    .img-container-listing {{ width: 100%; height: 380px; overflow: hidden; border-radius: 4px; cursor: pointer; }}
     .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
     .img-container-listing:hover img {{ transform: scale(1.03); }}
 
@@ -110,13 +110,22 @@ st.markdown(f"""
     div.stButton > button:hover {{
         color: #C41E3A !important;
     }}
+
+    /* CAMBIO QUIRÚRGICO: Estilo para botones de imagen invisibles */
+    .stButton>button:has(div.img-container-listing) {{
+        padding: 0 !important;
+        border: none !important;
+        background: none !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- DATOS ---
 propiedades = [
     {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
+    {"tipo": "DEPARTAMENTOS", "titulo": "Moderno Studio", "precio": "USD 120.000", "barrio": "Nueva Córdoba", "amb": "1", "m2": "40", "img": "Deptos.jpeg"},
     {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
+    {"tipo": "CASAS", "titulo": "Chalet del Sol", "precio": "USD 450.000", "barrio": "Villa Belgrano", "amb": "4", "m2": "280", "img": "Casas.jpeg"},
     {"tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
 ]
 
@@ -202,12 +211,9 @@ elif st.session_state.estado == 'web':
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # --- SUPER FILTRO CON CAMBIO QUIRÚRGICO: SOLO RANGO ---
+        # --- SUPER FILTRO ---
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
-        
         f_col1, f_col2, f_col3, f_col4, f_col5 = st.columns([1, 1, 1, 1, 1])
-        
-        # FILA 1
         with f_col1:
             st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
             st.selectbox("u", ["Argentina, Córdoba", "Argentina, Buenos Aires"], label_visibility="collapsed", key="u1")
@@ -215,7 +221,6 @@ elif st.session_state.estado == 'web':
             st.markdown("<p class='filter-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
             st.selectbox("t", ["Departamentos", "Casas", "Terrenos"], label_visibility="collapsed", key="t1")
         with f_col3:
-            # CAMBIO QUIRÚRGICO: Solo Rango de Presupuesto
             st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
             st.selectbox("rango", ["Seleccionar Rango", "0 a 50.000", "50.000 a 100.000", "100.000 a 350.000", "350.000 a 500.000", "+500.000"], label_visibility="collapsed", key="rango_p")
         with f_col4:
@@ -224,8 +229,7 @@ elif st.session_state.estado == 'web':
         with f_col5:
             if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
                 st.toast("Filtrando resultados...")
-
-        # FILA 2 (Para mantener la alineación de los otros campos)
+        
         with f_col1:
             st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
             st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
@@ -247,7 +251,11 @@ elif st.session_state.estado == 'web':
             for i, (nombre, img) in enumerate(categorias):
                 with [col1, col2, col3][i]:
                     img_b64 = get_image_base64(img)
-                    st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                    # CAMBIO QUIRÚRGICO: Contenedor con botón invisible sobre la imagen
+                    if st.button("", key=f"img_btn_{nombre}"):
+                        st.session_state.categoria_actual = nombre
+                        st.rerun()
+                    st.markdown(f"<div style='margin-top: -65px;' class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
                     if st.button(nombre, key=f"cat_{nombre}", use_container_width=True):
                         st.session_state.categoria_actual = nombre
                         st.rerun()
@@ -255,7 +263,7 @@ elif st.session_state.estado == 'web':
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
             d_col1, d_col2, d_col3 = st.columns(3)
             
-            for i, p in enumerate(propiedades):
+            for i, p in enumerate(propiedades[:3]):
                 with [d_col1, d_col2, d_col3][i]:
                     img_b64 = get_image_base64(p["img"])
                     st.markdown(f"""
@@ -273,9 +281,14 @@ elif st.session_state.estado == 'web':
                     st.button(f"VER FICHA COMPLETA", key=f"btn_dest_{i}", use_container_width=True)
 
         else:
+            # PANTALLA DE CATEGORÍA SELECCIONADA
             cat = st.session_state.categoria_actual
             st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{cat}</div>", unsafe_allow_html=True)
             propiedades_filtradas = [p for p in propiedades if p["tipo"] == cat]
+            
+            if not propiedades_filtradas:
+                st.info(f"No hay propiedades disponibles en {cat} por el momento.")
+            
             _, col_list, _ = st.columns([1, 2, 1])
             for i, p in enumerate(propiedades_filtradas):
                 with col_list:
@@ -292,6 +305,7 @@ elif st.session_state.estado == 'web':
                     """, unsafe_allow_html=True)
                     st.button(f"VER DETALLES", key=f"ficha_{i}", use_container_width=True)
 
+            st.markdown("<br>", unsafe_allow_html=True)
             if st.button("← VOLVER A CATEGORÍAS", use_container_width=True):
                 st.session_state.categoria_actual = None
                 st.rerun()
