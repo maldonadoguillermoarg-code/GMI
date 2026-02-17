@@ -17,8 +17,6 @@ if 'categoria_actual' not in st.session_state:
     st.session_state.categoria_actual = None
 if 'operacion_filtro' not in st.session_state:
     st.session_state.operacion_filtro = None
-if 'propiedad_seleccionada' not in st.session_state:
-    st.session_state.propiedad_seleccionada = None
 
 # Función para imágenes
 def get_image_base64(path):
@@ -81,30 +79,33 @@ st.markdown(f"""
         height: 15px;
     }}
 
-    /* Estilos Ficha de Propiedad (Inspiración Compass) */
-    .ficha-header {{
+    /* Estilos Tasaciones Especiales */
+    .tasacion-titulo {{
+        color: #C41E3A;
         font-family: 'Inter', sans-serif;
         font-weight: 900;
-        font-size: 40px;
-        color: #1a1a1a;
+        font-size: 60px;
+        text-align: left;
+        margin-bottom: 10px;
         letter-spacing: -1px;
-        line-height: 1;
     }}
-    .ficha-precio {{
+
+    .tasacion-descripcion {{
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        max-width: 400px;
+    }}
+
+    .tasacion-label {{
         font-family: 'Inter', sans-serif;
-        font-weight: 400;
-        font-size: 28px;
-        color: #C41E3A;
-        margin: 10px 0;
-    }}
-    .ficha-tag {{
-        display: inline-block;
-        background: #f0f0f0;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-right: 10px;
+        font-size: 16px;
+        font-weight: 800;
+        color: #000000 !important;
+        margin-bottom: 8px;
+        margin-top: 15px;
         text-transform: uppercase;
     }}
 
@@ -136,6 +137,8 @@ st.markdown(f"""
         margin-top: 100px;
         border-top: 3px solid #C41E3A;
     }}
+    .footer-title {{ color: #ffffff; font-weight: 900; font-size: 24px; letter-spacing: 2px; margin-bottom: 20px; }}
+    .footer-subtitle {{ color: #C41E3A; font-weight: 800; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }}
     .footer-link {{ color: #888; text-decoration: none; font-size: 13px; transition: 0.3s; line-height: 2; }}
     .footer-link:hover {{ color: #ffffff; padding-left: 5px; }}
 
@@ -169,6 +172,7 @@ st.markdown(f"""
         font-size: 24px;
         transition: 0.4s;
     }}
+    .btn-float:hover {{ transform: scale(1.1) rotate(15deg); }}
 
     .container-relativo {{
         position: relative;
@@ -192,9 +196,22 @@ st.markdown(f"""
         border-radius: 2px;
         z-index: 1;
         transition: background-color 0.2s ease;
+        color: transparent !important;
+        overflow: hidden;
     }}
+
     .forma-negra {{ background-color: #1a1a1a !important; }}
     .forma-roja {{ background-color: #C41E3A !important; }}
+
+    .container-relativo:active .forma-boton {{
+        background-color: #FF0000 !important;
+    }}
+
+    .container-relativo div.stButton {{
+        position: relative !important;
+        z-index: 2 !important;
+        width: 100% !important;
+    }}
 
     .container-relativo div.stButton > button {{
         width: 100% !important;
@@ -205,26 +222,58 @@ st.markdown(f"""
         font-weight: 900 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        
         background: linear-gradient(90deg, #000 0%, #000 40%, #888 50%, #000 60%, #000 100%) !important;
         background-size: 200% auto !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         animation: scan 3s linear infinite !important;
     }}
+
+    /* Estilos Redes Sociales Contacto */
+    .social-icon-box {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        transition: 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }}
+    .social-icon-box:hover {{
+        background: #fcfcfc;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        border-color: #C41E3A;
+    }}
+    .social-icon-label {{
+        margin-top: 15px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: 12px;
+        color: #1a1a1a;
+        letter-spacing: 1px;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- DATOS ---
 propiedades = [
-    {"id": 1, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg", "desc": "Exclusivo penthouse con vista panorámica a la ciudad. Terminaciones de lujo y amplios ventanales."},
-    {"id": 2, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg", "desc": "Ubicación privilegiada en el corazón de Nueva Córdoba. Piso alto, muy luminoso."},
-    {"id": 3, "tipo": "DEPARTAMENTOS", "operacion": "Alquiler", "titulo": "Torre Duomo", "precio": "$ 450.000", "barrio": "Nueva Córdoba", "amb": "2", "m2": "65", "img": "Deptos.jpeg", "desc": "Amenities de primer nivel: pileta, gimnasio y seguridad 24hs."},
-    {"id": 4, "tipo": "CASAS", "operacion": "Venta", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg", "desc": "Espectacular casona estilo clásico con jardín parquizado y piscina propia."},
-    {"id": 5, "tipo": "CASAS", "operacion": "Alquiler", "titulo": "Casona del Cerro", "precio": "$ 980.000", "barrio": "Cerro de las Rosas", "amb": "5", "m2": "320", "img": "Casas.jpeg", "desc": "Ideal para familias. Amplios espacios sociales y excelente entorno."},
-    {"id": 6, "tipo": "CASAS", "operacion": "Venta", "titulo": "Moderna Manantiales", "precio": "USD 280.000", "barrio": "Manantiales", "amb": "4", "m2": "210", "img": "Casas.jpeg", "desc": "Casa a estrenar con diseño vanguardista en barrio con seguridad."},
-    {"id": 7, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg", "desc": "Lote plano con frente al golf. El mejor entorno de la ciudad."},
-    {"id": 8, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Valle Escondido", "precio": "USD 125.000", "barrio": "Valle Escondido", "amb": "-", "m2": "600", "img": "Terreno.jpeg", "desc": "Lote en barrio consolidado con todos los servicios subterráneos."},
-    {"id": 9, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Tejas 3", "precio": "USD 55.000", "barrio": "Ruta 20", "amb": "-", "m2": "350", "img": "Terreno.jpeg", "desc": "Oportunidad de inversión en zona de gran crecimiento."},
+    {"id": 1, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
+    {"id": 2, "tipo": "DEPARTAMENTOS", "operacion": "Venta", "titulo": "Piso Estrada", "precio": "USD 240.000", "barrio": "Nueva Córdoba", "amb": "3", "m2": "95", "img": "Deptos.jpeg"},
+    {"id": 3, "tipo": "DEPARTAMENTOS", "operacion": "Alquiler", "titulo": "Torre Duomo", "precio": "$ 450.000", "barrio": "Nueva Córdoba", "amb": "2", "m2": "65", "img": "Deptos.jpeg"},
+    {"id": 4, "tipo": "CASAS", "operacion": "Venta", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
+    {"id": 5, "tipo": "CASAS", "operacion": "Alquiler", "titulo": "Casona del Cerro", "precio": "$ 980.000", "barrio": "Cerro de las Rosas", "amb": "5", "m2": "320", "img": "Casas.jpeg"},
+    {"id": 6, "tipo": "CASAS", "operacion": "Venta", "titulo": "Moderna Manantiales", "precio": "USD 280.000", "barrio": "Manantiales", "amb": "4", "m2": "210", "img": "Casas.jpeg"},
+    {"id": 7, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
+    {"id": 8, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Valle Escondido", "precio": "USD 125.000", "barrio": "Valle Escondido", "amb": "-", "m2": "600", "img": "Terreno.jpeg"},
+    {"id": 9, "tipo": "TERRENOS", "operacion": "Venta", "titulo": "Lote Tejas 3", "precio": "USD 55.000", "barrio": "Ruta 20", "amb": "-", "m2": "350", "img": "Terreno.jpeg"},
 ]
 
 # --- PANTALLA 1: RELOJ (INTRO) ---
@@ -307,60 +356,17 @@ elif st.session_state.estado == 'web':
             if nav_cols[i].button(label, key=f"nav_{pag}"):
                 st.session_state.pagina_actual = pag
                 st.session_state.categoria_actual = None
-                st.session_state.propiedad_seleccionada = None
-                if pag == "En Venta": st.session_state.operacion_filtro = "Venta"
-                elif pag == "Alquiler": st.session_state.operacion_filtro = "Alquiler"
-                else: st.session_state.operacion_filtro = None
+                if pag == "En Venta":
+                    st.session_state.operacion_filtro = "Venta"
+                elif pag == "Alquiler":
+                    st.session_state.operacion_filtro = "Alquiler"
+                else:
+                    st.session_state.operacion_filtro = None
                 st.rerun()
 
     st.markdown("<hr style='margin: 15px 0; border: 0.5px solid #d1d1d1; opacity: 0.3;'>", unsafe_allow_html=True)
 
-    # --- LÓGICA DE FICHA DETALLADA (MODO COMPASS) ---
-    if st.session_state.propiedad_seleccionada:
-        p = st.session_state.propiedad_seleccionada
-        st.markdown("<br>", unsafe_allow_html=True)
-        col_f1, col_f2 = st.columns([2, 1])
-        
-        with col_f1:
-            img_b64 = get_image_base64(p["img"])
-            st.markdown(f"""
-                <div style='border-radius: 12px; overflow: hidden; height: 500px;'>
-                    <img src='data:image/jpeg;base64,{img_b64}' style='width: 100%; height: 100%; object-fit: cover;'>
-                </div>
-            """, unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown(f"<p style='font-family: Inter; color: #555; line-height: 1.8;'>{p['desc']}</p>", unsafe_allow_html=True)
-            
-        with col_f2:
-            st.markdown(f"""
-                <div class='ficha-header'>{p['titulo']}</div>
-                <div class='ficha-precio'>{p['precio']}</div>
-                <div style='margin: 20px 0;'>
-                    <span class='ficha-tag'>{p['barrio']}</span>
-                    <span class='ficha-tag'>{p['tipo']}</span>
-                    <span class='ficha-tag'>{p['operacion']}</span>
-                </div>
-                <hr style='opacity: 0.1;'>
-                <div style='font-family: Inter; font-size: 14px; color: #666; display: flex; flex-direction: column; gap: 10px;'>
-                    <div><b>Superficie:</b> {p['m2']} m²</div>
-                    <div><b>Ambientes:</b> {p['amb']}</div>
-                    <div><b>Estado:</b> Excelente</div>
-                </div>
-                <br>
-            """, unsafe_allow_html=True)
-            
-            st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
-            if st.button("CONSULTAR POR WHATSAPP", use_container_width=True): st.toast("Redirigiendo...")
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
-            if st.button("VOLVER AL LISTADO"):
-                st.session_state.propiedad_seleccionada = None
-                st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
-
-    # --- CONTENIDO PRINCIPAL ---
-    elif st.session_state.pagina_actual == "Principal":
+    if st.session_state.pagina_actual == "Principal":
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
@@ -368,21 +374,68 @@ elif st.session_state.estado == 'web':
         f_col1, f_col2, f_col3, f_col4, f_col5 = st.columns([1, 1, 1, 1, 1])
         with f_col1:
             st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
-            st.selectbox("u", ["Córdoba, Argentina", "Buenos Aires, Argentina"], label_visibility="collapsed", key="u1")
+            st.selectbox("u", ["Argentina, Córdoba", "Argentina, Buenos Aires"], label_visibility="collapsed", key="u1")
         with f_col2:
-            st.markdown("<p class='filter-label'>TIPO</p>", unsafe_allow_html=True)
+            st.markdown("<p class='filter-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
             st.selectbox("t", ["Departamentos", "Casas", "Terrenos"], label_visibility="collapsed", key="t1")
         with f_col3:
             st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
-            st.selectbox("rango", ["Seleccionar Rango", "0 a 50k", "50k a 150k", "+150k"], label_visibility="collapsed", key="r1")
+            st.selectbox("rango", ["Seleccionar Rango", "0 a 50.000", "50.000 a 100.000", "100.000 a 350.000", "350.000 a 500.000", "+500.000"], label_visibility="collapsed", key="rango_p")
         with f_col4:
             st.markdown("<p class='filter-label'>OPERACIÓN</p>", unsafe_allow_html=True)
             st.selectbox("o", ["En Venta", "En Alquiler"], label_visibility="collapsed", key="o1")
         with f_col5:
-            if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"): st.toast("Buscando...")
+            if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
+                st.toast("Filtrando resultados...")
+            
+        with f_col1:
+            st.markdown("<p class='filter-label' style='margin-top:15px;'>BUSCADOR</p>", unsafe_allow_html=True)
+            st.text_input("b", placeholder="Barrio, calle o ciudad...", label_visibility="collapsed", key="b1")
+        with f_col2:
+            st.markdown("<p class='filter-label' style='margin-top:15px;'>DORMITORIOS</p>", unsafe_allow_html=True)
+            st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
+        with f_col3:
+            st.markdown("<p class='filter-label' style='margin-top:15px; border-bottom: 1px solid #ddd; display: inline-block;'>TELÉFONO</p>", unsafe_allow_html=True)
+            st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
+            if st.button("CONSULTAR POR TELÉFONO", key="btn_tel_filter", use_container_width=True):
+                st.toast("Llamando al +54 351 000 0000")
+            st.markdown("</div>", unsafe_allow_html=True)
+        with f_col4:
+            st.markdown("<p class='filter-label' style='margin-top:15px; border-bottom: 1px solid #ddd; display: inline-block;'>WHATSAPP</p>", unsafe_allow_html=True)
+            st.markdown("<div class='btn-filtro-contacto'>", unsafe_allow_html=True)
+            if st.button("ENVIAR WHATSAPP", key="btn_ws_filter", use_container_width=True):
+                st.toast("Abriendo WhatsApp...")
+            st.markdown("</div>", unsafe_allow_html=True)
+        with f_col5:
+            pass
+            
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.categoria_actual is None:
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>TODAS LAS PROPIEDADES</div>", unsafe_allow_html=True)
+            banner_b64 = get_image_base64("Córdoba_banner2.jpg")
+            st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}' style='width: 100%; height: 350px; object-fit: cover; border-radius: 8px;'></div>", unsafe_allow_html=True)
+            st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
+            if st.button("VER OPORTUNIDADES", key="btn_all_props"):
+                st.session_state.categoria_actual = "TODAS"; st.session_state.operacion_filtro = None; st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+        
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+        if st.session_state.categoria_actual is None:
+            st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>EXPLORAR</div>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns(3)
+            categorias = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
+            for i, (nombre, img) in enumerate(categorias):
+                with [col1, col2, col3][i]:
+                    img_b64 = get_image_base64(img)
+                    st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton'></div>", unsafe_allow_html=True)
+                    if st.button(nombre, key=f"cat_{nombre}"):
+                        st.session_state.categoria_actual = nombre; st.session_state.operacion_filtro = None; st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
+
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
             d_col1, d_col2, d_col3 = st.columns(3)
             for i, p in enumerate([propiedades[0], propiedades[3], propiedades[6]]):
@@ -390,43 +443,241 @@ elif st.session_state.estado == 'web':
                     img_b64 = get_image_base64(p["img"])
                     st.markdown(f"<div class='listing-card'><div style='height: 240px; overflow: hidden; border-radius: 6px;'><img src='data:image/jpeg;base64,{img_b64}' style='width: 100%; height: 100%; object-fit: cover;'></div><div style='padding: 20px 5px;'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p><p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
                     st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
-                    if st.button("VER FICHA COMPLETA", key=f"btn_dest_{i}"):
-                        st.session_state.propiedad_seleccionada = p
-                        st.rerun()
+                    if st.button("VER FICHA COMPLETA", key=f"btn_dest_{i}"): st.toast(f"Cargando ficha de {p['titulo']}...")
                     st.markdown("</div>", unsafe_allow_html=True)
         else:
-            # Lista de propiedades filtrada (Estilo Compass)
             cat = st.session_state.categoria_actual
+            sub_col1, sub_col2, sub_col3, sub_col4 = st.columns([1,1,1,1])
+            labels_sub = ["TODAS", "DEPARTAMENTOS", "CASAS", "TERRENOS"]
+            for i, (col, label) in enumerate(zip([sub_col1, sub_col2, sub_col3, sub_col4], labels_sub)):
+                with col:
+                    st.markdown(f"<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:4px;'></div>", unsafe_allow_html=True)
+                    if st.button(label, key=f"subnav_{label}"):
+                        st.session_state.categoria_actual = label; st.session_state.operacion_filtro = None; st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+            st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin: 30px 0;'>{cat}</div>", unsafe_allow_html=True)
+            
+            if cat in ["DEPARTAMENTOS", "CASAS", "TODAS"]:
+                btn_v, btn_a = st.columns(2)
+                with btn_v:
+                    color_v = "forma-roja" if st.session_state.operacion_filtro == "Venta" else ""
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_v}'></div>", unsafe_allow_html=True)
+                    if st.button("EN VENTA", key="btn_venta_cat"): st.session_state.operacion_filtro = "Venta"; st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
+                with btn_a:
+                    color_a = "forma-roja" if st.session_state.operacion_filtro == "Alquiler" else ""
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_a}'></div>", unsafe_allow_html=True)
+                    if st.button("EN ALQUILER", key="btn_alq_cat"): st.session_state.operacion_filtro = "Alquiler"; st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
+
             propiedades_filtradas = propiedades if cat == "TODAS" else [p for p in propiedades if p["tipo"] == cat]
-            
-            st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin: 30px 0;'>LISTADO {cat}</div>", unsafe_allow_html=True)
-            
+            if st.session_state.operacion_filtro: propiedades_filtradas = [p for p in propiedades_filtradas if p["operacion"] == st.session_state.operacion_filtro]
+                
             _, col_list, _ = st.columns([1, 2, 1])
             for i, p in enumerate(propiedades_filtradas):
                 with col_list:
                     img_b64 = get_image_base64(p["img"])
                     st.markdown(f"<div class='listing-card'><div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div><div style='padding: 20px 0;'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']} ({p['operacion'].upper()})</p><p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
                     st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
-                    if st.button("VER DETALLES", key=f"ficha_{cat}_{i}"):
-                        st.session_state.propiedad_seleccionada = p
-                        st.rerun()
+                    if st.button("VER DETALLES", key=f"ficha_{cat}_{i}"): st.toast("Cargando detalles...")
                     st.markdown("</div><br>", unsafe_allow_html=True)
 
-    # Footer Institucional (Sin cambios)
-    st.markdown(f"""
-        <div class='footer-container'>
-            <div style='display: flex; justify-content: space-between; flex-wrap: wrap; max-width: 1200px; margin: 0 auto;'>
-                <div style='flex: 1; min-width: 300px; margin-bottom: 40px;'>
-                    <div style='font-size: 24px; font-weight: 900; margin-bottom: 20px;'>GMI<span style='color: #C41E3A;'>.</span></div>
-                    <p style='color: #888; font-size: 13px; line-height: 1.8; max-width: 300px;'>Líderes en el mercado de Córdoba.</p>
+            st.markdown("<div class='container-relativo'><div class='forma-boton'></div>", unsafe_allow_html=True)
+            if st.button("VOLVER", key="btn_volver_main"): st.session_state.categoria_actual = None; st.session_state.operacion_filtro = None; st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- PÁGINA: EN VENTA ---
+    elif st.session_state.pagina_actual == "En Venta":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN VENTA</div>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns(3)
+        categorias_v = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg"), ("TERRENOS", "Terreno.jpeg")]
+        for i, (nombre, img) in enumerate(categorias_v):
+            with [col1, col2, col3][i]:
+                img_b64 = get_image_base64(img)
+                st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
+                st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
+                if st.button(nombre, key=f"venta_cat_{nombre}"): st.session_state.categoria_actual = nombre; st.rerun()
+                st.markdown("</div>", unsafe_allow_html=True)
+
+        if st.session_state.categoria_actual == "TERRENOS":
+            st.markdown("<br>", unsafe_allow_html=True)
+            _, b_col_plans, _ = st.columns([1, 1, 1])
+            with b_col_plans:
+                st.markdown("<div class='container-relativo'><div class='forma-boton forma-roja'></div>", unsafe_allow_html=True)
+                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", key="btn_planes_const"): st.toast("Cargando planes...")
+                st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
+        cat = st.session_state.categoria_actual
+        operacion = "Venta"
+        prop_venta = [p for p in propiedades if p["operacion"] == operacion]
+        if cat: prop_venta = [p for p in prop_venta if p["tipo"] == cat]
+        
+        label_seccion = f"RESULTADOS: {cat} EN VENTA" if cat else "TODAS LAS PROPIEDADES EN VENTA"
+        st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{label_seccion}</div>", unsafe_allow_html=True)
+        
+        _, col_list_v, _ = st.columns([1, 2, 1])
+        if prop_venta:
+            for i, p in enumerate(prop_venta):
+                with col_list_v:
+                    img_b64 = get_image_base64(p["img"])
+                    st.markdown(f"<div class='listing-card'><div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div><div style='padding: 20px 0;'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p><p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
+                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
+                    if st.button("VER DETALLES", key=f"ficha_venta_{i}"): st.toast(f"Cargando {p['titulo']}...")
+                    st.markdown("</div><br>", unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades.</p>", unsafe_allow_html=True)
+
+    # --- PÁGINA: ALQUILER ---
+    elif st.session_state.pagina_actual == "Alquiler":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 40px;'>PROPIEDADES EN ALQUILER</div>", unsafe_allow_html=True)
+        _, col1, col2, _ = st.columns([0.5, 1, 1, 0.5])
+        categorias_a = [("DEPARTAMENTOS", "Deptos.jpeg"), ("CASAS", "Casas.jpeg")]
+        for i, (nombre, img) in enumerate(categorias_a):
+            with [col1, col2][i]:
+                img_b64 = get_image_base64(img)
+                st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
+                color_sel = "forma-roja" if st.session_state.categoria_actual == nombre else ""
+                st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_sel}'></div>", unsafe_allow_html=True)
+                if st.button(nombre, key=f"alq_cat_{nombre}"): st.session_state.categoria_actual = nombre; st.rerun()
+                st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<br><hr style='border: 0.1px solid #d1d1d1; opacity: 0.3;'><br>", unsafe_allow_html=True)
+        cat = st.session_state.categoria_actual
+        operacion = "Alquiler"
+        prop_alq = [p for p in propiedades if p["operacion"] == operacion]
+        if cat: prop_alq = [p for p in prop_alq if p["tipo"] == cat]
+        
+        label_seccion = f"RESULTADOS: {cat} EN ALQUILER" if cat else "TODAS LAS PROPIEDADES EN ALQUILER"
+        st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin-bottom: 40px;'>{label_seccion}</div>", unsafe_allow_html=True)
+        
+        _, col_list_a, _ = st.columns([1, 2, 1])
+        if prop_alq:
+            for i, p in enumerate(prop_alq):
+                with col_list_a:
+                    img_b64 = get_image_base64(p["img"])
+                    st.markdown(f"<div class='listing-card'><div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div><div style='padding: 20px 0;'><p class='prop-precio'>{p['precio']}</p><p class='prop-ubicacion'>{p['titulo']} | {p['barrio']}</p><p class='prop-detalles'>{p['amb']} AMBIENTES • {p['m2']} M²</p></div></div>", unsafe_allow_html=True)
+                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'></div>", unsafe_allow_html=True)
+                    if st.button("VER DETALLES", key=f"ficha_alq_{i}"): st.toast(f"Cargando {p['titulo']}...")
+                    st.markdown("</div><br>", unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='text-align:center; color:#666;'>No se encontraron propiedades.</p>", unsafe_allow_html=True)
+
+    # --- PÁGINA: TASACIONES ---
+    elif st.session_state.pagina_actual == "Tasaciones":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        t_col1, t_col2 = st.columns([1, 1])
+        with t_col1:
+            st.markdown("<div style='padding-left: 50px;'>", unsafe_allow_html=True)
+            st.markdown("<p class='tasacion-titulo'>TASACIONES<br>PROFESIONALES</p>", unsafe_allow_html=True)
+            st.markdown("<p class='tasacion-descripcion'>Obtén el valor real de tu propiedad en el mercado actual con nuestro equipo de expertos certificados.</p>", unsafe_allow_html=True)
+            
+            st.markdown("<p class='tasacion-label'>NOMBRE COMPLETO</p>", unsafe_allow_html=True)
+            st.text_input("nom", placeholder="Ej: Juan Pérez", label_visibility="collapsed")
+            st.markdown("<p class='tasacion-label'>TELÉFONO DE CONTACTO</p>", unsafe_allow_html=True)
+            st.text_input("tel", placeholder="+54 351 ...", label_visibility="collapsed")
+            st.markdown("<p class='tasacion-label'>TIPO DE PROPIEDAD</p>", unsafe_allow_html=True)
+            st.selectbox("tipo_t", ["Departamento", "Casa", "Terreno", "Local Comercial"], label_visibility="collapsed")
+            
+            if st.button("SOLICITAR TASACIÓN", type="primary", use_container_width=True):
+                st.success("Solicitud enviada. Nos contactaremos a la brevedad.")
+            st.markdown("</div>", unsafe_allow_html=True)
+        with t_col2:
+            img_b64 = get_image_base64("Deptos.jpeg")
+            st.markdown(f"<div style='height: 100%; min-height: 600px; overflow: hidden; border-radius: 12px 0 0 12px;'><img src='data:image/jpeg;base64,{img_b64}' style='width: 100%; height: 100%; object-fit: cover;'></div>", unsafe_allow_html=True)
+
+    # --- PÁGINA: ADMINISTRACION ---
+    elif st.session_state.pagina_actual == "Administracion":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>ADMINISTRACIÓN DE CONSORCIOS</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Nunito Sans; color: #666; max-width: 700px; margin: 0 auto 50px;'>Gestión transparente y eficiente para edificios y barrios cerrados. Tecnología aplicada al servicio del copropietario.</div>", unsafe_allow_html=True)
+        
+        _, adm_col, _ = st.columns([1, 2, 1])
+        with adm_col:
+            st.markdown("""
+                <div style='background: white; padding: 40px; border-radius: 15px; border: 1px solid #eee;'>
+                    <p style='font-family: Inter; font-weight: 800; font-size: 14px; margin-bottom: 25px;'>ACCESO A COPROPIETARIOS</p>
+                    <input type='text' placeholder='Usuario / Email' style='width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px;'>
+                    <input type='password' placeholder='Contraseña' style='width: 100%; padding: 12px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 6px;'>
                 </div>
-                <div style='flex: 1; min-width: 200px; margin-bottom: 40px;'>
-                    <div style='font-size: 14px; font-weight: 800; margin-bottom: 25px;'>NAVEGACIÓN</div>
-                    <div style='display: flex; flex-direction: column;'>
-                        <a href='#' class='footer-link'>Propiedades</a>
-                        <a href='#' class='footer-link'>Tasaciones</a>
+            """, unsafe_allow_html=True)
+            if st.button("INGRESAR AL PORTAL", key="btn_adm_login", type="primary"):
+                st.error("Credenciales no válidas.")
+            
+            st.markdown("<br><p style='text-align: center; font-size: 12px; color: #888;'>¿Tu consorcio aún no trabaja con nosotros? <a href='#' style='color: #C41E3A;'>Solicitar Propuesta</a></p>", unsafe_allow_html=True)
+
+    # --- PÁGINA: CONTACTO ---
+    elif st.session_state.pagina_actual == "Contacto":
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 50px;'>CONTACTO</div>", unsafe_allow_html=True)
+        
+        c_col1, c_col2, c_col3 = st.columns(3)
+        with c_col1:
+            st.markdown("""
+                <a href='https://wa.me/543510000000' class='social-icon-box'>
+                    <span style='font-size: 30px;'>💬</span>
+                    <span class='social-icon-label'>WHATSAPP</span>
+                </a>
+            """, unsafe_allow_html=True)
+        with c_col2:
+            st.markdown("""
+                <a href='https://instagram.com' class='social-icon-box'>
+                    <span style='font-size: 30px;'>📸</span>
+                    <span class='social-icon-label'>INSTAGRAM</span>
+                </a>
+            """, unsafe_allow_html=True)
+        with c_col3:
+            st.markdown("""
+                <a href='mailto:info@gminmobiliaria.com.ar' class='social-icon-box'>
+                    <span style='font-size: 30px;'>✉️</span>
+                    <span class='social-icon-label'>EMAIL</span>
+                </a>
+            """, unsafe_allow_html=True)
+            
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("""
+            <div style='background: #1a1a1a; color: white; padding: 50px; border-radius: 15px; text-align: center;'>
+                <p style='font-family: Inter; font-weight: 800; font-size: 20px; letter-spacing: 3px; margin-bottom: 20px;'>NUESTRA OFICINA</p>
+                <p style='font-family: Nunito Sans; font-size: 16px; color: #aaa;'>Av. Rafael Nuñez 4500, Cerro de las Rosas<br>Córdoba, Argentina</p>
+                <p style='font-family: Nunito Sans; font-size: 14px; color: #666; margin-top: 20px;'>Lunes a Viernes: 09:00 a 18:00hs</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # --- FOOTER ---
+    st.markdown(f"""
+        <div class="footer-container">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                <div style="flex: 1; min-width: 300px; margin-bottom: 40px;">
+                    <div class="footer-title"><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></div>
+                    <div class="footer-subtitle">Negocios Inmobiliarios</div>
+                    <p style="color: #666; font-size: 13px; line-height: 1.8; max-width: 250px;">
+                        Líderes en el mercado inmobiliario de Córdoba, brindando soluciones integrales y confianza en cada operación.
+                    </p>
+                </div>
+                <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
+                    <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">NAVEGACIÓN</div>
+                    <div style="display: flex; flex-direction: column;">
+                        <a href="#" class="footer-link">Propiedades en Venta</a>
+                        <a href="#" class="footer-link">Propiedades en Alquiler</a>
+                        <a href="#" class="footer-link">Tasaciones Profesionales</a>
+                        <a href="#" class="footer-link">Administración de Consorcios</a>
                     </div>
                 </div>
+                <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
+                    <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">CONTACTO</div>
+                    <p style="color: #888; font-size: 13px; line-height: 2;">
+                        📍 Av. Rafael Nuñez 4500, Córdoba<br>
+                        📞 +54 351 000 0000<br>
+                        ✉️ info@gminmobiliaria.com.ar
+                    </p>
+                </div>
+            </div>
+            <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #222; text-align: center; color: #444; font-size: 11px; letter-spacing: 1px;">
+                © {datetime.datetime.now().year} GMI NEGOCIOS INMOBILIARIOS. TODOS LOS DERECHOS RESERVADOS.
             </div>
         </div>
     """, unsafe_allow_html=True)
