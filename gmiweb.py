@@ -45,7 +45,7 @@ st.markdown(f"""
     .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
     .img-container-listing:hover img {{ transform: scale(1.03); }}
 
-    /* Super Filtro - CAMBIO QUIRÚRGICO PARA ALINEACIÓN */
+    /* Super Filtro */
     .filter-box {{
         background-color: #ffffff;
         padding: 25px;
@@ -68,29 +68,30 @@ st.markdown(f"""
         height: 15px;
     }}
 
-    /* Forzar alineación de widgets de Streamlit */
-    [data-testid="stVerticalBlock"] > div {{
-        gap: 0rem !important;
-    }}
-
     div[data-testid="stCheckbox"] label p {{
         color: #1a1a1a !important;
         font-weight: 600;
         margin-top: 5px;
     }}
 
-    /* Botón buscar prolijo */
-    div.stButton > button.btn-buscar-pro {{
+    /* CAMBIO QUIRÚRGICO: Botón Buscar Color Gris Oscuro y Texto Blanco */
+    div.stButton > button[kind="primary"] {{
         background-color: #1a1a1a !important;
-        color: white !important;
-        border-radius: 4px !important;
-        width: 100% !important;
+        border: none !important;
+        color: #ffffff !important;
         height: 45px !important;
+        width: 100% !important;
         font-weight: 700 !important;
-        margin-top: 25px !important; /* Alinea con los inputs de abajo */
+        margin-top: 25px !important;
+        border-radius: 6px !important;
+        transition: 0.3s ease;
+    }}
+    div.stButton > button[kind="primary"]:hover {{
+        background-color: #333333 !important;
+        transform: translateY(-2px);
     }}
 
-    /* Footer Estilo Institucional */
+    /* Footer */
     .footer-container {{
         background-color: #1a1a1a;
         color: #ffffff;
@@ -206,9 +207,9 @@ elif st.session_state.estado == 'web':
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # --- SUPER FILTRO REESTRUCTURADO ---
+        # --- SUPER FILTRO CON ADICIÓN DE RANGOS ---
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
-        fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns([2, 1.5, 1.5, 1.5, 1.2])
+        fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns([2, 1.5, 1.8, 1.5, 1.2])
         
         with fcol1:
             st.markdown("<p class='filter-label'>UBICACIÓN</p>", unsafe_allow_html=True)
@@ -223,10 +224,12 @@ elif st.session_state.estado == 'web':
             st.selectbox("d", ["Todos", "1+", "2+", "3+"], label_visibility="collapsed", key="d1")
             
         with fcol3:
+            # CAMBIO QUIRÚRGICO: Inclusión de Rango Desplegable y Alineación
             st.markdown("<p class='filter-label'>PRESUPUESTO (USD)</p>", unsafe_allow_html=True)
-            st.text_input("m1", placeholder="Mínimo USD", label_visibility="collapsed", key="m1")
-            st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True) # Espaciador prolijo
-            st.text_input("m2", placeholder="Máximo USD", label_visibility="collapsed", key="m2")
+            st.text_input("min", placeholder="Mínimo USD", label_visibility="collapsed", key="m1")
+            st.selectbox("rango", ["Seleccionar Rango", "0 a 50.000", "50.000 a 100.000", "100.000 a 350.000", "350.000 a 500.000", "+500.000"], label_visibility="collapsed", key="rango_p")
+            st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            st.text_input("max", placeholder="Máximo USD", label_visibility="collapsed", key="m2")
             
         with fcol4:
             st.markdown("<p class='filter-label'>OPERACIÓN</p>", unsafe_allow_html=True)
@@ -235,10 +238,9 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
             
         with fcol5:
-            # Botón alineado con la fila de abajo
+            # Botón con color gris oscuro y letras blancas
             if st.button("BUSCAR", key="btn_search", use_container_width=True, type="primary"):
-                st.toast("Filtrando...")
-            st.markdown('<style>div[data-testid="stButton"] > button[kind="primary"] { background-color: #1a1a1a !important; height: 45px !important; margin-top: 25px !important; }</style>', unsafe_allow_html=True)
+                st.toast("Filtrando resultados...")
 
         st.markdown("</div>", unsafe_allow_html=True)
         st.markdown("<br><br><br>", unsafe_allow_html=True)
