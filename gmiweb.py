@@ -118,53 +118,61 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* Formas visuales detras de los botones */
-    .forma-boton {{
-        background-color: #e0e0e0;
-        height: 50px;
+    /* --- ESTRUCTURA DE FORMAS PARA BOTONES (EL CAMBIO SOLICITADO) --- */
+    .container-relativo {{
+        position: relative;
+        height: 60px;
+        margin-top: 10px;
         width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }}
+
+    .forma-boton {{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #e0e0e0; /* Gris base por defecto */
         border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: 'Inter', sans-serif;
-        font-weight: 800;
+        font-weight: 900;
         color: #1a1a1a;
         letter-spacing: 2px;
+        text-transform: uppercase;
+        z-index: 1;
+        pointer-events: none; /* No interfiere con el clic del botón real */
+    }}
+
+    /* Variación para botón destacado (Oportunidades o Acciones) */
+    .forma-negra {{ background-color: #1a1a1a !important; color: #ffffff !important; }}
+    .forma-roja {{ background-color: #C41E3A !important; color: #ffffff !important; }}
+
+    /* Estilo para que el st.button sea transparente y cubra la forma */
+    .container-relativo div.stButton {{
         position: absolute;
-        z-index: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
     }}
 
-    .container-relativo {{
-        position: relative;
-        height: 60px;
-        margin-top: 10px;
-    }}
-
-    /* --- CAMBIO QUIRÚRGICO AISLADO: BOTÓN VER OPORTUNIDADES --- */
-    button[key="btn_all_props"] {{
-        background-color: #444444 !important;
+    .container-relativo div.stButton > button {{
         width: 100% !important;
-        border-radius: 15px !important;
         height: 60px !important;
+        background: transparent !important;
         border: none !important;
-        transition: all 0.3s ease !important;
-        margin-top: 10px !important;
+        color: transparent !important; /* El texto lo pone la 'forma-boton' de abajo */
+        margin: 0 !important;
+        padding: 0 !important;
     }}
-
-    button[key="btn_all_props"]:hover {{
-        background-color: #C41E3A !important;
-    }}
-
-    button[key="btn_all_props"] p {{
-        color: #000000 !important;
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 900 !important;
-        font-size: 18px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 2px !important;
-    }}
-
+    
     /* Estilo para sub-navbar de categorías */
     .sub-nav-container {{
         display: flex;
@@ -303,7 +311,7 @@ elif st.session_state.estado == 'web':
             st.checkbox("Apto Crédito", key="apto_check")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- SECCIÓN BANNER Y BOTÓN ---
+        # --- SECCIÓN BANNER Y BOTÓN CON FORMA ---
         if st.session_state.categoria_actual is None:
             st.markdown("<br><br>", unsafe_allow_html=True)
             st.markdown("<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 12px; color: #1a1a1a; margin-bottom: 20px;'>TODAS LAS PROPIEDADES</div>", unsafe_allow_html=True)
@@ -311,10 +319,13 @@ elif st.session_state.estado == 'web':
             banner_b64 = get_image_base64("Córdoba_banner2.jpg")
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
-            if st.button("VER OPORTUNIDADES", key="btn_all_props", use_container_width=True):
+            # --- CAMBIO QUIRÚRGICO: FORMA DETRÁS DE VER OPORTUNIDADES ---
+            st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>VER OPORTUNIDADES</div>", unsafe_allow_html=True)
+            if st.button(" ", key="btn_all_props", use_container_width=True):
                 st.session_state.categoria_actual = "TODAS"
                 st.session_state.operacion_filtro = None
                 st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
         
         st.markdown("<br><br><br>", unsafe_allow_html=True)
 
@@ -327,11 +338,13 @@ elif st.session_state.estado == 'web':
                 with [col1, col2, col3][i]:
                     img_b64 = get_image_base64(img)
                     st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
-                    st.markdown(f"<div class='container-relativo'><div class='forma-boton'>{nombre}</div></div>", unsafe_allow_html=True)
+                    # --- CAMBIO QUIRÚRGICO: FORMA DETRÁS DE CATEGORÍAS ---
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton'>{nombre}</div>", unsafe_allow_html=True)
                     if st.button(" ", key=f"cat_{nombre}", use_container_width=True):
                         st.session_state.categoria_actual = nombre
                         st.session_state.operacion_filtro = None
                         st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
 
             st.markdown("<br><br><br><div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 4px; color: #1a1a1a; margin-bottom: 30px;'>PROPIEDADES DESTACADAS</div>", unsafe_allow_html=True)
             d_col1, d_col2, d_col3 = st.columns(3)
@@ -351,51 +364,54 @@ elif st.session_state.estado == 'web':
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.markdown("<div class='container-relativo'><div class='forma-boton' style='background-color:#1a1a1a; color:white; font-size:12px;'>VER FICHA COMPLETA</div></div>", unsafe_allow_html=True)
+                    # --- FORMA DETRÁS DE VER FICHA ---
+                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra' style='font-size:12px;'>VER FICHA COMPLETA</div>", unsafe_allow_html=True)
                     if st.button(" ", key=f"btn_dest_{i}", use_container_width=True):
                          st.toast(f"Cargando ficha de {p['titulo']}...")
+                    st.markdown("</div>", unsafe_allow_html=True)
 
         else:
             cat = st.session_state.categoria_actual
             
-            # --- SUB-NAVBAR ---
+            # --- SUB-NAVBAR CON FORMAS ---
             sub_col1, sub_col2, sub_col3, sub_col4 = st.columns([1,1,1,1])
-            with sub_col1:
-                if st.button("TODAS", use_container_width=True):
-                    st.session_state.categoria_actual = "TODAS"
-                    st.session_state.operacion_filtro = None
-                    st.rerun()
-            with sub_col2:
-                if st.button("DEPARTAMENTOS", use_container_width=True):
-                    st.session_state.categoria_actual = "DEPARTAMENTOS"
-                    st.session_state.operacion_filtro = None
-                    st.rerun()
-            with sub_col3:
-                if st.button("CASAS", use_container_width=True):
-                    st.session_state.categoria_actual = "CASAS"
-                    st.session_state.operacion_filtro = None
-                    st.rerun()
-            with sub_col4:
-                if st.button("TERRENOS", use_container_width=True):
-                    st.session_state.categoria_actual = "TERRENOS"
-                    st.session_state.operacion_filtro = None
-                    st.rerun()
+            labels_sub = ["TODAS", "DEPARTAMENTOS", "CASAS", "TERRENOS"]
+            for i, (col, label) in enumerate(zip([sub_col1, sub_col2, sub_col3, sub_col4], labels_sub)):
+                with col:
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton' style='height:45px;'>{label}</div>", unsafe_allow_html=True)
+                    if st.button(" ", key=f"subnav_{label}", use_container_width=True):
+                        st.session_state.categoria_actual = label
+                        st.session_state.operacion_filtro = None
+                        st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
 
             st.markdown(f"<div style='text-align: center; font-family: Inter; font-weight: 800; letter-spacing: 5px; color: #C41E3A; margin: 30px 0;'>{cat}</div>", unsafe_allow_html=True)
             
-            # --- FILTROS INTERNOS ---
-            if cat in ["DEPARTAMENTOS", "CASAS"]:
+            # --- FILTROS INTERNOS CON FORMAS ---
+            if cat in ["DEPARTAMENTOS", "CASAS", "TODAS"]:
                 btn_v, btn_a = st.columns(2)
-                if btn_v.button("EN VENTA", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Venta" else "secondary"):
-                    st.session_state.operacion_filtro = "Venta"
-                    st.rerun()
-                if btn_a.button("EN ALQUILER", use_container_width=True, type="primary" if st.session_state.operacion_filtro == "Alquiler" else "secondary"):
-                    st.session_state.operacion_filtro = "Alquiler"
-                    st.rerun()
+                with btn_v:
+                    color_v = "forma-roja" if st.session_state.operacion_filtro == "Venta" else ""
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_v}'>EN VENTA</div>", unsafe_allow_html=True)
+                    if st.button(" ", key="btn_venta_cat", use_container_width=True):
+                        st.session_state.operacion_filtro = "Venta"
+                        st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
+                with btn_a:
+                    color_a = "forma-roja" if st.session_state.operacion_filtro == "Alquiler" else ""
+                    st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_a}'>EN ALQUILER</div>", unsafe_allow_html=True)
+                    if st.button(" ", key="btn_alq_cat", use_container_width=True):
+                        st.session_state.operacion_filtro = "Alquiler"
+                        st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
+            
             elif cat == "TERRENOS":
-                if st.button("CONSULTAR PLANES DE CONSTRUCCIÓN", use_container_width=True):
+                # --- CAMBIO QUIRÚRGICO: FORMA DETRÁS DE PLANES DE CONSTRUCCIÓN ---
+                st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>CONSULTAR PLANES DE CONSTRUCCIÓN</div>", unsafe_allow_html=True)
+                if st.button(" ", key="btn_planes_terrenos", use_container_width=True):
                     st.session_state.pagina_actual = "Planes_Construccion"
                     st.rerun()
+                st.markdown("</div>", unsafe_allow_html=True)
 
             # --- LÓGICA DE FILTRADO ---
             if cat == "TODAS":
@@ -420,19 +436,27 @@ elif st.session_state.estado == 'web':
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.button(f"VER DETALLES", key=f"ficha_{cat}_{i}", use_container_width=True)
+                    # --- FORMA DETRÁS DE DETALLES ---
+                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>VER DETALLES</div>", unsafe_allow_html=True)
+                    st.button(" ", key=f"ficha_{cat}_{i}", use_container_width=True)
+                    st.markdown("</div><br>", unsafe_allow_html=True)
 
-            if st.button("← VOLVER AL MENÚ PRINCIPAL", use_container_width=True):
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<div class='container-relativo'><div class='forma-boton'>← VOLVER AL MENÚ PRINCIPAL</div>", unsafe_allow_html=True)
+            if st.button(" ", key="btn_volver_main", use_container_width=True):
                 st.session_state.categoria_actual = None
                 st.session_state.operacion_filtro = None
                 st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
     elif st.session_state.pagina_actual == "Planes_Construccion":
         st.markdown("<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>PLANES DE CONSTRUCCIÓN</h2><p style='color: #666;'>Sección en desarrollo para formulario de contacto.</p></div>", unsafe_allow_html=True)
-        if st.button("← VOLVER A TERRENOS", use_container_width=True):
+        st.markdown("<div class='container-relativo'><div class='forma-boton'>← VOLVER A TERRENOS</div>", unsafe_allow_html=True)
+        if st.button(" ", key="btn_volver_terrenos", use_container_width=True):
             st.session_state.pagina_actual = "Principal"
             st.session_state.categoria_actual = "TERRENOS"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
     else:
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2><p style='color: #666;'>Contenido en proceso de carga para GMI Negocios Inmobiliarios.</p></div>", unsafe_allow_html=True)
@@ -479,9 +503,12 @@ elif st.session_state.estado == 'web':
 
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
-    if fcol.button("VOLVER AL INICIO / CERRAR", key="btn_close", use_container_width=True):
-        st.session_state.estado = 'intro'
-        st.session_state.pagina_actual = 'Principal'
-        st.session_state.categoria_actual = None
-        st.session_state.operacion_filtro = None
-        st.rerun()
+    with fcol:
+        st.markdown("<div class='container-relativo'><div class='forma-boton' style='height:45px; font-size:10px;'>CERRAR SESIÓN</div>", unsafe_allow_html=True)
+        if st.button(" ", key="btn_close", use_container_width=True):
+            st.session_state.estado = 'intro'
+            st.session_state.pagina_actual = 'Principal'
+            st.session_state.categoria_actual = None
+            st.session_state.operacion_filtro = None
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
