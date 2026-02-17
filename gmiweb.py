@@ -47,7 +47,7 @@ st.markdown(f"""
     .img-container-listing img {{ width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }}
     .img-container-listing:hover img {{ transform: scale(1.03); }}
 
-    /* Super Filtro */
+    /* Super Filtro - PROHIBIDO MODIFICAR */
     .filter-box {{
         background-color: #ffffff;
         padding: 25px;
@@ -118,13 +118,15 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- ARQUITECTURA DE CAPAS PARA BOTONES CORREGIDA --- */
+    /* --- ARQUITECTURA DE CAPAS CORREGIDA --- */
     .container-relativo {{
         position: relative;
         height: 50px;
         margin-top: 15px;
         width: 100%;
-        overflow: visible;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }}
 
     .forma-boton {{
@@ -140,45 +142,46 @@ st.markdown(f"""
         justify-content: center;
         font-family: 'Inter', sans-serif;
         font-weight: 900;
-        color: #1a1a1a;
         letter-spacing: 2px;
         text-transform: uppercase;
         z-index: 1;
-        pointer-events: none; /* Ignora el click para que pase al botón real */
+        /* El texto de la forma ahora es del mismo color que su fondo */
+        color: #e0e0e0 !important; 
     }}
 
-    .forma-negra {{ background-color: #1a1a1a !important; color: #ffffff !important; }}
-    .forma-roja {{ background-color: #C41E3A !important; color: #ffffff !important; }}
+    .forma-negra {{ 
+        background-color: #1a1a1a !important; 
+        color: #1a1a1a !important; 
+    }}
+    .forma-roja {{ 
+        background-color: #C41E3A !important; 
+        color: #C41E3A !important; 
+    }}
 
-    /* CORRECCIÓN DE DESFASE: Forzar botón de Streamlit a ocupar todo el espacio padre */
+    /* Ajuste del botón real de Streamlit */
     .container-relativo div.stButton {{
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
+        position: relative !important;
+        z-index: 2 !important;
         width: 100% !important;
-        height: 100% !important;
-        z-index: 5 !important;
-        margin: 0 !important;
-        padding: 0 !important;
     }}
 
     .container-relativo div.stButton > button {{
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
         width: 100% !important;
-        height: 100% !important;
+        height: 50px !important;
         background: transparent !important;
         border: none !important;
-        color: transparent !important;
+        /* Texto del botón real ahora es negro y visible */
+        color: #000000 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 900 !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase !important;
         margin: 0 !important;
         padding: 0 !important;
-        display: block !important;
-        box-shadow: none !important;
     }}
 
     .container-relativo div.stButton > button:hover {{
-        background: rgba(0,0,0,0.05) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -278,7 +281,7 @@ elif st.session_state.estado == 'web':
         m = folium.Map(location=[-31.4167, -64.1833], zoom_start=12, tiles='CartoDB positron', zoom_control=False)
         st_folium(m, height=350, use_container_width=True, key="mapa_principal")
         
-        # --- SUPER FILTRO ---
+        # --- SUPER FILTRO (ESTRUCTURA ORIGINAL) ---
         st.markdown("<div class='filter-box'>", unsafe_allow_html=True)
         f_col1, f_col2, f_col3, f_col4, f_col5 = st.columns([1, 1, 1, 1, 1])
         with f_col1:
@@ -317,7 +320,7 @@ elif st.session_state.estado == 'web':
             st.markdown(f"<div class='banner-cordoba'><img src='data:image/jpeg;base64,{banner_b64}'></div>", unsafe_allow_html=True)
             
             st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>VER OPORTUNIDADES</div>", unsafe_allow_html=True)
-            if st.button(" ", key="btn_all_props", use_container_width=True):
+            if st.button("VER OPORTUNIDADES", key="btn_all_props"):
                 st.session_state.categoria_actual = "TODAS"
                 st.session_state.operacion_filtro = None
                 st.rerun()
@@ -335,7 +338,7 @@ elif st.session_state.estado == 'web':
                     img_b64 = get_image_base64(img)
                     st.markdown(f"<div class='img-container-listing'><img src='data:image/jpeg;base64,{img_b64}'></div>", unsafe_allow_html=True)
                     st.markdown(f"<div class='container-relativo'><div class='forma-boton'>{nombre}</div>", unsafe_allow_html=True)
-                    if st.button(" ", key=f"cat_{nombre}", use_container_width=True):
+                    if st.button(nombre, key=f"cat_{nombre}"):
                         st.session_state.categoria_actual = nombre
                         st.session_state.operacion_filtro = None
                         st.rerun()
@@ -359,8 +362,8 @@ elif st.session_state.estado == 'web':
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra' style='font-size:12px;'>VER FICHA COMPLETA</div>", unsafe_allow_html=True)
-                    if st.button(" ", key=f"btn_dest_{i}", use_container_width=True):
+                    st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>VER FICHA COMPLETA</div>", unsafe_allow_html=True)
+                    if st.button("VER FICHA COMPLETA", key=f"btn_dest_{i}"):
                          st.toast(f"Cargando ficha de {p['titulo']}...")
                     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -370,8 +373,8 @@ elif st.session_state.estado == 'web':
             labels_sub = ["TODAS", "DEPARTAMENTOS", "CASAS", "TERRENOS"]
             for i, (col, label) in enumerate(zip([sub_col1, sub_col2, sub_col3, sub_col4], labels_sub)):
                 with col:
-                    st.markdown(f"<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:45px; font-size:10px;'>{label}</div>", unsafe_allow_html=True)
-                    if st.button(" ", key=f"subnav_{label}", use_container_width=True):
+                    st.markdown(f"<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:45px;'>{label}</div>", unsafe_allow_html=True)
+                    if st.button(label, key=f"subnav_{label}"):
                         st.session_state.categoria_actual = label
                         st.session_state.operacion_filtro = None
                         st.rerun()
@@ -384,21 +387,21 @@ elif st.session_state.estado == 'web':
                 with btn_v:
                     color_v = "forma-roja" if st.session_state.operacion_filtro == "Venta" else ""
                     st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_v}'>EN VENTA</div>", unsafe_allow_html=True)
-                    if st.button(" ", key="btn_venta_cat", use_container_width=True):
+                    if st.button("EN VENTA", key="btn_venta_cat"):
                         st.session_state.operacion_filtro = "Venta"
                         st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
                 with btn_a:
                     color_a = "forma-roja" if st.session_state.operacion_filtro == "Alquiler" else ""
                     st.markdown(f"<div class='container-relativo'><div class='forma-boton {color_a}'>EN ALQUILER</div>", unsafe_allow_html=True)
-                    if st.button(" ", key="btn_alq_cat", use_container_width=True):
+                    if st.button("EN ALQUILER", key="btn_alq_cat"):
                         st.session_state.operacion_filtro = "Alquiler"
                         st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
             
             elif cat == "TERRENOS":
-                st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>CONSULTAR PLANES DE CONSTRUCCIÓN</div>", unsafe_allow_html=True)
-                if st.button(" ", key="btn_planes_terrenos", use_container_width=True):
+                st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>CONSULTAR PLANES</div>", unsafe_allow_html=True)
+                if st.button("CONSULTAR PLANES", key="btn_planes_terrenos"):
                     st.session_state.pagina_actual = "Planes_Construccion"
                     st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
@@ -426,21 +429,21 @@ elif st.session_state.estado == 'web':
                         </div>
                     """, unsafe_allow_html=True)
                     st.markdown("<div class='container-relativo'><div class='forma-boton forma-negra'>VER DETALLES</div>", unsafe_allow_html=True)
-                    if st.button(" ", key=f"ficha_{cat}_{i}", use_container_width=True):
+                    if st.button("VER DETALLES", key=f"ficha_{cat}_{i}"):
                         st.toast("Cargando detalles...")
                     st.markdown("</div><br>", unsafe_allow_html=True)
 
-            st.markdown("<div class='container-relativo'><div class='forma-boton'>← VOLVER AL MENÚ PRINCIPAL</div>", unsafe_allow_html=True)
-            if st.button(" ", key="btn_volver_main", use_container_width=True):
+            st.markdown("<div class='container-relativo'><div class='forma-boton'>VOLVER</div>", unsafe_allow_html=True)
+            if st.button("VOLVER", key="btn_volver_main"):
                 st.session_state.categoria_actual = None
                 st.session_state.operacion_filtro = None
                 st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
     elif st.session_state.pagina_actual == "Planes_Construccion":
-        st.markdown("<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>PLANES DE CONSTRUCCIÓN</h2><p style='color: #666;'>Sección en desarrollo.</p></div>", unsafe_allow_html=True)
-        st.markdown("<div class='container-relativo'><div class='forma-boton'>← VOLVER A TERRENOS</div>", unsafe_allow_html=True)
-        if st.button(" ", key="btn_volver_terrenos", use_container_width=True):
+        st.markdown("<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>PLANES DE CONSTRUCCIÓN</h2></div>", unsafe_allow_html=True)
+        st.markdown("<div class='container-relativo'><div class='forma-boton'>VOLVER</div>", unsafe_allow_html=True)
+        if st.button("VOLVER", key="btn_volver_terrenos"):
             st.session_state.pagina_actual = "Principal"
             st.session_state.categoria_actual = "TERRENOS"
             st.rerun()
@@ -455,8 +458,8 @@ elif st.session_state.estado == 'web':
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
     with fcol:
-        st.markdown("<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:45px; font-size:10px;'>CERRAR SESIÓN</div>", unsafe_allow_html=True)
-        if st.button(" ", key="btn_close", use_container_width=True):
+        st.markdown("<div class='container-relativo' style='height:45px;'><div class='forma-boton' style='height:45px;'>LOGOUT</div>", unsafe_allow_html=True)
+        if st.button("LOGOUT", key="btn_close"):
             st.session_state.estado = 'intro'
             st.session_state.pagina_actual = 'Principal'
             st.session_state.categoria_actual = None
