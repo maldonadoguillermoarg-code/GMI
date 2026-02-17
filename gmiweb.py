@@ -111,7 +111,7 @@ st.markdown(f"""
         color: #C41E3A !important;
     }}
 
-    /* Estilo para botones de imagen invisibles (Cambio Quirúrgico) */
+    /* Estilo para botones de imagen invisibles */
     .stButton>button:has(div.img-container-listing), 
     .stButton>button:has(div.listing-card) {{
         padding: 0 !important;
@@ -134,11 +134,16 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* Cambio Quirúrgico: Estilo para el botón de Propiedades Disponibles */
+    /* CAMBIO QUIRÚRGICO: Estilo resaltado para el botón "Propiedades Disponibles" */
+    div.stButton > button:has(div[data-testid="stMarkdownContainer"] p:contains("PROPIEDADES DISPONIBLES")),
     div.stButton > button[key="btn_all_props"] {{
-        font-size: 16px !important;
-        font-weight: 800 !important;
-        letter-spacing: 1px !important;
+        background-color: transparent !important;
+        border: 2px solid #1a1a1a !important;
+    }}
+    div.stButton > button[key="btn_all_props"] p {{
+        font-size: 22px !important;
+        font-weight: 900 !important;
+        color: #1a1a1a !important;
     }}
     </style>
     """, unsafe_allow_html=True)
