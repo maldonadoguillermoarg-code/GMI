@@ -6,143 +6,95 @@ import json
 import folium
 from streamlit_folium import st_folium
 
-# --- 1. CONFIGURACIÓN DE PÁGINA ---
+# --- 1. CONFIGURACIÓN DE PÁGINA (ESTÁNDAR BOUTIQUE) ---
 st.set_page_config(layout="wide", page_title="GMI | Negocios Inmobiliarios", initial_sidebar_state="collapsed")
 
 # --- 2. CONTROL DE ESTADO ---
 if 'estado' not in st.session_state:
     st.session_state.estado = 'intro'
-if 'categoria_actual' not in st.session_state:
-    st.session_state.categoria_actual = None
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = 'home'
+if 'propiedad_id' not in st.session_state:
+    st.session_state.propiedad_id = None
 
-# --- 3. CARGA DE DATOS PARA BUSCADOR (NUEVO) ---
+# --- 3. CARGA DE DATOS REALISTAS (CÓRDOBA) ---
 @st.cache_data
-def cargar_base_predictiva():
-    sugerencias = []
-    try:
-        with open('argentina_states.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            sugerencias += [p['nombre'] for p in data] if isinstance(data[0], dict) else data
-    except: pass
-    try:
-        with open('argentina_localities.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            sugerencias += [l['nombre'] for l in data]
-    except: pass
-    try:
-        with open('cordoba.geojson', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            sugerencias += [feat['properties']['Nombre'] for feat in data['features'] if feat['properties'].get('Nombre')]
-    except: pass
-    return sorted(list(set(sugerencias)))
+def cargar_propiedades():
+    return [
+        {
+            "id": 1, "tipo": "TERRENO", "titulo": "Lote Premium Manantiales II", "precio": "USD 45.000", 
+            "zona": "Manantiales", "m2": "300", "m2_cub": "0", "amb": "0", "banos": "0", "coch": "0",
+            "desc": "Terreno nivelado en etapa avanzada. Seguridad 24hs y todos los servicios subterráneos.",
+            "lat": -31.4650, "lon": -64.2480, "video": "https://youtube.com/watch?v=ejemplo1"
+        },
+        {
+            "id": 2, "tipo": "TERRENO", "titulo": "Macrolote en Docta Etapa 1", "precio": "USD 38.000", 
+            "zona": "Docta", "m2": "250", "m2_cub": "0", "amb": "0", "banos": "0", "coch": "0",
+            "desc": "Excelente ubicación cerca del ingreso principal. Posesión inmediata.",
+            "lat": -31.4320, "lon": -64.2950, "video": "https://youtube.com/watch?v=ejemplo2"
+        },
+        {
+            "id": 3, "tipo": "DEPTO", "titulo": "Semipiso Categoría Nueva Córdoba", "precio": "USD 125.000", 
+            "zona": "Nueva Córdoba", "m2": "85", "m2_cub": "80", "amb": "3", "banos": "2", "coch": "1",
+            "desc": "Frente al Palacio Ferreyra. Terminaciones en yeso, aberturas DVH y balcón terraza.",
+            "lat": -31.4280, "lon": -64.1870, "video": "https://youtube.com/watch?v=ejemplo3"
+        },
+        {
+            "id": 4, "tipo": "CASA", "titulo": "Casa Estilo Colonial Cofico", "precio": "USD 180.000", 
+            "zona": "Cofico", "m2": "400", "m2_cub": "220", "amb": "5", "banos": "3", "coch": "2",
+            "desc": "Propiedad reciclada a nuevo. Amplio patio con asador y techos altos originales.",
+            "lat": -31.4020, "lon": -64.1850, "video": "https://youtube.com/watch?v=ejemplo4"
+        }
+    ]
 
-OPCIONES_BUSQUEDA = cargar_base_predictiva()
+PROPIEDADES = cargar_propiedades()
 
-# --- 4. FUNCIONES DE UTILIDAD ---
-def get_image_base64(path):
-    try:
-        with open(path, "rb") as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    except:
-        return ""
-
-# --- 5. DATOS DE PROPIEDADES ---
-propiedades = [
-    {"tipo": "DEPARTAMENTOS", "titulo": "Penthouse Alvear", "precio": "USD 850.000", "barrio": "Recoleta", "amb": "4", "m2": "120", "img": "Deptos.jpeg"},
-    {"tipo": "CASAS", "titulo": "Residencia Los Olivos", "precio": "USD 1.200.000", "barrio": "Norte", "amb": "6", "m2": "450", "img": "Casas.jpeg"},
-    {"tipo": "TERRENOS", "titulo": "Lote Premium Golf", "precio": "USD 340.000", "barrio": "Country Club", "amb": "-", "m2": "1200", "img": "Terreno.jpeg"},
-    {"tipo": "DEPARTAMENTOS", "titulo": "Modern Loft", "precio": "USD 210.000", "barrio": "Nueva Córdoba", "amb": "2", "m2": "65", "img": "Deptos.jpeg"},
-    {"tipo": "CASAS", "titulo": "Chalet del Bosque", "precio": "USD 540.000", "barrio": "Villa Belgrano", "amb": "5", "m2": "320", "img": "Casas.jpeg"},
-    {"tipo": "TERRENOS", "titulo": "Macrolote Industrial", "precio": "USD 980.000", "barrio": "Circunvalación", "amb": "-", "m2": "5000", "img": "Terreno.jpeg"},
-]
-
-# --- 6. ESTILOS CSS GENERALES Y HOUZEZ ---
+# --- 4. ESTILOS CSS (REPETANDO IDENTIDAD GMI) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
     @import url('https://fonts.cdnfonts.com/css/seven-segment');
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* UI BOUTIQUE */
+    .stApp { background-color: #ffffff; }
+    .header-gmi { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 999; }
+    .logo-text { font-family: 'Inter'; font-weight: 800; font-size: 32px; }
+    .btn-tasacion-nav { border: 2px solid #C41E3A; color: #C41E3A; padding: 5px 15px; border-radius: 5px; font-weight: 700; text-decoration: none; }
     
-    .houzez-card {
-        background: white; border-radius: 8px; overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px;
-        transition: 0.3s; border: 1px solid #eee; position: relative;
-    }
-    .houzez-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .img-container-listing { width: 100%; height: 240px; overflow: hidden; }
-    .img-container-listing img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+    /* CARDS */
+    .houzez-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #eee; margin-bottom: 20px; transition: 0.3s; }
+    .houzez-card:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .houzez-price { color: #C41E3A; font-weight: 800; font-size: 22px; padding: 0 15px; }
+    .houzez-title { font-weight: 700; padding: 10px 15px 5px; }
     
-    .houzez-badge {
-        position: absolute; top: 15px; left: 15px; background: #003366;
-        color: white; padding: 5px 12px; font-size: 11px; font-weight: 700;
-        border-radius: 3px; z-index: 10;
-    }
-    .houzez-price { color: #C41E3A; font-family: 'Inter'; font-weight: 800; font-size: 22px; padding: 0 20px; }
-    .houzez-title { font-family: 'Inter'; font-weight: 700; font-size: 18px; color: #1a1a1a; padding: 15px 20px 5px 20px; }
-    .houzez-meta {
-        display: flex; justify-content: space-between; padding: 15px 20px;
-        border-top: 1px solid #f0f0f0; color: #666; font-size: 13px;
-    }
-    
-    .search-container-box {
-        background: white; padding: 25px; border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee;
-    }
-
-    .map-preview-card {
-        border: 2px dashed #ddd;
-        border-radius: 8px;
-        padding: 30px 20px;
-        text-align: center;
-        color: #999;
-        margin-bottom: 25px;
-        background: #fafafa;
-    }
+    /* FICHA DETALLE */
+    .infografia-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .info-icon { text-align: center; font-size: 12px; color: #555; }
+    .sticky-contact { border: 2px solid #003366; padding: 20px; border-radius: 10px; position: sticky; top: 100px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- LÓGICA DE PANTALLAS ---
+# --- 5. LÓGICA DE PANTALLAS ---
 
 if st.session_state.estado == 'intro':
+    # PANTALLA DE RELOJ (SIN CAMBIOS)
     st.markdown("""
         <style>
         .stApp { background-color: #000000 !important; }
-        .digital-timer {
-            font-family: 'Seven Segment', sans-serif; color: #FF0000;
-            font-size: clamp(45px, 10vw, 90px); text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-            text-align: center; letter-spacing: 5px; line-height: 1; margin-top: 20px;
-        }
-        .labels-timer {
-            color: #8B0000; text-align: center; letter-spacing: 12px; font-size: 14px;
-            font-weight: 800; text-transform: uppercase; margin-top: 15px;
-        }
-        .text-link-titileo {
-            color: #FF0000 !important; font-family: 'Inter', sans-serif; font-weight: 900;
-            font-size: 20px; text-align: center; letter-spacing: 3px; margin-top: 40px;
-            animation: blinker 1.2s linear infinite; text-transform: uppercase;
-        }
+        .digital-timer { font-family: 'Seven Segment', sans-serif; color: #FF0000; font-size: clamp(45px, 10vw, 90px); text-shadow: 0 0 15px rgba(255, 0, 0, 0.7); text-align: center; margin-top: 20px; }
+        .text-link-titileo { color: #FF0000 !important; font-family: 'Inter', sans-serif; font-weight: 900; text-align: center; animation: blinker 1.2s linear infinite; margin-top: 40px; }
         @keyframes blinker { 50% { opacity: 0.1; } }
-        div.stButton > button {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: transparent !important; border: none !important; color: transparent !important; z-index: 999;
-        }
+        div.stButton > button { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: transparent !important; border: none !important; color: transparent !important; z-index: 999; }
         </style>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<div style='text-align: center; margin-top: 10vh;'><h1 style='font-size: 100px; margin-bottom: 0px; color: white;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></h1><p style='letter-spacing: 8px; color: #444; font-size: 14px; font-weight: 800; margin-bottom: 50px;'>NEGOCIOS INMOBILIARIOS</p></div>", unsafe_allow_html=True)
-
+        <div style='text-align: center; margin-top: 10vh;'><h1 style='font-size: 100px; color: white;'><span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span></h1></div>
+    """, unsafe_allow_html=True)
+    
     futuro = datetime.datetime(2026, 10, 31, 0, 0)
-    ahora = datetime.datetime.now()
-    dif = futuro - ahora
+    dif = futuro - datetime.datetime.now()
     dias, horas, residuo = dif.days, *divmod(dif.seconds, 3600)
     minutos, segundos = divmod(residuo, 60)
     
-    st.markdown(f"<div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div><div class='labels-timer'>DÍAS HORAS MINUTOS SEGUNDOS</div><div class='text-link-titileo'>>>> CLICK PARA ENTRAR A LA WEB <<<</div>", unsafe_allow_html=True)
-
+    st.markdown(f"<div class='digital-timer'>{dias:02d}:{horas:02d}:{minutos:02d}:{segundos:02d}</div><div class='text-link-titileo'>>>> CLICK PARA ENTRAR <<<</div>", unsafe_allow_html=True)
     if st.button("ENTER"):
         st.session_state.estado = 'web'
         st.rerun()
@@ -150,85 +102,119 @@ if st.session_state.estado == 'intro':
     st.rerun()
 
 elif st.session_state.estado == 'web':
-    st.markdown("<style>.stApp { background-color: #f8f9fa !important; }</style>", unsafe_allow_html=True)
-    
-    # Header
-    st.markdown(f"""
-        <div style='text-align: center; padding: 30px 0;'>
-            <div style='font-family: "Inter"; font-size: 50px; font-weight: 800; color: #1a1a1a;'>
-                <span style='color: #003366;'>G</span>M<span style='color: #C41E3A;'>I</span>
-            </div>
-            <div style='letter-spacing: 6px; color: #999; font-size: 11px; font-weight: 700; text-transform: uppercase;'>Negocios Inmobiliarios Premium</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # --- DISEÑO 50/50: MAPA Y BUSCADOR ---
-    col_izq, col_der = st.columns([1, 1])
-    
-    with col_izq:
-        m = folium.Map(location=[-31.4167, -64.1833], zoom_start=13, tiles='CartoDB positron')
-        st_folium(m, height=450, use_container_width=True, key="mapa_houzez")
-    
-    with col_der:
-        st.markdown('<div class="search-container-box">', unsafe_allow_html=True)
-        
-        # ARRIBA: Cuadrado para vista previa de propiedad seleccionada en el mapa
-        st.markdown("""
-            <div class="map-preview-card">
-                <p style="font-family: Inter; font-weight: 600; font-size: 14px; margin: 0; color: #555;">PROPIEDAD SELECCIONADA</p>
-                <p style="font-size: 12px; margin-top: 5px;">Toca un pin en el mapa para ver los detalles aquí.</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-        # ABAJO: Filtros de búsqueda
-        seleccion = st.selectbox(
-            "Localidad o Barrio", 
-            options=[""] + OPCIONES_BUSQUEDA,
-            format_func=lambda x: "Escribí para buscar (Ej: Nueva Córdoba)..." if x == "" else x
-        )
-        
-        c1, c2 = st.columns(2)
-        with c1: st.selectbox("Operación", ["Venta", "Alquiler"], key="op_web")
-        with c2: st.selectbox("Tipo de Propiedad", ["Departamentos", "Casas", "Terrenos"], key="tipo_web")
-        
-        if st.button("PONTE RICKOSO", use_container_width=True, type="primary"):
-            st.toast(f"Buscando en {seleccion}...")
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
-
-    # Título de Sección
+    # HEADER STICKY
     st.markdown("""
-        <div style='text-align: center; margin-bottom: 50px;'>
-            <h2 style='font-family: Inter; font-weight: 800; font-size: 35px; color: #1a1a1a;'>Propiedades Destacadas</h2>
-            <div style='width: 50px; height: 3px; background: #C41E3A; margin: 10px auto;'></div>
+        <div class="header-gmi">
+            <div class="logo-text"><span style="color:#003366">G</span>M<span style="color:#C41E3A">I</span></div>
+            <div style="display:flex; gap:20px; align-items:center;">
+                <small>VENTAS</small> <small>ALQUILERES</small> <a href="#" class="btn-tasacion-nav">TASACIONES</a>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Grid de Propiedades
-    col1, col2, col3 = st.columns(3)
-    for i, p in enumerate(propiedades):
-        with [col1, col2, col3][i % 3]:
-            img_b64 = get_image_base64(p["img"])
-            st.markdown(f"""
-                <div class="houzez-card">
-                    <div class="houzez-badge">DESTACADO</div>
-                    <div class="img-container-listing"><img src="data:image/jpeg;base64,{img_b64}"></div>
-                    <div class="houzez-title">{p['titulo']}</div>
-                    <p style="padding: 0 20px; color: #888; font-size: 14px; margin-bottom: 15px;">
-                        {p['barrio']}, Córdoba
-                    </p>
-                    <div class="houzez-price">{p['precio']}</div>
-                    <div class="houzez-meta">
-                        <span>{p['amb']} Dorm</span>
-                        <span>{p['m2']} m²</span>
+    if st.session_state.pagina == 'home':
+        # --- HERO MAP & FILTRO MAESTRO ---
+        col_map, col_filtro = st.columns([1.2, 0.8])
+        
+        with col_map:
+            m = folium.Map(location=[-31.42, -64.20], zoom_start=12, tiles='CartoDB positron')
+            for p in PROPIEDADES:
+                folium.Marker(
+                    [p['lat'], p['lon']], 
+                    popup=f"{p['titulo']} - {p['precio']}",
+                    icon=folium.Icon(color='red' if p['id']%2==0 else 'blue')
+                ).add_to(m)
+            st_folium(m, height=450, use_container_width=True)
+
+        with col_der := col_filtro:
+            st.markdown('<div style="padding:20px; background:#f9f9f9; border-radius:10px;">', unsafe_allow_html=True)
+            st.subheader("Buscador")
+            st.selectbox("Zona", ["Todas", "Manantiales", "Docta", "Nueva Córdoba", "Cofico"])
+            st.multiselect("Tipo", ["Casas", "Deptos", "Terrenos"], default=["Casas"])
+            if st.button("LA CONFIRMACIÓN DE MORTY", use_container_width=True, type="primary"):
+                st.toast("Filtrando...")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # GRID DE DESTACADOS
+        st.markdown("<h2 style='text-align:center; margin-top:50px;'>Propiedades Destacadas</h2>", unsafe_allow_html=True)
+        cols = st.columns(3)
+        for i, p in enumerate(PROPIEDADES[:3]):
+            with cols[i]:
+                st.markdown(f"""
+                    <div class="houzez-card">
+                        <div style="height:200px; background:#eee;"></div>
+                        <div class="houzez-title">{p['titulo']}</div>
+                        <div class="houzez-price">{p['precio']}</div>
+                        <p style="padding:0 15px; color:#777; font-size:13px;">{p['zona']}</p>
                     </div>
+                """, unsafe_allow_html=True)
+                if st.button(f"VER FICHA COMPLETA", key=f"p_{p['id']}", use_container_width=True):
+                    st.session_state.propiedad_id = p['id']
+                    st.session_state.pagina = 'detalle'
+                    st.rerun()
+
+    elif st.session_state.pagina == 'detalle':
+        # --- FICHA DE PROPIEDAD: LA CONFIRMACIÓN DE MORTY ---
+        p = next(item for item in PROPIEDADES if item["id"] == st.session_state.propiedad_id)
+        
+        if st.button("← VOLVER AL LISTADO"):
+            st.session_state.pagina = 'home'
+            st.rerun()
+
+        col_main, col_side = st.columns([1.5, 1])
+        
+        with col_main:
+            st.title(p['titulo'])
+            tab1, tab2, tab3 = st.tabs(["📸 Fotos", "🎥 Video", "📍 Mapa"])
+            with tab1: st.image("https://via.placeholder.com/800x450?text=Imagen+Propiedad")
+            with tab2: st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ") # Placeholder
+            with tab3: st.write("Mapa detallado aquí")
+
+            st.markdown(f"""
+                <div class="infografia-box">
+                    <div class="info-icon">📐<br><b>{p['m2']}m²</b><br>Totales</div>
+                    <div class="info-icon">🏠<br><b>{p['amb']}</b><br>Ambientes</div>
+                    <div class="info-icon">🛁<br><b>{p['banos']}</b><br>Baños</div>
+                    <div class="info-icon">🚗<br><b>{p['coch']}</b><br>Cochera</div>
+                    <div class="info-icon">🏗️<br><b>{p['m2_cub']}m²</b><br>Cubiertos</div>
+                    <div class="info-icon">🏢<br><b>{p['tipo']}</b><br>Tipo</div>
+                </div>
+                <h3>Descripción</h3>
+                <p style='font-size:18px; line-height:1.6; color:#444;'>{p['desc']}</p>
+            """, unsafe_allow_html=True)
+
+        with col_side:
+            st.markdown(f"""
+                <div class="sticky-contact">
+                    <h2 style="color:#C41E3A; margin-bottom:0;">{p['precio']}</h2>
+                    <p style="color:#666; margin-bottom:20px;">Expensas estimadas: $35.000</p>
+                    <hr>
                 </div>
             """, unsafe_allow_html=True)
-            st.button(f"VER FICHA COMPLETA", key=f"btn_{i}", use_container_width=True)
+            
+            # FORMULARIO CONECTABLE A ZOHO
+            with st.form("contacto_zoho"):
+                nombre = st.text_input("Nombre")
+                email = st.text_input("Email")
+                mensaje = st.text_area("Mensaje", value=f"Hola GMI, me interesa: {p['titulo']}")
+                submit = st.form_submit_button("CONSULTAR AHORA", use_container_width=True)
+                if submit:
+                    st.success("Enviado a Zoho CRM (Simulado)")
 
-    st.markdown("<br><br><hr>", unsafe_allow_html=True)
-    if st.button("← VOLVER AL RELOJ DE LANZAMIENTO"):
-        st.session_state.estado = 'intro'
-        st.rerun()
+            # WHATSAPP DIRECTO
+            st.markdown(f"""
+                <a href="https://wa.me/543512345678?text=Consulta%20por%20{p['titulo']}" 
+                   style="text-decoration:none;">
+                    <button style="width:100%; background:#25D366; color:white; border:none; padding:12px; border-radius:5px; font-weight:700; cursor:pointer;">
+                        WHATSAPP DIRECTO
+                    </button>
+                </a>
+            """, unsafe_allow_html=True)
+
+    # FOOTER OBLIGATORIO
+    st.markdown("""
+        <hr><div style='text-align:center; padding:20px; color:#999; font-size:12px;'>
+        GMI Negocios Inmobiliarios - Matrícula Profesional CPI 1234<br>
+        Córdoba, Argentina. 2026
+        </div>
+    """, unsafe_allow_html=True)
