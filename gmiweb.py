@@ -118,12 +118,13 @@ st.markdown(f"""
         object-fit: cover;
     }}
 
-    /* --- ARQUITECTURA DE CAPAS PARA BOTONES (CORRECCIÓN DE DESFASE) --- */
+    /* --- ARQUITECTURA DE CAPAS PARA BOTONES CORREGIDA --- */
     .container-relativo {{
         position: relative;
-        height: 50px; /* Altura fija controlada */
+        height: 50px;
         margin-top: 15px;
         width: 100%;
+        overflow: visible;
     }}
 
     .forma-boton {{
@@ -143,35 +144,41 @@ st.markdown(f"""
         letter-spacing: 2px;
         text-transform: uppercase;
         z-index: 1;
-        pointer-events: none;
+        pointer-events: none; /* Ignora el click para que pase al botón real */
     }}
 
     .forma-negra {{ background-color: #1a1a1a !important; color: #ffffff !important; }}
     .forma-roja {{ background-color: #C41E3A !important; color: #ffffff !important; }}
 
-    /* Forzar al botón de Streamlit a superponerse exactamente */
+    /* CORRECCIÓN DE DESFASE: Forzar botón de Streamlit a ocupar todo el espacio padre */
     .container-relativo div.stButton {{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 2;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 5 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }}
 
     .container-relativo div.stButton > button {{
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
         width: 100% !important;
-        height: 50px !important;
+        height: 100% !important;
         background: transparent !important;
         border: none !important;
         color: transparent !important;
         margin: 0 !important;
         padding: 0 !important;
         display: block !important;
+        box-shadow: none !important;
     }}
-    
+
     .container-relativo div.stButton > button:hover {{
-        background: rgba(0,0,0,0.02) !important; /* Feedback mínimo al pasar el mouse */
+        background: rgba(0,0,0,0.05) !important;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -443,7 +450,7 @@ elif st.session_state.estado == 'web':
         st.markdown(f"<div style='text-align: center; padding: 120px;'><h2 style='font-family: Inter; color: #1a1a1a; letter-spacing: 5px;'>{st.session_state.pagina_actual.upper()}</h2></div>", unsafe_allow_html=True)
 
     # --- PIE DE PÁGINA ---
-    st.markdown("""<div class="footer-container">...</div>""", unsafe_allow_html=True) # Footer original mantenido
+    st.markdown("""<div class="footer-container">...</div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     _, fcol, _ = st.columns([2, 1, 2])
