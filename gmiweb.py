@@ -764,8 +764,8 @@ elif st.session_state.estado == 'web':
                     <div style="flex: 1; min-width: 200px; margin-bottom: 40px;">
                         <div style="font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 2px;">CONTACTO</div>
                         <p style="color: #888; font-size: 13px; line-height: 2;">
-                            📍 Av. Rafael Nuñez 4500, Córdoba<br>
-                            📞 +54 351 000 0000<br>
+                            📍 25 de Mayo 496, Córdoba<br>
+                            📞 +54 3515 126791 <br>
                             ✉️ info@gminmobiliaria.com.ar
                         </p>
                     </div>
